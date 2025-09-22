@@ -8,6 +8,7 @@ import {
   Newspaper,
   Settings,
   MessageCircle,
+  Shield,
   X
 } from 'lucide-react';
 
@@ -23,6 +24,7 @@ const menuItems = [
   { id: 'breeds', label: 'Breed Database', icon: BookOpen },
   { id: 'events', label: 'Events & Shows', icon: Calendar },
   { id: 'members', label: 'Members', icon: Users },
+  { id: 'compliance', label: 'Compliance Canvas', icon: Shield },
   { id: 'community', label: 'Community', icon: MessageCircle },
   { id: 'resources', label: 'Resources', icon: FileText },
   { id: 'news', label: 'News & Updates', icon: Newspaper },
@@ -50,9 +52,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, on
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-green-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">P</span>
+                <span className="text-white font-bold text-sm">L</span>
               </div>
-              <span className="font-semibold text-gray-900">Poultry Club SA</span>
+              <span className="font-semibold text-gray-900">Livestock Club SA</span>
             </div>
             <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100">
               <X className="h-5 w-5 text-gray-600" />

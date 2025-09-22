@@ -9,7 +9,7 @@ interface Breed {
   id: string;
   name: string;
   origin: string;
-  category: 'chicken' | 'duck' | 'goose' | 'turkey' | 'guinea-fowl' | 'pigeon';
+  category: 'chicken' | 'duck' | 'goose' | 'turkey' | 'guinea-fowl' | 'pigeon' | 'pig' | 'goat' | 'rabbit';
   description: string;
   traits: string[];
   weight: {
@@ -124,6 +124,102 @@ const breeds: Breed[] = [
     rating: 4.2,
     contributors: 21,
     imageUrl: '/placeholder-guinea-fowl.jpg'
+  },
+  {
+    id: '7',
+    name: 'Hampshire Pig',
+    origin: 'United Kingdom',
+    category: 'pig',
+    description: 'Hardy pig breed known for excellent meat quality, good mothering ability, and lean muscle development.',
+    traits: ['Lean Meat', 'Good Mothering', 'Hardy', 'Fast Growing'],
+    weight: {
+      male: '320kg',
+      female: '250kg'
+    },
+    temperament: 'Docile',
+    rating: 4.6,
+    contributors: 18,
+    imageUrl: '/placeholder-hampshire-pig.jpg'
+  },
+  {
+    id: '8',
+    name: 'Large White Pig',
+    origin: 'United Kingdom',
+    category: 'pig',
+    description: 'Popular commercial pig breed with excellent feed conversion and high litter numbers.',
+    traits: ['High Fertility', 'Good Feed Conversion', 'Large Litters', 'Hardy'],
+    weight: {
+      male: '300kg',
+      female: '230kg'
+    },
+    temperament: 'Calm',
+    rating: 4.7,
+    contributors: 25,
+    imageUrl: '/placeholder-large-white-pig.jpg'
+  },
+  {
+    id: '9',
+    name: 'Boer Goat',
+    origin: 'South Africa',
+    category: 'goat',
+    description: 'Premium meat goat breed developed in South Africa, known for fast growth and excellent meat quality.',
+    traits: ['Fast Growth', 'Excellent Meat', 'Hardy', 'Good Mothers'],
+    weight: {
+      male: '120kg',
+      female: '90kg'
+    },
+    temperament: 'Docile',
+    rating: 4.8,
+    contributors: 32,
+    imageUrl: '/placeholder-boer-goat.jpg'
+  },
+  {
+    id: '10',
+    name: 'Saanen Goat',
+    origin: 'Switzerland',
+    category: 'goat',
+    description: 'World-renowned dairy goat breed with excellent milk production and calm temperament.',
+    traits: ['High Milk Production', 'Calm', 'Hardy', 'Heat Tolerant'],
+    weight: {
+      male: '90kg',
+      female: '65kg'
+    },
+    temperament: 'Calm',
+    rating: 4.5,
+    contributors: 24,
+    imageUrl: '/placeholder-saanen-goat.jpg'
+  },
+  {
+    id: '11',
+    name: 'New Zealand White Rabbit',
+    origin: 'United States',
+    category: 'rabbit',
+    description: 'Popular meat rabbit breed with excellent growth rate and feed conversion efficiency.',
+    traits: ['Fast Growth', 'Good Feed Conversion', 'Large Litters', 'Docile'],
+    weight: {
+      male: '5kg',
+      female: '4.5kg'
+    },
+    temperament: 'Docile',
+    rating: 4.4,
+    contributors: 16,
+    imageUrl: '/placeholder-nz-white-rabbit.jpg'
+  },
+  {
+    id: '12',
+    name: 'Californian Rabbit',
+    origin: 'United States',
+    category: 'rabbit',
+    description: 'Dual-purpose rabbit breed excellent for both meat and fur production with distinctive markings.',
+    traits: ['Dual Purpose', 'Good Meat Quality', 'Hardy', 'Distinctive Markings'],
+    weight: {
+      male: '4.5kg',
+      female: '4kg'
+    },
+    temperament: 'Calm',
+    rating: 4.3,
+    contributors: 14,
+    imageUrl: '/placeholder-californian-rabbit.jpg'
   }
 ];
 
@@ -136,6 +232,9 @@ const BreedCard: React.FC<{ breed: Breed }> = ({ breed }) => {
       case 'turkey': return 'bg-red-100 text-red-700';
       case 'guinea-fowl': return 'bg-purple-100 text-purple-700';
       case 'pigeon': return 'bg-gray-100 text-gray-700';
+      case 'pig': return 'bg-pink-100 text-pink-700';
+      case 'goat': return 'bg-yellow-100 text-yellow-700';
+      case 'rabbit': return 'bg-indigo-100 text-indigo-700';
       default: return 'bg-gray-100 text-gray-700';
     }
   };
@@ -257,9 +356,9 @@ export const BreedEncyclopedia: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Breed Encyclopedia</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Livestock Encyclopedia</h1>
           <p className="text-gray-600 mt-1">
-            Comprehensive database of {breeds.length} poultry breeds with detailed information
+            Comprehensive database of {breeds.length} livestock breeds with detailed information
           </p>
         </div>
         <Button>
