@@ -1,11 +1,11 @@
 import React from 'react';
-import { 
-  Home, 
-  BookOpen, 
-  Brain, 
-  Users, 
-  FileText, 
-  TrendingUp, 
+import {
+  Home,
+  BookOpen,
+  Calendar,
+  Users,
+  FileText,
+  Newspaper,
   Settings,
   MessageCircle,
   X
@@ -20,12 +20,12 @@ interface SidebarProps {
 
 const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: Home },
-  { id: 'encyclopedia', label: 'Breed Guide', icon: BookOpen },
-  { id: 'ai-tools', label: 'AI Optimization', icon: Brain },
-  { id: 'team', label: 'Team & Farm', icon: Users },
+  { id: 'breeds', label: 'Breed Database', icon: BookOpen },
+  { id: 'events', label: 'Events & Shows', icon: Calendar },
+  { id: 'members', label: 'Members', icon: Users },
   { id: 'community', label: 'Community', icon: MessageCircle },
-  { id: 'traceability', label: 'Compliance', icon: FileText },
-  { id: 'market', label: 'Market Insights', icon: TrendingUp },
+  { id: 'resources', label: 'Resources', icon: FileText },
+  { id: 'news', label: 'News & Updates', icon: Newspaper },
   { id: 'settings', label: 'Settings', icon: Settings },
 ];
 
@@ -49,10 +49,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, on
         <div className="p-4 border-b border-gray-200 md:hidden">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-green-700 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">P</span>
               </div>
-              <span className="font-semibold text-gray-900">PigPro SA</span>
+              <span className="font-semibold text-gray-900">Poultry Club SA</span>
             </div>
             <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100">
               <X className="h-5 w-5 text-gray-600" />
@@ -73,8 +73,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, on
                   }}
                   className={`
                     w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors
-                    ${activeTab === item.id 
-                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                    ${activeTab === item.id
+                      ? 'bg-green-50 text-green-700 border border-green-200'
                       : 'text-gray-700 hover:bg-gray-50'
                     }
                   `}

@@ -3,11 +3,11 @@ import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
 import { BreedEncyclopedia } from './components/BreedEncyclopedia';
-import { AITools } from './components/AITools';
-import { TeamFarm } from './components/TeamFarm';
+import { Events } from './components/Events';
+import { Members } from './components/Members';
 import { Community } from './components/Community';
-import { Traceability } from './components/Traceability';
-import { MarketInsights } from './components/MarketInsights';
+import { Resources } from './components/Resources';
+import { News } from './components/News';
 import { LandingPage } from './components/LandingPage';
 import { AuthModal } from './components/AuthModal';
 
@@ -37,18 +37,18 @@ function App() {
     switch (activeTab) {
       case 'dashboard':
         return <Dashboard />;
-      case 'encyclopedia':
+      case 'breeds':
         return <BreedEncyclopedia />;
-      case 'ai-tools':
-        return <AITools />;
-      case 'team':
-        return <TeamFarm />;
+      case 'events':
+        return <Events />;
+      case 'members':
+        return <Members />;
       case 'community':
         return <Community />;
-      case 'traceability':
-        return <Traceability />;
-      case 'market':
-        return <MarketInsights />;
+      case 'resources':
+        return <Resources />;
+      case 'news':
+        return <News />;
       case 'settings':
         return (
           <div className="space-y-6">

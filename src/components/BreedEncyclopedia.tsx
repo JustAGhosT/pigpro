@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
 import { Search, Filter, Star, Plus, Eye, Users } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Badge } from './ui/badge';
 
 interface Breed {
   id: string;
   name: string;
   origin: string;
-  category: string;
+  category: 'chicken' | 'duck' | 'goose' | 'turkey' | 'guinea-fowl' | 'pigeon';
   description: string;
   traits: string[];
-  avgWeight: string;
-  growthRate: string;
-  feedEfficiency: string;
+  weight: {
+    male: string;
+    female: string;
+  };
+  eggProduction?: string;
+  temperament: string;
   rating: number;
   contributors: number;
   imageUrl: string;
@@ -19,222 +26,335 @@ interface Breed {
 const breeds: Breed[] = [
   {
     id: '1',
-    name: 'Kolbroek',
-    origin: 'South Africa',
-    category: 'Heritage',
-    description: 'Indigenous South African breed known for excellent meat quality and adaptability to local conditions.',
-    traits: ['Hardy', 'Disease Resistant', 'Good Mothering', 'Slow Growing'],
-    avgWeight: '80-120kg',
-    growthRate: 'Slow (400-500g/day)',
-    feedEfficiency: 'Excellent',
+    name: 'Rhode Island Red',
+    origin: 'United States',
+    category: 'chicken',
+    description: 'Hardy dual-purpose breed known for excellent egg production and good meat quality.',
+    traits: ['Hardy', 'Good Egg Layer', 'Dual Purpose', 'Cold Tolerant'],
+    weight: {
+      male: '3.9kg',
+      female: '2.9kg'
+    },
+    eggProduction: '250-300 eggs/year',
+    temperament: 'Docile',
     rating: 4.8,
-    contributors: 23,
-    imageUrl: 'https://images.pexels.com/photos/1300353/pexels-photo-1300353.jpeg?auto=compress&cs=tinysrgb&w=400'
+    contributors: 34,
+    imageUrl: '/placeholder-rhode-island-red.jpg'
   },
   {
     id: '2',
-    name: 'Large White',
-    origin: 'England',
-    category: 'Commercial',
-    description: 'Popular commercial breed with excellent growth rates and lean meat production.',
-    traits: ['Fast Growing', 'High Fertility', 'Good Feed Conversion', 'Lean Meat'],
-    avgWeight: '250-350kg',
-    growthRate: 'Fast (700-900g/day)',
-    feedEfficiency: 'Very Good',
+    name: 'White Leghorn',
+    origin: 'Italy',
+    category: 'chicken',
+    description: 'Excellent white egg layer breed, active and hardy with high feed efficiency.',
+    traits: ['Excellent Layer', 'Active', 'Hardy', 'Heat Tolerant'],
+    weight: {
+      male: '2.7kg',
+      female: '2.0kg'
+    },
+    eggProduction: '280-320 eggs/year',
+    temperament: 'Active',
     rating: 4.6,
-    contributors: 45,
-    imageUrl: 'https://images.pexels.com/photos/1300353/pexels-photo-1300353.jpeg?auto=compress&cs=tinysrgb&w=400'
+    contributors: 28,
+    imageUrl: '/placeholder-leghorn.jpg'
   },
   {
     id: '3',
-    name: 'Landrace',
-    origin: 'Denmark',
-    category: 'Commercial',
-    description: 'Excellent maternal breed with high prolificacy and good milk production.',
-    traits: ['High Prolificacy', 'Good Milk Production', 'Long Body', 'Docile'],
-    avgWeight: '200-300kg',
-    growthRate: 'Moderate (600-750g/day)',
-    feedEfficiency: 'Good',
+    name: 'Pekin Duck',
+    origin: 'China',
+    category: 'duck',
+    description: 'Large white duck breed excellent for meat production with calm temperament.',
+    traits: ['Fast Growing', 'Good Meat Production', 'Hardy', 'Calm'],
+    weight: {
+      male: '4.1kg',
+      female: '3.6kg'
+    },
+    eggProduction: '150-200 eggs/year',
+    temperament: 'Calm',
     rating: 4.4,
-    contributors: 32,
-    imageUrl: 'https://images.pexels.com/photos/1300353/pexels-photo-1300353.jpeg?auto=compress&cs=tinysrgb&w=400'
+    contributors: 19,
+    imageUrl: '/placeholder-pekin-duck.jpg'
   },
   {
     id: '4',
-    name: 'Duroc',
-    origin: 'United States',
-    category: 'Commercial',
-    description: 'Red-colored breed known for excellent meat quality and marbling.',
-    traits: ['Excellent Meat Quality', 'Good Marbling', 'Hardy', 'Fast Growing'],
-    avgWeight: '270-350kg',
-    growthRate: 'Fast (750-850g/day)',
-    feedEfficiency: 'Good',
+    name: 'Toulouse Goose',
+    origin: 'France',
+    category: 'goose',
+    description: 'Large heritage goose breed known for excellent meat quality and liver production.',
+    traits: ['Large Size', 'Excellent Meat', 'Good Forager', 'Docile'],
+    weight: {
+      male: '12kg',
+      female: '10kg'
+    },
+    eggProduction: '35-40 eggs/year',
+    temperament: 'Docile',
     rating: 4.5,
-    contributors: 28,
-    imageUrl: 'https://images.pexels.com/photos/1300353/pexels-photo-1300353.jpeg?auto=compress&cs=tinysrgb&w=400'
+    contributors: 15,
+    imageUrl: '/placeholder-toulouse-goose.jpg'
+  },
+  {
+    id: '5',
+    name: 'Bronze Turkey',
+    origin: 'United States',
+    category: 'turkey',
+    description: 'Traditional heritage turkey breed with excellent meat quality and natural breeding ability.',
+    traits: ['Heritage Breed', 'Natural Breeding', 'Good Meat Quality', 'Hardy'],
+    weight: {
+      male: '16kg',
+      female: '9kg'
+    },
+    temperament: 'Alert',
+    rating: 4.3,
+    contributors: 12,
+    imageUrl: '/placeholder-bronze-turkey.jpg'
+  },
+  {
+    id: '6',
+    name: 'Guinea Fowl',
+    origin: 'Africa',
+    category: 'guinea-fowl',
+    description: 'Hardy bird excellent for pest control, alert and protective of the flock.',
+    traits: ['Pest Control', 'Alert', 'Hardy', 'Good Alarm System'],
+    weight: {
+      male: '1.3kg',
+      female: '1.2kg'
+    },
+    eggProduction: '100-150 eggs/year',
+    temperament: 'Alert',
+    rating: 4.2,
+    contributors: 21,
+    imageUrl: '/placeholder-guinea-fowl.jpg'
   }
 ];
 
-const BreedCard: React.FC<{ breed: Breed }> = ({ breed }) => (
-  <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
-    <div className="aspect-video bg-gray-200 relative">
-      <img 
-        src={breed.imageUrl} 
-        alt={breed.name}
-        className="w-full h-full object-cover"
-      />
-      <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center space-x-1">
-        <Star className="h-3 w-3 text-yellow-500 fill-current" />
-        <span className="text-xs font-medium">{breed.rating}</span>
-      </div>
-    </div>
-    
-    <div className="p-4">
-      <div className="flex items-start justify-between mb-2">
-        <div>
-          <h3 className="font-semibold text-gray-900">{breed.name}</h3>
-          <p className="text-sm text-gray-600">{breed.origin}</p>
-        </div>
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-          breed.category === 'Heritage' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'
-        }`}>
-          {breed.category}
-        </span>
-      </div>
+const BreedCard: React.FC<{ breed: Breed }> = ({ breed }) => {
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'chicken': return 'bg-amber-100 text-amber-700';
+      case 'duck': return 'bg-blue-100 text-blue-700';
+      case 'goose': return 'bg-green-100 text-green-700';
+      case 'turkey': return 'bg-red-100 text-red-700';
+      case 'guinea-fowl': return 'bg-purple-100 text-purple-700';
+      case 'pigeon': return 'bg-gray-100 text-gray-700';
+      default: return 'bg-gray-100 text-gray-700';
+    }
+  };
 
-      <p className="text-sm text-gray-700 mb-3 line-clamp-2">{breed.description}</p>
-
-      <div className="space-y-2 mb-4">
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Avg. Weight:</span>
-          <span className="font-medium">{breed.avgWeight}</span>
-        </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Growth Rate:</span>
-          <span className="font-medium">{breed.growthRate}</span>
-        </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Feed Efficiency:</span>
-          <span className="font-medium">{breed.feedEfficiency}</span>
+  return (
+    <Card className="hover:shadow-lg transition-shadow">
+      <div className="aspect-video bg-gray-200 relative rounded-t-xl">
+        <img
+          src={breed.imageUrl}
+          alt={breed.name}
+          className="w-full h-full object-cover rounded-t-xl"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjI0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIGR5PSIuM2VtIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5CcmVlZCBJbWFnZTwvdGV4dD48L3N2Zz4=';
+          }}
+        />
+        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center space-x-1">
+          <Star className="h-3 w-3 text-yellow-500 fill-current" />
+          <span className="text-xs font-medium">{breed.rating}</span>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-1 mb-4">
-        {breed.traits.slice(0, 3).map((trait, index) => (
-          <span 
-            key={index}
-            className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs"
-          >
-            {trait}
-          </span>
-        ))}
-        {breed.traits.length > 3 && (
-          <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
-            +{breed.traits.length - 3} more
-          </span>
-        )}
-      </div>
-
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-1 text-sm text-gray-600">
-          <Users className="h-4 w-4" />
-          <span>{breed.contributors} contributors</span>
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle className="text-lg font-semibold">{breed.name}</CardTitle>
+            <p className="text-sm text-gray-600">{breed.origin}</p>
+          </div>
+          <Badge className={`text-xs ${getCategoryColor(breed.category)}`}>
+            {breed.category.charAt(0).toUpperCase() + breed.category.slice(1)}
+          </Badge>
         </div>
-        <button className="flex items-center space-x-1 text-emerald-600 hover:text-emerald-700 text-sm font-medium">
-          <Eye className="h-4 w-4" />
-          <span>View Details</span>
-        </button>
-      </div>
-    </div>
-  </div>
-);
+      </CardHeader>
+
+      <CardContent>
+        <CardDescription className="mb-4 line-clamp-2">{breed.description}</CardDescription>
+
+        <div className="space-y-2 mb-4">
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">Male Weight:</span>
+            <span className="font-medium">{breed.weight.male}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">Female Weight:</span>
+            <span className="font-medium">{breed.weight.female}</span>
+          </div>
+          {breed.eggProduction && (
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">Egg Production:</span>
+              <span className="font-medium">{breed.eggProduction}</span>
+            </div>
+          )}
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">Temperament:</span>
+            <span className="font-medium">{breed.temperament}</span>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-1 mb-4">
+          {breed.traits.slice(0, 3).map((trait, index) => (
+            <span
+              key={index}
+              className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs"
+            >
+              {trait}
+            </span>
+          ))}
+          {breed.traits.length > 3 && (
+            <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
+              +{breed.traits.length - 3} more
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-1 text-sm text-gray-600">
+            <Users className="h-4 w-4" />
+            <span>{breed.contributors} contributors</span>
+          </div>
+          <Button size="sm" variant="outline">
+            <Eye className="h-4 w-4 mr-1" />
+            View Details
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 export const BreedEncyclopedia: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [sortBy, setSortBy] = useState('name');
 
-  const filteredBreeds = breeds.filter(breed => {
-    const matchesSearch = breed.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         breed.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || breed.category.toLowerCase() === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const categories = ['all', ...Array.from(new Set(breeds.map(b => b.category)))];
+
+  const filteredBreeds = breeds
+    .filter(breed => {
+      const matchesSearch = breed.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           breed.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           breed.traits.some(trait => trait.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesCategory = selectedCategory === 'all' || breed.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return a.name.localeCompare(b.name);
+        case 'rating':
+          return b.rating - a.rating;
+        case 'origin':
+          return a.origin.localeCompare(b.origin);
+        default:
+          return 0;
+      }
+    });
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Breed Encyclopedia</h1>
-        <p className="text-gray-600 mt-1">Comprehensive guide to pig breeds for South African farmers</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Breed Encyclopedia</h1>
+          <p className="text-gray-600 mt-1">
+            Comprehensive database of {breeds.length} poultry breeds with detailed information
+          </p>
+        </div>
+        <Button>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Breed
+        </Button>
       </div>
 
-      {/* Search and Filter */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search breeds..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-            />
+      {/* Filters */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="Search breeds, traits, or characteristics..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <div className="lg:w-48">
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
+              >
+                {categories.map(category => (
+                  <option key={category} value={category}>
+                    {category === 'all' ? 'All Categories' : category.charAt(0).toUpperCase() + category.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="lg:w-48">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
+              >
+                <option value="name">Sort by Name</option>
+                <option value="rating">Sort by Rating</option>
+                <option value="origin">Sort by Origin</option>
+              </select>
+            </div>
           </div>
-        </div>
-        
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-2">
-            <Filter className="h-4 w-4 text-gray-400" />
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-            >
-              <option value="all">All Categories</option>
-              <option value="heritage">Heritage</option>
-              <option value="commercial">Commercial</option>
-            </select>
-          </div>
-          
-          <button className="flex items-center space-x-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors">
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">Add Breed</span>
-          </button>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <div className="text-2xl font-bold text-gray-900">{breeds.length}</div>
-          <div className="text-sm text-gray-600">Total Breeds</div>
-        </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <div className="text-2xl font-bold text-gray-900">128</div>
-          <div className="text-sm text-gray-600">Active Contributors</div>
-        </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <div className="text-2xl font-bold text-gray-900">4.6</div>
-          <div className="text-sm text-gray-600">Avg. Rating</div>
-        </div>
-      </div>
-
-      {/* Breed Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredBreeds.map((breed) => (
-          <BreedCard key={breed.id} breed={breed} />
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+        {categories.filter(c => c !== 'all').map(category => (
+          <Card key={category}>
+            <CardContent className="pt-6 text-center">
+              <div className="text-2xl font-bold text-green-600">
+                {breeds.filter(b => b.category === category).length}
+              </div>
+              <div className="text-sm text-gray-600">
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
-      {filteredBreeds.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-gray-400 mb-4">
-            <Search className="h-12 w-12 mx-auto" />
-          </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No breeds found</h3>
-          <p className="text-gray-600">Try adjusting your search or filter criteria</p>
+      {/* Breeds Grid */}
+      {filteredBreeds.length === 0 ? (
+        <Card>
+          <CardContent className="py-12 text-center">
+            <div className="h-12 w-12 text-gray-400 mx-auto mb-4">
+              <svg fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No breeds found</h3>
+            <p className="text-gray-500">
+              {searchTerm || selectedCategory !== 'all'
+                ? 'Try adjusting your search or filters.'
+                : 'No breeds available in the database.'}
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredBreeds.map(breed => (
+            <BreedCard key={breed.id} breed={breed} />
+          ))}
         </div>
       )}
+
+      <div className="text-center text-sm text-gray-600">
+        Showing {filteredBreeds.length} of {breeds.length} breeds
+      </div>
     </div>
   );
 };
