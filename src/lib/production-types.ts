@@ -4,6 +4,29 @@
 export interface Species {
   id: string;
   name: string;
+  is_dairy: boolean;
+  is_ruminant: boolean;
+  created_at: string;
+}
+
+export interface Group {
+  id: string;
+  name: string;
+  species_id: string;
+  location_id: string;
+  tags: string[];
+  active: boolean;
+}
+
+export interface Animal {
+  id: string;
+  external_id?: string;
+  species_id: string;
+  group_id?: string;
+  sex: 'male' | 'female' | 'unknown';
+  dob?: string;
+  status: 'active' | 'sold' | 'dead' | 'culled';
+  tags: string[];
 }
 
 export type ProductionEvent = 'birth' | 'death' | 'weight' | 'egg_count' | 'milk_volume' | 'sale' | 'purchase' | 'feed_intake' | 'cull' | 'treatment' | 'transfer' | 'grazing_move';
@@ -32,4 +55,36 @@ export interface ProductionRecord {
   };
   created_by: string; // User ID
   created_at: string; // Using string for date
+}
+
+export interface FinancialTransaction {
+  id: string;
+  species_id?: string;
+  group_id?: string;
+  category_id: string;
+  type: 'income' | 'expense';
+  amount: number;
+  currency: string;
+  fx_rate_to_base: number;
+  base_amount_cached: number;
+  date: string;
+  vendor_or_buyer?: string;
+  memo?: string;
+  attachments: string[];
+  created_by: string;
+  created_at: string;
+}
+
+export interface Category {
+  id:string;
+  name: string;
+  type: 'income' | 'expense';
+  parent_id?: string;
+  is_active: boolean;
+}
+
+export interface KpiData {
+  totalRevenue: number;
+  totalExpense: number;
+  grossMargin: number;
 }

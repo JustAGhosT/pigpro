@@ -1,5 +1,4 @@
 import React from 'react';
-import { Dashboard } from './Dashboard';
 import { BreedEncyclopedia } from './BreedEncyclopedia';
 import { Events } from './Events';
 import { Members } from './Members';
@@ -10,6 +9,8 @@ import { ComplianceCanvas } from './ComplianceCanvas';
 import { LivestockIntelligence } from './LivestockIntelligence';
 import { ProductionPage } from './production/ProductionPage';
 import { DairyCheeseManagement } from './dairy/DairyCheeseManagement';
+import { FinancialsPage } from './financials/FinancialsPage';
+import { DashboardPage } from './dashboard/DashboardPage';
 
 interface MainContentProps {
   activeTab: string;
@@ -18,9 +19,11 @@ interface MainContentProps {
 export const MainContent: React.FC<MainContentProps> = ({ activeTab }) => {
   switch (activeTab) {
     case 'dashboard':
-      return <Dashboard />;
+      return <DashboardPage />;
     case 'production':
       return <ProductionPage />;
+    case 'financials':
+      return <FinancialsPage />;
     case 'breeds':
       return <BreedEncyclopedia />;
     case 'events':
