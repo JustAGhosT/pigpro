@@ -118,6 +118,12 @@ const COMPLIANCE_ALERTS: ComplianceAlert[] = [
 ];
 
 const AnalysisCard: React.FC<{ data: LivestockAnalysisData }> = ({ data }) => {
+  const getConfidenceBadgeColor = (confidence: number) => {
+    if (confidence >= 90) return 'bg-green-100 text-green-800';
+    if (confidence >= 80) return 'bg-yellow-100 text-yellow-800';
+    return 'bg-red-100 text-red-800';
+  };
+
   return (
     <Card className="hover:shadow-lg transition-shadow">
       <CardHeader>
@@ -126,11 +132,7 @@ const AnalysisCard: React.FC<{ data: LivestockAnalysisData }> = ({ data }) => {
             <CardTitle className="text-lg">{data.species} - {data.breed}</CardTitle>
             <CardDescription>AI Analysis Results</CardDescription>
           </div>
-          <Badge className={`${
-            data.confidence >= 90 ? 'bg-green-100 text-green-800' :
-            data.confidence >= 80 ? 'bg-yellow-100 text-yellow-800' :
-            'bg-red-100 text-red-800'
-          }`}>
+          <Badge className={getConfidenceBadgeColor(data.confidence)}>
             {data.confidence}% confidence
           </Badge>
         </div>
