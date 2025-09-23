@@ -50,10 +50,14 @@ export const BreedEncyclopedia: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLivestock, setSelectedLivestock] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [sortBy, _setSortBy] = useState('name');
-  const [selectedOrigin, _setSelectedOrigin] = useState('all');
-  const [selectedTemperament, _setSelectedTemperament] = useState('all');
-  const [selectedTrait, _setSelectedTrait] = useState('all');
+  // eslint-disable-next-line no-unused-vars
+  const [sortBy, setSortBy] = useState('name');
+  // eslint-disable-next-line no-unused-vars
+  const [selectedOrigin, setSelectedOrigin] = useState('all');
+  // eslint-disable-next-line no-unused-vars
+  const [selectedTemperament, setSelectedTemperament] = useState('all');
+  // eslint-disable-next-line no-unused-vars
+  const [selectedTrait, setSelectedTrait] = useState('all');
   const [expandedBreed, setExpandedBreed] = useState<string | null>(null);
 
   const { categories, origins, temperaments, allTraits } = useMemo(() => {
