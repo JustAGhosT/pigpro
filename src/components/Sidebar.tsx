@@ -11,6 +11,7 @@ import {
   Shield,
   X,
   Feather
+  Brain
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -23,7 +24,7 @@ interface SidebarProps {
 const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: Home },
   { id: 'breeds', label: 'Breed Database', icon: BookOpen },
-  { id: 'chicken-intelligence', label: 'Chicken Intelligence', icon: Feather },
+  { id: 'intelligence', label: 'Livestock Intelligence', icon: Brain },
   { id: 'events', label: 'Events & Shows', icon: Calendar },
   { id: 'members', label: 'Members', icon: Users },
   { id: 'compliance', label: 'Compliance Canvas', icon: Shield },

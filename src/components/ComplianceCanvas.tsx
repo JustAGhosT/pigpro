@@ -7,7 +7,6 @@ import {
   CheckCircle,
   AlertTriangle,
   Search,
-  Building2,
   Circle,
   Bird,
   Target
@@ -109,6 +108,55 @@ const SAMPLE_PERMITS: CompliancePermit[] = [
     ],
     category: 'forward-looking',
     compliance_level: 'mandatory'
+  },
+  {
+    id: 'feed-production-permit',
+    name: 'Feed Production & Storage Permit',
+    applies_to: ['chickens', 'pigs', 'goats', 'rabbits'],
+    activity: ['feed_production'],
+    issuing_authority: 'Department of Agriculture / Animal Feed Manufacturers Association',
+    who: 'Feed producers, mixers, and storage facility operators',
+    roles: ['feed_technologist', 'quality_controller', 'authority'],
+    core: 'Registration and quality certification for all animal feed production. Regular testing and labeling requirements.',
+    docs: 'Feed registration certificates; Quality test reports; Facility inspection certificates; Labeling compliance.',
+    refs: [
+      'https://www.dalrrd.gov.za/feed-regulations',
+      'https://www.afma.co.za/guidelines'
+    ],
+    category: 'conservative',
+    compliance_level: 'mandatory'
+  },
+  {
+    id: 'transport-permit',
+    name: 'Animal Transport Welfare Permit',
+    applies_to: ['chickens', 'pigs', 'goats', 'rabbits'],
+    activity: ['transport'],
+    issuing_authority: 'Department of Agriculture / Provincial Veterinary Services',
+    who: 'Commercial livestock transporters and farmers transporting animals',
+    roles: ['transport_operator', 'driver', 'state_vet'],
+    core: 'Proper vehicle certification, driver training, and animal welfare compliance during transport.',
+    docs: 'Vehicle fitness certificates; Driver training certificates; Route permits; Animal welfare protocols.',
+    refs: [
+      'https://www.nspca.co.za/transport-guidelines'
+    ],
+    category: 'forward-looking',
+    compliance_level: 'recommended'
+  },
+  {
+    id: 'water-use-license',
+    name: 'Water Use License for Livestock',
+    applies_to: ['pigs', 'goats'],
+    activity: ['breeding', 'waste_management'],
+    issuing_authority: 'Department of Water and Sanitation / Provincial Water Boards',
+    who: 'Large livestock operations with significant water consumption',
+    roles: ['water_engineer', 'facility_manager', 'authority'],
+    core: 'License required for water abstraction above specified limits. Water quality monitoring and reporting.',
+    docs: 'Water use license; Monitoring reports; Water quality certificates; Usage log books.',
+    refs: [
+      'https://www.dws.gov.za/water-use-licensing'
+    ],
+    category: 'forward-looking',
+    compliance_level: 'mandatory'
   }
 ];
 
@@ -159,6 +207,78 @@ const SAMPLE_SOPS: ComplianceSOP[] = [
     references: [
       'State Veterinary Services Guidelines',
       'OIE Terrestrial Animal Health Code'
+    ]
+  },
+  {
+    id: 'feed-management',
+    title: 'Feed Quality Management',
+    description: 'Standard procedures for feed storage, quality control, and nutritional management',
+    category: 'nutrition',
+    animal_types: ['chickens', 'pigs', 'goats', 'rabbits'],
+    steps: [
+      'Feed quality inspection upon delivery',
+      'Proper storage in dry, ventilated areas',
+      'Regular testing for mycotoxins and contaminants',
+      'Feed rotation and inventory management',
+      'Nutritional requirement calculations per species'
+    ],
+    requirements: [
+      'Temperature and humidity monitoring systems',
+      'Feed testing laboratory access',
+      'Qualified nutritionist consultation',
+      'Proper storage facilities'
+    ],
+    references: [
+      'Animal Feed Manufacturers Association Guidelines',
+      'Department of Agriculture Feed Regulations'
+    ]
+  },
+  {
+    id: 'waste-management',
+    title: 'Livestock Waste Management',
+    description: 'Environmental compliance procedures for waste handling and disposal',
+    category: 'environment',
+    animal_types: ['pigs', 'chickens', 'goats'],
+    steps: [
+      'Daily waste collection and removal',
+      'Proper composting procedures',
+      'Liquid waste treatment systems',
+      'Environmental impact monitoring',
+      'Compliance reporting to authorities'
+    ],
+    requirements: [
+      'Waste treatment facilities',
+      'Environmental monitoring equipment',
+      'Trained waste management personnel',
+      'Regular environmental audits'
+    ],
+    references: [
+      'National Environmental Management Act',
+      'Water Use License Conditions'
+    ]
+  },
+  {
+    id: 'breeding-records',
+    title: 'Breeding Record Management',
+    description: 'Comprehensive record keeping for breeding programs and genetics',
+    category: 'breeding',
+    animal_types: ['pigs', 'goats', 'rabbits'],
+    steps: [
+      'Individual animal identification systems',
+      'Breeding performance tracking',
+      'Genetic lineage documentation',
+      'Production record maintenance',
+      'Health and vaccination history'
+    ],
+    requirements: [
+      'Electronic or physical record systems',
+      'Regular data backup procedures',
+      'Staff training on record keeping',
+      'Veterinary record integration'
+    ],
+    references: [
+      'South African Stud Book Association',
+      'Livestock Improvement Corporation Guidelines'
     ]
   }
 ];
