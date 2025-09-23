@@ -12,6 +12,22 @@ import { stats, tasks } from '../lib/data';
 import { StatCard } from './StatCard';
 import { TaskItem } from './TaskItem';
 
+const StatIcon = ({ title }: { title: string }) => {
+  const iconProps = { className: "h-8 w-8" };
+  switch (title) {
+    case 'Total Herd':
+      return <PiggyBank {...iconProps} />;
+    case 'Avg. Revenue/Pig':
+      return <TrendingUp {...iconProps} />;
+    case 'Team Members':
+      return <Users {...iconProps} />;
+    case 'Breeding Score':
+      return <Award {...iconProps} />;
+    default:
+      return null;
+  }
+};
+
 export const Dashboard: React.FC = () => {
   return (
     <div className="space-y-6">
@@ -22,19 +38,14 @@ export const Dashboard: React.FC = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => (
+        {stats.map((stat) => (
           <StatCard
-            key={index}
+            key={stat.title}
             title={stat.title}
             value={stat.value}
             change={stat.change}
             trend={stat.trend}
-            icon={
-              index === 0 ? <PiggyBank className="h-8 w-8" /> :
-              index === 1 ? <TrendingUp className="h-8 w-8" /> :
-              index === 2 ? <Users className="h-8 w-8" /> :
-              <Award className="h-8 w-8" />
-            }
+            icon={<StatIcon title={stat.title} />}
           />
         ))}
       </div>
@@ -81,9 +92,9 @@ export const Dashboard: React.FC = () => {
               <Calendar className="h-5 w-5 text-gray-400" />
             </div>
             <div className="space-y-3">
-              {tasks.map((task, index) => (
+              {tasks.map((task) => (
                 <TaskItem
-                  key={index}
+                  key={task.title}
                   title={task.title}
                   description={task.description}
                   priority={task.priority}

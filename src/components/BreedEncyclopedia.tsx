@@ -50,10 +50,15 @@ export const BreedEncyclopedia: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLivestock, setSelectedLivestock] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  // eslint-disable-next-line no-unused-vars
   const [sortBy, setSortBy] = useState('name');
+  // eslint-disable-next-line no-unused-vars
   const [selectedOrigin, setSelectedOrigin] = useState('all');
+  // eslint-disable-next-line no-unused-vars
   const [selectedTemperament, setSelectedTemperament] = useState('all');
+  // eslint-disable-next-line no-unused-vars
   const [selectedTrait, setSelectedTrait] = useState('all');
+  const [expandedBreed, setExpandedBreed] = useState<string | null>(null);
 
   const { categories, origins, temperaments, allTraits } = useMemo(() => {
     const categories = ['all', ...Array.from(new Set(breeds.map(b => b.category)))];
@@ -62,7 +67,7 @@ export const BreedEncyclopedia: React.FC = () => {
     const allTraits = ['all', ...Array.from(new Set(breeds.flatMap(b => b.traits)))];
     return { categories, origins, temperaments, allTraits };
   }, [breeds]);
-  const livestockTypes = useMemo(() => ['all', ...Object.keys(LIVESTOCK_DATA)], []);
+  const livestockTypes = useMemo(() => ['all', ...Array.from(new Set(breeds.map(b => b.livestockType)))], []);
 
   const filteredBreeds = useMemo(() => {
     return breeds
@@ -77,12 +82,15 @@ export const BreedEncyclopedia: React.FC = () => {
         const matchesTemperament =
           selectedTemperament === 'all' || breed.temperament === selectedTemperament;
         const matchesTrait = selectedTrait === 'all' || breed.traits.includes(selectedTrait);
+        const matchesLivestock = selectedLivestock === 'all' || breed.livestockType === selectedLivestock;
+
         return (
           matchesSearch &&
           matchesCategory &&
           matchesOrigin &&
           matchesTemperament &&
-          matchesTrait
+          matchesTrait &&
+          matchesLivestock
         );
       })
       .sort((a, b) => {
@@ -97,14 +105,14 @@ export const BreedEncyclopedia: React.FC = () => {
             return 0;
         }
       });
-  }, [searchTerm, selectedCategory, selectedOrigin, selectedTemperament, selectedTrait, sortBy]);
+  }, [searchTerm, selectedCategory, selectedOrigin, selectedTemperament, selectedTrait, selectedLivestock, sortBy]);
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Livestock Encyclopedia</h1>
         <p className="text-gray-600 mt-1">
-          Comprehensive database of {allBreeds.length} livestock breeds with detailed information.
+          Comprehensive database of {breeds.length} livestock breeds with detailed information.
         </p>
       </div>
 
@@ -185,7 +193,7 @@ export const BreedEncyclopedia: React.FC = () => {
       )}
 
       <div className="text-center text-sm text-gray-600">
-        Showing {filteredBreeds.length} of {allBreeds.length} breeds
+        Showing {filteredBreeds.length} of {breeds.length} breeds
       </div>
     </div>
   );

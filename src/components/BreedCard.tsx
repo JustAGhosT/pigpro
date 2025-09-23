@@ -71,9 +71,9 @@ export const BreedCard: React.FC<{ breed: Breed; onViewDetails: (breed: Breed) =
         </div>
 
         <div className="flex flex-wrap gap-1 mb-4">
-          {breed.traits.slice(0, 3).map((trait, index) => (
+          {breed.traits.slice(0, 3).map((trait) => (
             <span
-              key={index}
+              key={trait}
               className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs"
             >
               {trait}
