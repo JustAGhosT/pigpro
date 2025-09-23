@@ -9,10 +9,46 @@ import { Breed } from '../lib/types';
 import { BreedCard } from './BreedCard';
 import { BreedDetailModal } from './BreedDetailModal';
 
+/** ===== Flatten + Normalize LIVESTOCK_DATA ===== */
+function normalizeBreed(raw: any, livestockType: string, category: string, index: number): UIBreed {
+  const id =
+    (typeof raw?.id === 'string' && raw.id) ||
+    `${livestockType}-${category}-${(raw?.name ?? 'item').toString().toLowerCase().replace(/\s+/g, '-')}-${index}`;
+
+  const characteristics: Characteristics | undefined =
+    raw?.characteristics && typeof raw.characteristics === 'object'
+      ? raw.characteristics
+      : undefined;
+
+  const performance: PerfRecord | undefined =
+    raw?.performance && typeof raw.performance === 'object'
+      ? Object.fromEntries(
+          Object.entries(raw.performance).map(([k, v]) => [k, Number(v) || 0])
+        )
+      : undefined;
+
+  return {
+    id,
+    name: raw?.name ?? 'Unknown',
+    livestockType,
+    category,
+    subcategory: raw?.subcategory,
+    origin: raw?.origin,
+    description: raw?.description,
+    temperament: raw?.temperament ?? (Array.isArray(raw?.traits) ? undefined : raw?.traits?.temperament),
+    traits: raw?.traits,
+    characteristics,
+    performance,
+    rating: typeof raw?.rating === 'number' ? raw.rating : undefined,
+    contributors: typeof raw?.contributors === 'number' ? raw.contributors : undefined,
+    imageUrl: raw?.imageUrl,
+  };
+}
+
+/** ===== Main Component ===== */
 export const BreedEncyclopedia: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedBreedForModal, setSelectedBreedForModal] = useState<Breed | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedLivestock, setSelectedLivestock] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState('name');
   const [selectedOrigin, setSelectedOrigin] = useState('all');
@@ -26,11 +62,7 @@ export const BreedEncyclopedia: React.FC = () => {
     const allTraits = ['all', ...Array.from(new Set(breeds.flatMap(b => b.traits)))];
     return { categories, origins, temperaments, allTraits };
   }, [breeds]);
-
-  const handleViewDetails = (breed: Breed) => {
-    setSelectedBreedForModal(breed);
-    setIsModalOpen(true);
-  };
+  const livestockTypes = useMemo(() => ['all', ...Object.keys(LIVESTOCK_DATA)], []);
 
   const filteredBreeds = useMemo(() => {
     return breeds
@@ -69,124 +101,66 @@ export const BreedEncyclopedia: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Livestock Encyclopedia</h1>
-          <p className="text-gray-600 mt-1">
-            Comprehensive database of {breeds.length} livestock breeds with detailed information
-          </p>
-        </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Breed
-        </Button>
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Livestock Encyclopedia</h1>
+        <p className="text-gray-600 mt-1">
+          Comprehensive database of {allBreeds.length} livestock breeds with detailed information.
+        </p>
       </div>
 
-      {/* Filters */}
       <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="Search breeds, traits, or characteristics..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <div className="lg:w-48">
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
-              >
-                {categories.map(category => (
-                  <option key={category} value={category}>
-                    {category === 'all' ? 'All Categories' : category.charAt(0).toUpperCase() + category.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="lg:w-48">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
-              >
-                <option value="name">Sort by Name</option>
-                <option value="rating">Sort by Rating</option>
-                <option value="origin">Sort by Origin</option>
-              </select>
-            </div>
-            <div className="lg:w-48">
-              <select
-                value={selectedOrigin}
-                onChange={(e) => setSelectedOrigin(e.target.value)}
-                className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
-              >
-                {origins.map(origin => (
-                  <option key={origin} value={origin}>
-                    {origin === 'all' ? 'All Origins' : origin}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="lg:w-48">
-              <select
-                value={selectedTemperament}
-                onChange={(e) => setSelectedTemperament(e.target.value)}
-                className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
-              >
-                {temperaments.map(t => (
-                  <option key={t} value={t}>
-                    {t === 'all' ? 'All Temperaments' : t}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="lg:w-48">
-              <select
-                value={selectedTrait}
-                onChange={(e) => setSelectedTrait(e.target.value)}
-                className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
-              >
-                {allTraits.map(t => (
-                  <option key={t} value={t}>
-                    {t === 'all' ? 'All Traits' : t}
-                  </option>
-                ))}
-              </select>
-            </div>
+        <CardContent className="pt-6 flex flex-col lg:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder="Search breeds, traits, or characteristics..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
           </div>
+
+          <select
+            value={selectedLivestock}
+            onChange={(e) => {
+              setSelectedLivestock(e.target.value);
+              setSelectedCategory('all');
+            }}
+            className="w-full lg:w-48 h-9 px-3 py-1 border border-gray-200 rounded-md text-sm capitalize"
+          >
+            {livestockTypes.map(type => (
+              <option key={type} value={type} className="capitalize">
+                {type}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="w-full lg:w-48 h-9 px-3 py-1 border border-gray-200 rounded-md text-sm capitalize"
+            disabled={selectedLivestock === 'all'}
+          >
+            {categories.map(cat => (
+              <option key={cat} value={cat} className="capitalize">
+                {cat}
+              </option>
+            ))}
+          </select>
         </CardContent>
       </Card>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-        {categories.filter(c => c !== 'all').map(category => (
-          <Card key={category}>
-            <CardContent className="pt-6 text-center">
-              <div className="text-2xl font-bold text-green-600">
-                {breeds.filter(b => b.category === category).length}
-              </div>
-              <div className="text-sm text-gray-600">
-                {category.charAt(0).toUpperCase() + category.slice(1)}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
 
       {/* Breeds Grid */}
       {filteredBreeds.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
             <div className="h-12 w-12 text-gray-400 mx-auto mb-4">
-              <svg fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+              <svg fill="currentColor" viewBox="0 0 20 20" className="h-12 w-12">
+                <path
+                  fillRule="evenodd"
+                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">No breeds found</h3>
@@ -200,18 +174,19 @@ export const BreedEncyclopedia: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredBreeds.map(breed => (
-            <BreedCard key={breed.id} breed={breed} onViewDetails={handleViewDetails} />
+            <BreedCard
+              key={breed.id}
+              breed={breed}
+              isExpanded={expandedBreed === breed.id}
+              onToggleExpand={() => setExpandedBreed(expandedBreed === breed.id ? null : breed.id)}
+            />
           ))}
         </div>
       )}
 
       <div className="text-center text-sm text-gray-600">
-        Showing {filteredBreeds.length} of {breeds.length} breeds
+        Showing {filteredBreeds.length} of {allBreeds.length} breeds
       </div>
-
-      {isModalOpen && selectedBreedForModal && (
-        <BreedDetailModal breed={selectedBreedForModal} onClose={() => setIsModalOpen(false)} />
-      )}
     </div>
   );
 };
