@@ -5,6 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { tasks } from '@/lib/data';
 import { TaskItem } from '@/components/TaskItem';
 import { Calendar, Target, TrendingUp, FileText } from 'lucide-react';
+import { DashboardCard } from './DashboardCard';
 
 const StatCard = ({ title, value, currency = false }) => (
     <Card>
@@ -128,13 +129,10 @@ export const DashboardPage: React.FC = () => {
                     </Card>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        {/* Recent Activity */}
-                        <div className="lg:col-span-2">
-                          <div className="bg-white rounded-xl border border-gray-200 p-6">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+                        <DashboardCard title="Recent Activity" className="lg:col-span-2">
                             <div className="space-y-4">
-                                {recentActivityData.map((activity, index) => (
-                                    <div key={index} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
+                                {recentActivityData.map((activity) => (
+                                    <div key={activity.title} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
                                         <div className={`w-2 h-2 ${activity.color} rounded-full`}></div>
                                         <div className="flex-1">
                                             <p className="text-sm font-medium text-gray-900">{activity.title}</p>
@@ -144,18 +142,11 @@ export const DashboardPage: React.FC = () => {
                                     </div>
                                 ))}
                             </div>
-                          </div>
-                        </div>
+                        </DashboardCard>
 
-                        {/* Upcoming Tasks */}
-                        <div>
-                          <div className="bg-white rounded-xl border border-gray-200 p-6">
-                            <div className="flex items-center justify-between mb-4">
-                              <h3 className="text-lg font-semibold text-gray-900">Upcoming Tasks</h3>
-                              <Calendar className="h-5 w-5 text-gray-400" />
-                            </div>
+                        <DashboardCard title="Upcoming Tasks" headerContent={<Calendar className="h-5 w-5 text-gray-400" />}>
                             <div className="space-y-3">
-                              {tasks.map((task) => (
+                                {tasks.map((task) => (
                                 <TaskItem
                                   key={task.title}
                                   title={task.title}
@@ -165,18 +156,15 @@ export const DashboardPage: React.FC = () => {
                                 />
                               ))}
                             </div>
-                          </div>
-                        </div>
+                        </DashboardCard>
                     </div>
 
-                    {/* Quick Actions */}
-                      <div className="bg-white rounded-xl border border-gray-200 p-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                    <DashboardCard title="Quick Actions">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {quickActionsData.map((action, index) => {
+                            {quickActionsData.map((action) => {
                                 const Icon = action.icon;
                                 return (
-                                    <button key={index} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
+                                    <button key={action.title} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
                                         <Icon className={`h-6 w-6 ${action.iconColor} mb-2`} />
                                         <h4 className="font-medium text-gray-900">{action.title}</h4>
                                         <p className="text-sm text-gray-600">{action.description}</p>
@@ -184,7 +172,7 @@ export const DashboardPage: React.FC = () => {
                                 );
                             })}
                         </div>
-                      </div>
+                    </DashboardCard>
                 </>
             )}
         </div>
