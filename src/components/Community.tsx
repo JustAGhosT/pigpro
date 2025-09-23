@@ -252,7 +252,7 @@ export const Community: React.FC = () => {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Community</h1>
-        <p className="text-gray-600 mt-1">Connect, learn, and share with fellow pig farmers across South Africa</p>
+        <p className="text-gray-600 mt-1">Connect, learn, and share with fellow livestock farmers across South Africa</p>
       </div>
 
       {/* Community Stats */}
