@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
-import { 
-  Users, 
-  MessageCircle, 
-  Heart, 
-  Share2, 
-  Plus, 
+import {
+  Users,
+  MessageCircle,
+  Heart,
+  Share2,
+  Plus,
   Search,
   Filter,
   TrendingUp,
   Award,
-  Calendar,
   MapPin,
-  Eye,
-  ThumbsUp,
   BookOpen,
   Camera
 } from 'lucide-react';

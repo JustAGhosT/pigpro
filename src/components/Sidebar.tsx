@@ -10,7 +10,6 @@ import {
   MessageCircle,
   Shield,
   X,
-  Feather
   Brain
 } from 'lucide-react';
 
