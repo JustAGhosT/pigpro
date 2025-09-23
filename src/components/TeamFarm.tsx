@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { 
-  Users, 
-  Plus, 
-  Mail, 
-  Phone, 
+import {
+  Users,
+  Mail,
+  Phone,
   Calendar,
   MapPin,
   Activity,
