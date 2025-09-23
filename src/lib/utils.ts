@@ -48,3 +48,18 @@ export const performanceConfig = {
     fonts: 'preload'
   }
 };
+
+export const getCategoryColor = (category: string) => {
+  switch (category) {
+    case 'chicken': return 'bg-amber-100 text-amber-700';
+    case 'duck': return 'bg-blue-100 text-blue-700';
+    case 'goose': return 'bg-green-100 text-green-700';
+    case 'turkey': return 'bg-red-100 text-red-700';
+    case 'guinea-fowl': return 'bg-purple-100 text-purple-700';
+    case 'pigeon': return 'bg-gray-100 text-gray-700';
+    case 'pig': return 'bg-pink-100 text-pink-700';
+    case 'goat': return 'bg-yellow-100 text-yellow-700';
+    case 'rabbit': return 'bg-indigo-100 text-indigo-700';
+    default: return 'bg-gray-100 text-gray-700';
+  }
+};
