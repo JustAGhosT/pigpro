@@ -18,6 +18,7 @@ export const CheeseProduction: React.FC = () => {
 
   const calculateMaturationProgress = (batch: CheeseBatch) => {
     if (batch.status === 'complete') return 100;
+    if (batch.expected_aging_time <= 0) return 100;
     const daysSinceStart = differenceInDays(new Date(), batch.start_date);
     const progress = (daysSinceStart / batch.expected_aging_time) * 100;
     return Math.min(progress, 100);
