@@ -283,6 +283,48 @@ const SAMPLE_SOPS: ComplianceSOP[] = [
   }
 ];
 
+const useFilters = (animals: string[], activities: string[], searchTerm: string) => {
+  const checkAnimalMatch = (itemAnimals: string[]) =>
+    animals.length === 0 || itemAnimals.some(animal => animals.includes(animal));
+
+  const checkSearchMatch = (searchableTexts: string[]) =>
+    searchTerm === '' || searchableTexts.some(text =>
+      text.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+  return { checkAnimalMatch, checkSearchMatch };
+};
+
+const useToggleHandler = () => {
+  const createToggleHandler = (setState: React.Dispatch<React.SetStateAction<string[]>>) =>
+    (id: string) => {
+      setState(prev =>
+        prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+      );
+    };
+
+  return { createToggleHandler };
+};
+
+const AnimalBadges: React.FC<{ animalIds: string[] }> = ({ animalIds }) => (
+  <>
+    {animalIds.map((animal) => {
+      const animalData = LIVESTOCK_TYPES.find(t => t.id === animal);
+      return (
+        <Badge key={animal} className={animalData?.color || 'bg-gray-100 text-gray-800'}>
+          {animalData?.label}
+        </Badge>
+      );
+    })}
+  </>
+);
+
+const EmptyState: React.FC<{ type: string }> = ({ type }) => (
+  <div className="text-center py-8">
+    <p className="text-gray-500">No {type} found matching your criteria.</p>
+  </div>
+);
+
 export const ComplianceCanvas: React.FC = () => {
   const [selectedStrategy, setSelectedStrategy] = useState<'forward-looking' | 'conservative'>('conservative');
   const [selectedAnimals, setSelectedAnimals] = useState<string[]>([]);
@@ -290,48 +332,32 @@ export const ComplianceCanvas: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState<'permits' | 'sops'>('permits');
 
+  const { checkAnimalMatch, checkSearchMatch } = useFilters(selectedAnimals, selectedActivities, searchTerm);
+  const { createToggleHandler } = useToggleHandler();
+
+  const handleAnimalToggle = createToggleHandler(setSelectedAnimals);
+  const handleActivityToggle = createToggleHandler(setSelectedActivities);
+
   const filteredPermits = useMemo(() => {
     return SAMPLE_PERMITS.filter(permit => {
       const matchesStrategy = permit.category === selectedStrategy;
-      const matchesAnimals = selectedAnimals.length === 0 ||
-        permit.applies_to.some(animal => selectedAnimals.includes(animal));
+      const matchesAnimals = checkAnimalMatch(permit.applies_to);
       const matchesActivities = selectedActivities.length === 0 ||
         permit.activity.some(activity => selectedActivities.includes(activity));
-      const matchesSearch = searchTerm === '' ||
-        permit.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        permit.core.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = checkSearchMatch([permit.name, permit.core]);
 
       return matchesStrategy && matchesAnimals && matchesActivities && matchesSearch;
     });
-  }, [selectedStrategy, selectedAnimals, selectedActivities, searchTerm]);
+  }, [selectedStrategy, selectedActivities, checkAnimalMatch, checkSearchMatch]);
 
   const filteredSOPs = useMemo(() => {
     return SAMPLE_SOPS.filter(sop => {
-      const matchesAnimals = selectedAnimals.length === 0 ||
-        sop.animal_types.some(animal => selectedAnimals.includes(animal));
-      const matchesSearch = searchTerm === '' ||
-        sop.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        sop.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesAnimals = checkAnimalMatch(sop.animal_types);
+      const matchesSearch = checkSearchMatch([sop.title, sop.description]);
 
       return matchesAnimals && matchesSearch;
     });
-  }, [selectedAnimals, searchTerm]);
-
-  const handleAnimalToggle = (animalId: string) => {
-    setSelectedAnimals(prev =>
-      prev.includes(animalId)
-        ? prev.filter(id => id !== animalId)
-        : [...prev, animalId]
-    );
-  };
-
-  const handleActivityToggle = (activityId: string) => {
-    setSelectedActivities(prev =>
-      prev.includes(activityId)
-        ? prev.filter(id => id !== activityId)
-        : [...prev, activityId]
-    );
-  };
+  }, [checkAnimalMatch, checkSearchMatch]);
 
   const generateCompliancePack = () => {
     alert('Compliance pack generation feature coming soon!');
@@ -489,14 +515,7 @@ export const ComplianceCanvas: React.FC = () => {
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900 mb-2">{permit.name}</h3>
                         <div className="flex flex-wrap gap-2 mb-3">
-                          {permit.applies_to.map((animal) => {
-                            const animalData = LIVESTOCK_TYPES.find(t => t.id === animal);
-                            return (
-                              <Badge key={animal} className={animalData?.color || 'bg-gray-100 text-gray-800'}>
-                                {animalData?.label}
-                              </Badge>
-                            );
-                          })}
+                          <AnimalBadges animalIds={permit.applies_to} />
                           <Badge className={
                             permit.compliance_level === 'mandatory' ? 'bg-red-100 text-red-800' :
                             permit.compliance_level === 'recommended' ? 'bg-yellow-100 text-yellow-800' :
@@ -531,11 +550,7 @@ export const ComplianceCanvas: React.FC = () => {
                     </div>
                   </Card>
                 ))}
-                {filteredPermits.length === 0 && (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500">No permits found matching your criteria.</p>
-                  </div>
-                )}
+                {filteredPermits.length === 0 && <EmptyState type="permits" />}
               </div>
             ) : (
               <div className="space-y-4">
@@ -545,14 +560,7 @@ export const ComplianceCanvas: React.FC = () => {
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900 mb-2">{sop.title}</h3>
                         <div className="flex flex-wrap gap-2 mb-3">
-                          {sop.animal_types.map((animal) => {
-                            const animalData = LIVESTOCK_TYPES.find(t => t.id === animal);
-                            return (
-                              <Badge key={animal} className={animalData?.color || 'bg-gray-100 text-gray-800'}>
-                                {animalData?.label}
-                              </Badge>
-                            );
-                          })}
+                          <AnimalBadges animalIds={sop.animal_types} />
                           <Badge className="bg-purple-100 text-purple-800">
                             {sop.category}
                           </Badge>
@@ -591,11 +599,7 @@ export const ComplianceCanvas: React.FC = () => {
                     </div>
                   </Card>
                 ))}
-                {filteredSOPs.length === 0 && (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500">No SOPs found matching your criteria.</p>
-                  </div>
-                )}
+                {filteredSOPs.length === 0 && <EmptyState type="SOPs" />}
               </div>
             )}
           </div>
