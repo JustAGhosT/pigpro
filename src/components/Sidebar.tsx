@@ -25,8 +25,7 @@ interface SidebarProps {
 // NOTE: This is a mock implementation based on the available mock data.
 // In a real application, this would check the current user's animals.
 const hasDairyAnimals = () => {
-  const cattle = LIVESTOCK_DATA.cattle;
-  return cattle && cattle.breeds && cattle.breeds.dairy && cattle.breeds.dairy.length > 0;
+  return LIVESTOCK_DATA.cattle?.breeds?.dairy?.length > 0;
 };
 
 const menuItems = [
