@@ -1,0 +1,19 @@
+{
+  "name": "pigpro-api",
+  "version": "1.0.0",
+  "description": "API for PigPro application",
+  "scripts": {
+    "start": "func start",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "echo \"No tests yet...\""
+  },
+  "dependencies": {
+    "@azure/functions": "^4.0.0",
+    "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0"
+  },
+  "main": "dist/src/functions/*.js"
+}

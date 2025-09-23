@@ -29,6 +29,26 @@ const StatIcon = ({ title }: { title: string }) => {
 };
 
 export const Dashboard: React.FC = () => {
+  React.useEffect(() => {
+    // This is a test to demonstrate the connection to the new backend API.
+    // For this to work, the backend must be running (e.g., via `func start` in the `backend/api` directory).
+    // The vite.config.ts has been configured to proxy /api requests to http://localhost:7071.
+    console.log("Attempting to fetch species data from the backend...");
+    fetch('/api/v1/species')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Successfully fetched species data:", data);
+      })
+      .catch(error => {
+        console.error("Error fetching species data:", error);
+      });
+  }, []); // The empty dependency array ensures this effect runs only once when the component mounts.
+
   return (
     <div className="space-y-6">
       <div>
