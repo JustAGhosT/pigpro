@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Filter, Star, Plus, Eye, Users } from 'lucide-react';
+import { Search, Star, Plus, Eye, Users } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -17,10 +17,22 @@ interface Breed {
     female: string;
   };
   eggProduction?: string;
+  milkProduction?: string;
   temperament: string;
   rating: number;
   contributors: number;
   imageUrl: string;
+  compliance: {
+    ndImmunisation?: boolean;
+    pdmaRequirements?: string[];
+    exportConsiderations?: string[];
+  };
+  intelligence: {
+    breedingPotential: number;
+    marketDemand: 'high' | 'medium' | 'low';
+    adaptability: number;
+    maintenanceLevel: 'low' | 'medium' | 'high';
+  };
 }
 
 const breeds: Breed[] = [
@@ -39,7 +51,18 @@ const breeds: Breed[] = [
     temperament: 'Docile',
     rating: 4.8,
     contributors: 34,
-    imageUrl: '/placeholder-rhode-island-red.jpg'
+    imageUrl: '/placeholder-rhode-island-red.jpg',
+    compliance: {
+      ndImmunisation: true,
+      pdmaRequirements: ['Health certificates', 'Transport permits'],
+      exportConsiderations: ['HPAI vaccination', 'Export health certificates']
+    },
+    intelligence: {
+      breedingPotential: 92,
+      marketDemand: 'high' as const,
+      adaptability: 88,
+      maintenanceLevel: 'low' as const
+    }
   },
   {
     id: '2',
