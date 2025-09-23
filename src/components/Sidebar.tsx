@@ -24,7 +24,6 @@ interface SidebarProps {
 const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: Home },
   { id: 'breeds', label: 'Breed Database', icon: BookOpen },
-  // TODO: Add logic to only show this if the user has dairy animals (goats, cows, sheep)
   { id: 'dairy', label: 'Dairy & Cheese', icon: LeafyGreen },
   { id: 'intelligence', label: 'Livestock Intelligence', icon: Brain },
   { id: 'events', label: 'Events & Shows', icon: Calendar },

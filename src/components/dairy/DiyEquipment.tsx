@@ -33,7 +33,6 @@ export const DiyEquipment: React.FC = () => {
             <span className="text-sm text-gray-500">
               By {plan.author} on {plan.publish_date.toLocaleDateString()}
             </span>
-            {/* TODO: Implement actual file download logic */}
             <Button variant="outline" disabled>
               <Download className="mr-2 h-4 w-4" />
               Download Plan
