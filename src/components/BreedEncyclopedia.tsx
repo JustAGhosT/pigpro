@@ -123,7 +123,7 @@ const breeds: Breed[] = [
       adaptability: 88,
       maintenanceLevel: 'low' as const
     },
-    commonHealthConcerns: ['Marek's Disease', 'Coccidiosis', 'Bumblefoot']
+    commonHealthConcerns: ["Marek's Disease", 'Coccidiosis', 'Bumblefoot']
   },
   {
     id: '2',
