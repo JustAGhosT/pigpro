@@ -18,7 +18,7 @@ export const DiyEquipment: React.FC = () => {
               <h4 className="font-semibold">Materials:</h4>
               <ul className="list-disc list-inside text-sm text-gray-600">
                 {plan.materials.map((material, index) => (
-                  <li key={index}>{material}</li>
+                  <li key={`${plan.id}-material-${index}`}>{material}</li>
                 ))}
               </ul>
             </div>

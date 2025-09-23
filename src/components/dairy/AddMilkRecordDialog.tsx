@@ -3,7 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { DairyAnimal, MilkRecord, Species } from '@/lib/dairy-types';
+import { MilkRecord } from '@/lib/dairy-types';
 import { dairyAnimals } from '@/lib/dairy-data';
 
 interface AddMilkRecordDialogProps {
@@ -20,9 +20,7 @@ export const AddMilkRecordDialog: React.FC<AddMilkRecordDialogProps> = ({ isOpen
   const [photo, setPhoto] = useState<File | null>(null);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setPhoto(e.target.files[0]);
-    }
+    setPhoto(e.target.files?.[0] || null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -35,9 +33,9 @@ export const AddMilkRecordDialog: React.FC<AddMilkRecordDialogProps> = ({ isOpen
       animal_id: animalId,
       species: selectedAnimal.species,
       timestamp: new Date(),
-      volume: parseFloat(volume),
+      volume: Number.parseFloat(volume),
       quality_notes: qualityNotes,
-      storage_temp: parseFloat(storageTemp),
+      storage_temp: Number.parseFloat(storageTemp),
       photo_url: photo ? URL.createObjectURL(photo) : undefined,
     };
 

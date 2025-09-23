@@ -6,7 +6,7 @@ import { CheeseRecipe } from '@/lib/dairy-types';
 import { RecipeDetailDialog } from './RecipeDetailDialog';
 
 export const RecipeLibrary: React.FC = () => {
-  const [recipes, setRecipes] = useState<CheeseRecipe[]>(cheeseRecipes);
+  const [recipes] = useState<CheeseRecipe[]>(cheeseRecipes);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRecipe, setSelectedRecipe] = useState<CheeseRecipe | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -43,7 +43,7 @@ export const RecipeLibrary: React.FC = () => {
               <CardContent>
                 <p className="font-semibold">Ingredients:</p>
                 <ul className="list-disc list-inside text-sm">
-                  {recipe.ingredients.slice(0, 3).map((ing, i) => <li key={i}>{ing}</li>)}
+                  {recipe.ingredients.slice(0, 3).map((ing, i) => <li key={`${recipe.id}-ingredient-preview-${i}`}>{ing}</li>)}
                   {recipe.ingredients.length > 3 && <li>...</li>}
                 </ul>
                 <p className="mt-4 font-semibold">Aging Time:</p>

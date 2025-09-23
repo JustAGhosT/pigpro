@@ -27,19 +27,19 @@ export const RecipeDetailDialog: React.FC<RecipeDetailDialogProps> = ({ isOpen, 
             <div>
               <h3 className="font-semibold text-lg">Ingredients</h3>
               <ul className="list-disc list-inside mt-2">
-                {recipe.ingredients.map((item, index) => <li key={index}>{item}</li>)}
+                {recipe.ingredients.map((item, index) => <li key={`${recipe.id}-ingredient-${index}`}>{item}</li>)}
               </ul>
             </div>
             <div>
               <h3 className="font-semibold text-lg">Equipment Needed</h3>
               <ul className="list-disc list-inside mt-2">
-                {recipe.equipment_needed.map((item, index) => <li key={index}>{item}</li>)}
+                {recipe.equipment_needed.map((item, index) => <li key={`${recipe.id}-equipment-${index}`}>{item}</li>)}
               </ul>
             </div>
             <div>
               <h3 className="font-semibold text-lg">Instructions</h3>
               <ol className="list-decimal list-inside mt-2 space-y-1">
-                {recipe.steps.map((step, index) => <li key={index}>{step}</li>)}
+                {recipe.steps.map((step, index) => <li key={`${recipe.id}-step-${index}`}>{step}</li>)}
               </ol>
             </div>
             <div>

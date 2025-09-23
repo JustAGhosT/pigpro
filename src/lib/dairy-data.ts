@@ -1,4 +1,4 @@
-import { DairyAnimal, MilkRecord, DiyPlan, CheeseBatch, CheeseRecipe, Species } from './dairy-types';
+import { DairyAnimal, MilkRecord, DiyPlan, CheeseBatch, CheeseRecipe } from './dairy-types';
 
 export const dairyAnimals: DairyAnimal[] = [
   { id: 'animal-1', name: 'Bessie', species: 'cow' },

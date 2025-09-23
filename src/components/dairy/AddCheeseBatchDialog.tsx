@@ -27,10 +27,10 @@ export const AddCheeseBatchDialog: React.FC<AddCheeseBatchDialogProps> = ({ isOp
       cheese_type: cheeseType,
       species: species,
       start_date: new Date(),
-      milk_volume: parseFloat(milkVolume),
+      milk_volume: Number.parseFloat(milkVolume),
       ingredients: ingredients.split(',').map(item => item.trim()),
       status: 'inoculation',
-      expected_aging_time: parseInt(expectedAgingTime),
+      expected_aging_time: Number.parseInt(expectedAgingTime),
       aging_conditions: [],
       notes: notes,
     };
