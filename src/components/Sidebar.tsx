@@ -9,8 +9,9 @@ import {
   Settings,
   MessageCircle,
   Shield,
-  Brain,
-  X
+  X,
+  Feather
+  Brain
 } from 'lucide-react';
 
 interface SidebarProps {

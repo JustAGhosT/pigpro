@@ -41,6 +41,8 @@ function App() {
         return <Dashboard />;
       case 'breeds':
         return <BreedEncyclopedia />;
+      case 'chicken-intelligence':
+        return <ChickenBreedIntelligence />;
       case 'events':
         return <Events />;
       case 'members':
