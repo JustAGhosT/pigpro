@@ -575,7 +575,7 @@ export const ComplianceCanvas: React.FC = () => {
                         <h4 className="font-medium text-gray-900 mb-2">Key Steps:</h4>
                         <ul className="space-y-1 text-sm text-gray-600">
                           {sop.steps.map((step, index) => (
-                            <li key={index} className="flex items-start gap-2">
+                            <li key={`${sop.id}-step-${index}`} className="flex items-start gap-2">
                               <span className="w-5 h-5 bg-green-100 text-green-600 rounded-full text-xs flex items-center justify-center mt-0.5 flex-shrink-0">
                                 {index + 1}
                               </span>
@@ -589,7 +589,7 @@ export const ComplianceCanvas: React.FC = () => {
                         <h4 className="font-medium text-gray-900 mb-2">Requirements:</h4>
                         <ul className="space-y-1 text-sm text-gray-600">
                           {sop.requirements.map((req, index) => (
-                            <li key={index} className="flex items-start gap-2">
+                            <li key={`${sop.id}-req-${index}`} className="flex items-start gap-2">
                               <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                               {req}
                             </li>
