@@ -1,3 +1,194 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Mobile-first optimizations for South African users */
+@layer base {
+  /* Base font sizes optimized for mobile readability */
+  html {
+    font-size: 16px;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Improved tap targets for mobile */
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Enhanced focus states for accessibility */
+  *:focus {
+    outline: 2px solid #10b981;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Mobile-optimized card components */
+  .card-mobile {
+    @apply p-4 bg-white rounded-lg border border-gray-200 shadow-sm;
+  }
+
+  .card-mobile:hover {
+    @apply shadow-md transform transition-all duration-200;
+  }
+
+  /* Mobile-friendly button styles */
+  .btn-mobile {
+    @apply px-6 py-3 text-base font-medium rounded-lg transition-all duration-200;
+    min-height: 48px;
+  }
+
+  .btn-primary {
+    @apply bg-green-600 text-white hover:bg-green-700 active:bg-green-800;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-100 text-gray-900 hover:bg-gray-200 active:bg-gray-300;
+  }
+
+  /* Responsive grid improvements */
+  .responsive-grid {
+    @apply grid gap-4;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  /* Mobile navigation improvements */
+  .mobile-nav {
+    @apply fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Loading states for slow connections */
+  .loading-skeleton {
+    @apply animate-pulse bg-gray-200 rounded;
+  }
+
+  /* Offline indicators */
+  .offline-banner {
+    @apply bg-yellow-50 border-yellow-200 text-yellow-800 p-4 text-center;
+  }
+}
+
+@layer utilities {
+  /* Touch-friendly spacing */
+  .touch-spacing {
+    @apply space-y-4 md:space-y-6;
+  }
+
+  /* South African mobile network optimizations */
+  .slow-connection-optimize {
+    /* Reduce animations for slow connections */
+    @apply transition-none;
+  }
+
+  /* Improved text readability */
+  .text-readable {
+    @apply text-base leading-relaxed;
+  }
+
+  /* Mobile-first layouts */
+  .mobile-stack {
+    @apply flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4;
+  }
+
+  /* Safe area handling for iOS */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Improved form controls for touch */
+  .form-control-mobile {
+    @apply px-4 py-3 text-base border border-gray-300 rounded-lg;
+    min-height: 48px;
+  }
+
+  .form-control-mobile:focus {
+    @apply ring-2 ring-green-500 border-green-500;
+  }
+
+  /* Better image loading for mobile */
+  .img-responsive {
+    @apply max-w-full h-auto;
+    loading: lazy;
+  }
+
+  /* Mobile-optimized compliance matrix */
+  .compliance-table-mobile {
+    @apply overflow-x-auto;
+  }
+
+  .compliance-table-mobile table {
+    @apply min-w-full text-sm;
+  }
+
+  .compliance-card-mobile {
+    @apply bg-white rounded-lg border p-4 mb-4 shadow-sm;
+  }
+
+  /* Performance optimizations */
+  .will-change-transform {
+    will-change: transform;
+  }
+
+  .content-visibility-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 200px;
+  }
+}
+
+/* Media queries for specific mobile optimizations */
+@media (max-width: 640px) {
+  /* Smaller text on very small screens */
+  .text-sm-mobile {
+    font-size: 0.875rem;
+  }
+
+  /* Reduce padding on mobile */
+  .container-mobile {
+    @apply px-4;
+  }
+
+  /* Stack elements on mobile */
+  .mobile-stack-force {
+    @apply flex-col space-y-3;
+  }
+}
+
+/* Network-specific optimizations */
+@media (prefers-reduced-motion: reduce) {
+  .slow-connection-optimize {
+    @apply transition-none;
+  }
+}
+
+/* Dark mode support for battery saving */
+@media (prefers-color-scheme: dark) {
+  .dark-mode-support {
+    @apply bg-gray-900 text-gray-100;
+  }
+}
+
+/* High contrast mode for accessibility */
+@media (prefers-contrast: high) {
+  .high-contrast {
+    @apply border-2 border-black;
+  }
+}

@@ -11,6 +11,7 @@ import { News } from './components/News';
 import { LandingPage } from './components/LandingPage';
 import { AuthModal } from './components/AuthModal';
 import { ComplianceCanvas } from './components/ComplianceCanvas';
+import { LivestockIntelligence } from './components/LivestockIntelligence';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -52,6 +53,8 @@ function App() {
         return <News />;
       case 'compliance':
         return <ComplianceCanvas />;
+      case 'intelligence':
+        return <LivestockIntelligence />;
       case 'settings':
         return (
           <div className="space-y-6">

@@ -9,6 +9,7 @@ import {
   Settings,
   MessageCircle,
   Shield,
+  Brain,
   X
 } from 'lucide-react';
 
@@ -22,6 +23,7 @@ interface SidebarProps {
 const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: Home },
   { id: 'breeds', label: 'Breed Database', icon: BookOpen },
+  { id: 'intelligence', label: 'Livestock Intelligence', icon: Brain },
   { id: 'events', label: 'Events & Shows', icon: Calendar },
   { id: 'members', label: 'Members', icon: Users },
   { id: 'compliance', label: 'Compliance Canvas', icon: Shield },
