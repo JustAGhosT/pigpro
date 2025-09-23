@@ -13,6 +13,7 @@ import {
   X,
   LeafyGreen
 } from 'lucide-react';
+import { LIVESTOCK_DATA } from '@/lib/livestock-data';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -21,10 +22,17 @@ interface SidebarProps {
   onTabChange: (tab: string) => void;
 }
 
+// NOTE: This is a mock implementation based on the available mock data.
+// In a real application, this would check the current user's animals.
+const hasDairyAnimals = () => {
+  const cattle = LIVESTOCK_DATA.cattle;
+  return cattle && cattle.breeds && cattle.breeds.dairy && cattle.breeds.dairy.length > 0;
+};
+
 const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: Home },
   { id: 'breeds', label: 'Breed Database', icon: BookOpen },
-  { id: 'dairy', label: 'Dairy & Cheese', icon: LeafyGreen },
+  ...(hasDairyAnimals() ? [{ id: 'dairy', label: 'Dairy & Cheese', icon: LeafyGreen }] : []),
   { id: 'intelligence', label: 'Livestock Intelligence', icon: Brain },
   { id: 'events', label: 'Events & Shows', icon: Calendar },
   { id: 'members', label: 'Members', icon: Users },

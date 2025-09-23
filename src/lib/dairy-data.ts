@@ -34,11 +34,11 @@ export const diyPlans: DiyPlan[] = [
     species_list: ['goat'],
     description: 'A sturdy and safe milking stand for your goats.',
     materials: ['Plywood', '2x4 lumber', 'Screws', 'Wood glue'],
-    instructions_url: '/diy/goat-milking-stand.pdf',
+    instructions_url: '/diy/goat-milking-stand.txt',
     safety_notes: 'Always supervise animals on the stand.',
     author: 'Farm DIY Monthly',
     publish_date: new Date('2025-01-15T00:00:00Z'),
-    download_url: '/diy/goat-milking-stand.pdf',
+    download_url: '/diy/goat-milking-stand.txt',
   },
   {
     id: 'diy-2',
@@ -46,10 +46,10 @@ export const diyPlans: DiyPlan[] = [
     species_list: ['cow'],
     description: 'A simple and effective stanchion for handling cows.',
     materials: ['Metal pipes', 'Bolts', 'Concrete'],
-    instructions_url: '/diy/cow-stanchion.pdf',
+    instructions_url: '/diy/cow-stanchion.txt',
     author: 'DIY Farmer',
     publish_date: new Date('2024-11-20T00:00:00Z'),
-    download_url: '/diy/cow-stanchion.pdf',
+    download_url: '/diy/cow-stanchion.txt',
   },
 ];
 
