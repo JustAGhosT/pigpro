@@ -1,5 +1,5 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import { productionRecordsDb } from "../lib/inMemoryDb";
 import { ProductionRecord } from "../types/domain";
 

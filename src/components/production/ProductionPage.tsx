@@ -54,7 +54,7 @@ export const ProductionPage: React.FC = () => {
             {records.map(record => (
               <div key={record.id} className="p-3 bg-gray-50 rounded-lg flex justify-between items-center">
                 <div>
-                  <span className="font-medium text-gray-800">{record.event_type.replace(/_/g, ' ')}</span>
+                  <span className="font-medium text-gray-800">{record.event_type.replaceAll('_', ' ')}</span>
                   <span className="text-sm text-gray-600 ml-2">({new Date(record.date).toLocaleDateString()})</span>
                 </div>
                 <div className="text-sm text-gray-800">

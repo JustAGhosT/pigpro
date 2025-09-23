@@ -1,6 +1,11 @@
 // NOTE: These types are copied from the backend's domain.ts file.
 // In a real-world monorepo, these would be in a shared package.
 
+export interface Species {
+  id: string;
+  name: string;
+}
+
 export type ProductionEvent = 'birth' | 'death' | 'weight' | 'egg_count' | 'milk_volume' | 'sale' | 'purchase' | 'feed_intake' | 'cull' | 'treatment' | 'transfer' | 'grazing_move';
 
 export interface ProductionRecord {
