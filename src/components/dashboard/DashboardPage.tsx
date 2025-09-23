@@ -19,6 +19,49 @@ const StatCard = ({ title, value, currency = false }) => (
     </Card>
 );
 
+const recentActivityData = [
+    {
+        color: 'bg-green-500',
+        title: 'Breeding optimization completed',
+        description: 'Sow #247 recommended for Large White cross',
+        time: '2h ago',
+    },
+    {
+        color: 'bg-blue-500',
+        title: 'New team member added',
+        description: 'Johan joined as Feed Specialist',
+        time: '4h ago',
+    },
+    {
+        color: 'bg-yellow-500',
+        title: 'Compliance check due',
+        description: 'Health certificates need renewal',
+        time: '1d ago',
+    },
+];
+
+const quickActionsData = [
+    {
+        icon: Target,
+        iconColor: 'text-emerald-600',
+        title: 'AI Breed Analysis',
+        description: 'Upload photos for breed identification',
+    },
+    {
+        icon: TrendingUp,
+        iconColor: 'text-blue-600',
+        title: 'Optimize Breeding',
+        description: 'Get AI-powered breeding recommendations',
+    },
+    {
+        icon: FileText,
+        iconColor: 'text-purple-600',
+        title: 'Export Reports',
+        description: 'Generate compliance documents',
+    },
+];
+
+
 export const DashboardPage: React.FC = () => {
     const [kpiData, setKpiData] = useState<KpiData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -90,30 +133,16 @@ export const DashboardPage: React.FC = () => {
                           <div className="bg-white rounded-xl border border-gray-200 p-6">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
                             <div className="space-y-4">
-                              <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                <div className="flex-1">
-                                  <p className="text-sm font-medium text-gray-900">Breeding optimization completed</p>
-                                  <p className="text-xs text-gray-600">Sow #247 recommended for Large White cross</p>
-                                </div>
-                                <span className="text-xs text-gray-500">2h ago</span>
-                              </div>
-                              <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                <div className="flex-1">
-                                  <p className="text-sm font-medium text-gray-900">New team member added</p>
-                                  <p className="text-xs text-gray-600">Johan joined as Feed Specialist</p>
-                                </div>
-                                <span className="text-xs text-gray-500">4h ago</span>
-                              </div>
-                              <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-                                <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                                <div className="flex-1">
-                                  <p className="text-sm font-medium text-gray-900">Compliance check due</p>
-                                  <p className="text-xs text-gray-600">Health certificates need renewal</p>
-                                </div>
-                                <span className="text-xs text-gray-500">1d ago</span>
-                              </div>
+                                {recentActivityData.map((activity, index) => (
+                                    <div key={index} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
+                                        <div className={`w-2 h-2 ${activity.color} rounded-full`}></div>
+                                        <div className="flex-1">
+                                            <p className="text-sm font-medium text-gray-900">{activity.title}</p>
+                                            <p className="text-xs text-gray-600">{activity.description}</p>
+                                        </div>
+                                        <span className="text-xs text-gray-500">{activity.time}</span>
+                                    </div>
+                                ))}
                             </div>
                           </div>
                         </div>
@@ -144,21 +173,16 @@ export const DashboardPage: React.FC = () => {
                       <div className="bg-white rounded-xl border border-gray-200 p-6">
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
-                            <Target className="h-6 w-6 text-emerald-600 mb-2" />
-                            <h4 className="font-medium text-gray-900">AI Breed Analysis</h4>
-                            <p className="text-sm text-gray-600">Upload photos for breed identification</p>
-                          </button>
-                          <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
-                            <TrendingUp className="h-6 w-6 text-blue-600 mb-2" />
-                            <h4 className="font-medium text-gray-900">Optimize Breeding</h4>
-                            <p className="text-sm text-gray-600">Get AI-powered breeding recommendations</p>
-                          </button>
-                          <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
-                            <FileText className="h-6 w-6 text-purple-600 mb-2" />
-                            <h4 className="font-medium text-gray-900">Export Reports</h4>
-                            <p className="text-sm text-gray-600">Generate compliance documents</p>
-                          </button>
+                            {quickActionsData.map((action, index) => {
+                                const Icon = action.icon;
+                                return (
+                                    <button key={index} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
+                                        <Icon className={`h-6 w-6 ${action.iconColor} mb-2`} />
+                                        <h4 className="font-medium text-gray-900">{action.title}</h4>
+                                        <p className="text-sm text-gray-600">{action.description}</p>
+                                    </button>
+                                );
+                            })}
                         </div>
                       </div>
                 </>
