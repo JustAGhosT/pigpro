@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ProductionEvent, ProductionRecord, Species } from '@/lib/production-types';
+import { formatLabel } from '@/lib/utils';
 
 const eventTypes: ProductionEvent[] = [
   'birth', 'death', 'weight', 'egg_count', 'milk_volume', 'sale', 'purchase', 'feed_intake', 'cull', 'treatment', 'transfer', 'grazing_move'
@@ -95,7 +96,6 @@ export const AddProductionRecordForm: React.FC<AddProductionRecordFormProps> = (
   };
 
   const renderDynamicFields = () => {
-    // ... (same as before)
     switch (formData.event_type) {
       case 'weight':
         return (
@@ -162,7 +162,7 @@ export const AddProductionRecordForm: React.FC<AddProductionRecordFormProps> = (
           <Label htmlFor="event_type">Event Type</Label>
           <select id="event_type" name="event_type" value={formData.event_type} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg">
             {eventTypes.map(type => (
-              <option key={type} value={type}>{type.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</option>
+              <option key={type} value={type}>{formatLabel(type)}</option>
             ))}
           </select>
         </div>

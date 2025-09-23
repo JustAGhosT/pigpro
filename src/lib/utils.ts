@@ -5,6 +5,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// Helper function to format labels (e.g., 'egg_count' -> 'Egg Count')
+export const formatLabel = (str: string): string => {
+  if (!str) return '';
+  const spaced = str.replaceAll('_', ' ');
+  return spaced.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+};
+
 export const colors = {
   primary: '#2D5016', // Deep Forest Green - Represents agriculture and nature
   secondary: '#F4A460', // Sandy Brown - Represents poultry and earth

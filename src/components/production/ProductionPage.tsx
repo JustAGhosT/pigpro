@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { AddProductionRecordForm } from './AddProductionRecordForm';
 import { ProductionRecord } from '@/lib/production-types';
+import { formatLabel } from '@/lib/utils';
 
 export const ProductionPage: React.FC = () => {
   const [records, setRecords] = useState<ProductionRecord[]>([]);
@@ -54,7 +55,7 @@ export const ProductionPage: React.FC = () => {
             {records.map(record => (
               <div key={record.id} className="p-3 bg-gray-50 rounded-lg flex justify-between items-center">
                 <div>
-                  <span className="font-medium text-gray-800">{record.event_type.replaceAll('_', ' ')}</span>
+                  <span className="font-medium text-gray-800">{formatLabel(record.event_type)}</span>
                   <span className="text-sm text-gray-600 ml-2">({new Date(record.date).toLocaleDateString()})</span>
                 </div>
                 <div className="text-sm text-gray-800">
