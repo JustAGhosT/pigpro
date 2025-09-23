@@ -8,6 +8,7 @@ import { Resources } from './Resources';
 import { News } from './News';
 import { ComplianceCanvas } from './ComplianceCanvas';
 import { LivestockIntelligence } from './LivestockIntelligence';
+import { ProductionPage } from './production/ProductionPage';
 import { DairyCheeseManagement } from './dairy/DairyCheeseManagement';
 
 interface MainContentProps {
@@ -18,6 +19,8 @@ export const MainContent: React.FC<MainContentProps> = ({ activeTab }) => {
   switch (activeTab) {
     case 'dashboard':
       return <Dashboard />;
+    case 'production':
+      return <ProductionPage />;
     case 'breeds':
       return <BreedEncyclopedia />;
     case 'events':

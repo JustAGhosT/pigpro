@@ -1,0 +1,19 @@
+# Local settings
+local.settings.json
+
+# Secrets
+.vscode/launch.json
+
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
+
+# Other
+.DS_Store
+Thumbs.db
