@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Star, Plus, Eye, Users } from 'lucide-react';
+import { Search, Star, Plus, Eye, Users, X } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -33,7 +33,67 @@ interface Breed {
     adaptability: number;
     maintenanceLevel: 'low' | 'medium' | 'high';
   };
+  commonHealthConcerns?: string[];
 }
+
+const BreedDetailModal: React.FC<{ breed: Breed; onClose: () => void }> = ({ breed, onClose }) => {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="p-6 sticky top-0 bg-white border-b z-10">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">{breed.name}</h2>
+              <p className="text-gray-600">{breed.origin}</p>
+            </div>
+            <Button onClick={onClose} size="icon" variant="ghost">
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="p-6 space-y-6">
+          <img
+            src={breed.imageUrl}
+            alt={breed.name}
+            className="w-full h-64 object-cover rounded-lg"
+          />
+          <p className="text-gray-700">{breed.description}</p>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Health Profile</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {breed.commonHealthConcerns && breed.commonHealthConcerns.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-1">Common Health Concerns</h4>
+                  <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                    {breed.commonHealthConcerns.map(concern => <li key={concern}>{concern}</li>)}
+                  </ul>
+                </div>
+              )}
+              {breed.compliance?.ndImmunisation && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Badge variant="outline">ND Immunisation Required</Badge>
+                </div>
+              )}
+              <div>
+                <h4 className="font-semibold mb-1">Maintenance Level</h4>
+                <p className="text-sm text-gray-600 capitalize">{breed.intelligence.maintenanceLevel}</p>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-1">Adaptability Score</h4>
+                <p className="text-sm text-gray-600">{breed.intelligence.adaptability}/100</p>
+              </div>
+            </CardContent>
+          </Card>
+
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const breeds: Breed[] = [
   {
@@ -62,7 +122,8 @@ const breeds: Breed[] = [
       marketDemand: 'high' as const,
       adaptability: 88,
       maintenanceLevel: 'low' as const
-    }
+    },
+    commonHealthConcerns: ['Marek's Disease', 'Coccidiosis', 'Bumblefoot']
   },
   {
     id: '2',
@@ -79,7 +140,8 @@ const breeds: Breed[] = [
     temperament: 'Active',
     rating: 4.6,
     contributors: 28,
-    imageUrl: '/placeholder-leghorn.jpg'
+    imageUrl: '/placeholder-leghorn.jpg',
+    commonHealthConcerns: ['Avian Influenza (if in high-risk areas)', 'Egg-binding']
   },
   {
     id: '3',
@@ -246,7 +308,7 @@ const breeds: Breed[] = [
   }
 ];
 
-const BreedCard: React.FC<{ breed: Breed }> = ({ breed }) => {
+const BreedCard: React.FC<{ breed: Breed; onViewDetails: (breed: Breed) => void }> = ({ breed, onViewDetails }) => {
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'chicken': return 'bg-amber-100 text-amber-700';
@@ -337,7 +399,7 @@ const BreedCard: React.FC<{ breed: Breed }> = ({ breed }) => {
             <Users className="h-4 w-4" />
             <span>{breed.contributors} contributors</span>
           </div>
-          <Button size="sm" variant="outline">
+          <Button size="sm" variant="outline" onClick={() => onViewDetails(breed)}>
             <Eye className="h-4 w-4 mr-1" />
             View Details
           </Button>
@@ -348,11 +410,27 @@ const BreedCard: React.FC<{ breed: Breed }> = ({ breed }) => {
 };
 
 export const BreedEncyclopedia: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedBreedForModal, setSelectedBreedForModal] = useState<Breed | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState('name');
+  const [selectedOrigin, setSelectedOrigin] = useState('all');
+  const [selectedTemperament, setSelectedTemperament] = useState('all');
+  const [selectedTrait, setSelectedTrait] = useState('all');
 
-  const categories = ['all', ...Array.from(new Set(breeds.map(b => b.category)))];
+  const { categories, origins, temperaments, allTraits } = useMemo(() => {
+    const categories = ['all', ...Array.from(new Set(breeds.map(b => b.category)))];
+    const origins = ['all', ...Array.from(new Set(breeds.map(b => b.origin)))];
+    const temperaments = ['all', ...Array.from(new Set(breeds.map(b => b.temperament)))];
+    const allTraits = ['all', ...Array.from(new Set(breeds.flatMap(b => b.traits)))];
+    return { categories, origins, temperaments, allTraits };
+  }, []);
+
+  const handleViewDetails = (breed: Breed) => {
+    setSelectedBreedForModal(breed);
+    setIsModalOpen(true);
+  };
 
   const filteredBreeds = breeds
     .filter(breed => {
@@ -360,7 +438,10 @@ export const BreedEncyclopedia: React.FC = () => {
                            breed.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            breed.traits.some(trait => trait.toLowerCase().includes(searchTerm.toLowerCase()));
       const matchesCategory = selectedCategory === 'all' || breed.category === selectedCategory;
-      return matchesSearch && matchesCategory;
+      const matchesOrigin = selectedOrigin === 'all' || breed.origin === selectedOrigin;
+      const matchesTemperament = selectedTemperament === 'all' || breed.temperament === selectedTemperament;
+      const matchesTrait = selectedTrait === 'all' || breed.traits.includes(selectedTrait);
+      return matchesSearch && matchesCategory && matchesOrigin && matchesTemperament && matchesTrait;
     })
     .sort((a, b) => {
       switch (sortBy) {
@@ -429,6 +510,45 @@ export const BreedEncyclopedia: React.FC = () => {
                 <option value="origin">Sort by Origin</option>
               </select>
             </div>
+            <div className="lg:w-48">
+              <select
+                value={selectedOrigin}
+                onChange={(e) => setSelectedOrigin(e.target.value)}
+                className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
+              >
+                {origins.map(origin => (
+                  <option key={origin} value={origin}>
+                    {origin === 'all' ? 'All Origins' : origin}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="lg:w-48">
+              <select
+                value={selectedTemperament}
+                onChange={(e) => setSelectedTemperament(e.target.value)}
+                className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
+              >
+                {temperaments.map(t => (
+                  <option key={t} value={t}>
+                    {t === 'all' ? 'All Temperaments' : t}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="lg:w-48">
+              <select
+                value={selectedTrait}
+                onChange={(e) => setSelectedTrait(e.target.value)}
+                className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
+              >
+                {allTraits.map(t => (
+                  <option key={t} value={t}>
+                    {t === 'all' ? 'All Traits' : t}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -469,7 +589,7 @@ export const BreedEncyclopedia: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredBreeds.map(breed => (
-            <BreedCard key={breed.id} breed={breed} />
+            <BreedCard key={breed.id} breed={breed} onViewDetails={handleViewDetails} />
           ))}
         </div>
       )}
@@ -477,6 +597,10 @@ export const BreedEncyclopedia: React.FC = () => {
       <div className="text-center text-sm text-gray-600">
         Showing {filteredBreeds.length} of {breeds.length} breeds
       </div>
+
+      {isModalOpen && selectedBreedForModal && (
+        <BreedDetailModal breed={selectedBreedForModal} onClose={() => setIsModalOpen(false)} />
+      )}
     </div>
   );
 };

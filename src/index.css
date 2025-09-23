@@ -127,6 +127,7 @@
   /* Better image loading for mobile */
   .img-responsive {
     @apply max-w-full h-auto;
+    loading: lazy;
   }
 
   /* Mobile-optimized compliance matrix */

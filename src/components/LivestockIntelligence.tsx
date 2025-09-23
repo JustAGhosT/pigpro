@@ -11,7 +11,8 @@ import {
   Zap,
   CheckCircle,
   AlertTriangle,
-  Info
+  Info,
+  Dna
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -270,9 +271,50 @@ const ComplianceAlertCard: React.FC<{ alert: ComplianceAlert }> = ({ alert }) =>
 };
 
 export const LivestockIntelligence: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'analysis' | 'upload' | 'reports' | 'compliance'>('analysis');
+  const [activeTab, setActiveTab] = useState<'analysis' | 'upload' | 'reports' | 'compliance' | 'breeding'>('analysis');
   const [analysisData] = useState(MOCK_ANALYSIS_DATA);
   const [complianceAlerts] = useState(COMPLIANCE_ALERTS);
+  const [selectedBaseBreed, setSelectedBaseBreed] = useState<string>('');
+  const [selectedBreedingGoal, setSelectedBreedingGoal] = useState<string>('');
+
+  const BREEDING_GOALS = [
+    'Improve Breeding Potential',
+    'Improve Health Score',
+    'Increase Size & Weight',
+    'Enhance Muscle Definition',
+  ];
+
+  const breedingRecommendations = useMemo(() => {
+    if (!selectedBaseBreed || !selectedBreedingGoal) {
+      return [];
+    }
+
+    const baseBreed = analysisData.find(b => b.id === selectedBaseBreed);
+    if (!baseBreed) {
+      return [];
+    }
+
+    const potentialPartners = analysisData.filter(b => b.id !== selectedBaseBreed && b.species === baseBreed.species);
+
+    const getScore = (breed: LivestockAnalysisData, goal: string) => {
+      switch (goal) {
+        case 'Improve Breeding Potential':
+          return breed.breedingPotential;
+        case 'Improve Health Score':
+          return breed.healthScore;
+        case 'Increase Size & Weight':
+          return breed.traits.find(t => t.name === 'Size & Weight')?.score || 0;
+        case 'Enhance Muscle Definition':
+          return breed.traits.find(t => t.name === 'Muscle Definition')?.score || 0;
+        default:
+          return 0;
+      }
+    };
+
+    return potentialPartners
+      .sort((a, b) => getScore(b, selectedBreedingGoal) - getScore(a, selectedBreedingGoal))
+      .slice(0, 3);
+  }, [selectedBaseBreed, selectedBreedingGoal, analysisData]);
 
   return (
     <div className="space-y-6">
@@ -342,13 +384,14 @@ export const LivestockIntelligence: React.FC = () => {
               { id: 'analysis', label: 'AI Analysis', icon: Brain },
               { id: 'upload', label: 'Upload & Scan', icon: Camera },
               { id: 'reports', label: 'Reports', icon: BarChart3 },
-              { id: 'compliance', label: 'Compliance Alerts', icon: AlertTriangle }
+              { id: 'compliance', label: 'Compliance Alerts', icon: AlertTriangle },
+              { id: 'breeding', label: 'Breeding Advisor', icon: Dna }
             ].map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as 'analysis' | 'upload' | 'reports' | 'compliance')}
+                  onClick={() => setActiveTab(tab.id as 'analysis' | 'upload' | 'reports' | 'compliance' | 'breeding')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
                     activeTab === tab.id
                       ? 'border-green-500 text-green-600'
@@ -482,6 +525,93 @@ export const LivestockIntelligence: React.FC = () => {
                 {complianceAlerts.map((alert) => (
                   <ComplianceAlertCard key={alert.id} alert={alert} />
                 ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'breeding' && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold">Breeding Advisor</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Select Your Breeding Pair</CardTitle>
+                    <CardDescription>Choose a base animal and your desired improvement goal.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <label htmlFor="base-breed" className="block text-sm font-medium text-gray-700 mb-1">
+                        Base Breed
+                      </label>
+                      <select
+                        id="base-breed"
+                        value={selectedBaseBreed}
+                        onChange={(e) => setSelectedBaseBreed(e.target.value)}
+                        className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
+                      >
+                        <option value="">Select a breed...</option>
+                        {analysisData.map(animal => (
+                          <option key={animal.id} value={animal.id}>
+                            {animal.breed} ({animal.species})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="breeding-goal" className="block text-sm font-medium text-gray-700 mb-1">
+                        Breeding Goal
+                      </label>
+                      <select
+                        id="breeding-goal"
+                        value={selectedBreedingGoal}
+                        onChange={(e) => setSelectedBreedingGoal(e.target.value)}
+                        className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
+                      >
+                        <option value="">Select a goal...</option>
+                        {BREEDING_GOALS.map(goal => (
+                          <option key={goal} value={goal}>
+                            {goal}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Breeding Recommendations</CardTitle>
+                    <CardDescription>Suggested pairings to achieve your goal.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {!selectedBaseBreed || !selectedBreedingGoal ? (
+                      <p className="text-gray-500">Select a base breed and a goal to see recommendations.</p>
+                    ) : breedingRecommendations.length > 0 ? (
+                      <div className="space-y-3">
+                        {breedingRecommendations.map(rec => (
+                          <div key={rec.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                            <div>
+                              <p className="font-semibold">{rec.breed}</p>
+                              <p className="text-sm text-gray-600">{rec.species}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-semibold text-green-600">
+                                {
+                                  selectedBreedingGoal === 'Improve Breeding Potential' ? `${rec.breedingPotential}%` :
+                                  selectedBreedingGoal === 'Improve Health Score' ? `${rec.healthScore}%` :
+                                  `${rec.traits.find(t => t.name === selectedBreedingGoal.replace('Increase ', '').replace('Enhance ', ''))?.score || 0}%`
+                                }
+                              </p>
+                              <p className="text-xs text-gray-500">Match Score</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-500">No suitable partners found for this goal.</p>
+                    )}
+                  </CardContent>
+                </Card>
               </div>
             </div>
           )}
