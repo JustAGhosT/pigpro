@@ -105,7 +105,7 @@ export const BreedEncyclopedia: React.FC = () => {
             return 0;
         }
       });
-  }, [searchTerm, selectedCategory, selectedOrigin, selectedTemperament, selectedTrait, sortBy]);
+  }, [searchTerm, selectedCategory, selectedOrigin, selectedTemperament, selectedTrait, selectedLivestock, sortBy]);
 
   return (
     <div className="space-y-6">
