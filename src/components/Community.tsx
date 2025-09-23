@@ -9,7 +9,10 @@ import {
   Filter,
   TrendingUp,
   Award,
+  Calendar,
   MapPin,
+  Eye,
+  ThumbsUp,
   BookOpen,
   Camera
 } from 'lucide-react';
@@ -42,6 +45,50 @@ interface Expert {
   responses: number;
   location: string;
 }
+
+interface Group {
+  id: string;
+  name: string;
+  description: string;
+  memberCount: number;
+  imageUrl: string;
+  category: string;
+}
+
+const groups: Group[] = [
+  {
+    id: '1',
+    name: 'Western Cape Pork Producers',
+    description: 'A group for commercial and small-scale pig farmers in the Western Cape.',
+    memberCount: 234,
+    imageUrl: 'https://images.pexels.com/photos/2422588/pexels-photo-2422588.jpeg?auto=compress&cs=tinysrgb&w=400',
+    category: 'Regional'
+  },
+  {
+    id: '2',
+    name: 'Kolbroek Breed Enthusiasts',
+    description: 'Dedicated to the preservation and promotion of the indigenous Kolbroek pig.',
+    memberCount: 189,
+    imageUrl: 'https://images.pexels.com/photos/110820/pexels-photo-110820.jpeg?auto=compress&cs=tinysrgb&w=400',
+    category: 'Breed Specific'
+  },
+  {
+    id: '3',
+    name: 'Free-Range & Organic Farming SA',
+    description: 'Sharing knowledge on sustainable and organic farming practices in South Africa.',
+    memberCount: 456,
+    imageUrl: 'https://images.pexels.com/photos/76953/pexels-photo-76953.jpeg?auto=compress&cs=tinysrgb&w=400',
+    category: 'Farming Practice'
+  },
+  {
+    id: '4',
+    name: 'Beginner Pig Farmers Hub',
+    description: 'A supportive space for those new to the world of pig farming to ask questions and learn.',
+    memberCount: 782,
+    imageUrl: 'https://images.pexels.com/photos/379984/pexels-photo-379984.jpeg?auto=compress&cs=tinysrgb&w=400',
+    category: 'Beginners'
+  }
+];
 
 const posts: Post[] = [
   {
@@ -244,6 +291,34 @@ const ExpertCard: React.FC<{ expert: Expert }> = ({ expert }) => (
   </div>
 );
 
+const GroupCard: React.FC<{ group: Group }> = ({ group }) => (
+  <div className="bg-white rounded-xl border border-gray-200 hover:shadow-md transition-shadow flex flex-col">
+    <div className="aspect-video bg-gray-200 relative rounded-t-xl">
+      <img
+        src={group.imageUrl}
+        alt={group.name}
+        className="w-full h-full object-cover rounded-t-xl"
+      />
+      <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1">
+        <span className="text-xs font-medium">{group.category}</span>
+      </div>
+    </div>
+    <div className="p-4 flex-grow flex flex-col">
+      <h4 className="font-semibold text-gray-900 mb-2">{group.name}</h4>
+      <p className="text-sm text-gray-600 mb-4 flex-grow">{group.description}</p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-1 text-sm text-gray-600">
+          <Users className="h-4 w-4" />
+          <span>{group.memberCount} members</span>
+        </div>
+        <button className="bg-emerald-600 text-white px-3 py-1 rounded-lg hover:bg-emerald-700 transition-colors text-sm">
+          Join Group
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
 export const Community: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'feed' | 'experts' | 'groups'>('feed');
   const [searchTerm, setSearchTerm] = useState('');
@@ -432,15 +507,10 @@ export const Community: React.FC = () => {
 
       {activeTab === 'groups' && (
         <div className="space-y-6">
-          <div className="text-center py-12">
-            <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Groups Coming Soon</h3>
-            <p className="text-gray-600 mb-4">
-              Join specialized groups based on your location, breed focus, or farming interests.
-            </p>
-            <button className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-colors">
-              Get Notified
-            </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {groups.map((group) => (
+              <GroupCard key={group.id} group={group} />
+            ))}
           </div>
         </div>
       )}

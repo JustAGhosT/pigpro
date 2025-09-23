@@ -12,7 +12,6 @@ import { LandingPage } from './components/LandingPage';
 import { AuthModal } from './components/AuthModal';
 import { ComplianceCanvas } from './components/ComplianceCanvas';
 import { LivestockIntelligence } from './components/LivestockIntelligence';
-import { ChickenBreedIntelligence } from './components/ChickenBreedIntelligence';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -42,8 +41,6 @@ function App() {
         return <Dashboard />;
       case 'breeds':
         return <BreedEncyclopedia />;
-      case 'chicken-intelligence':
-        return <ChickenBreedIntelligence />;
       case 'events':
         return <Events />;
       case 'members':

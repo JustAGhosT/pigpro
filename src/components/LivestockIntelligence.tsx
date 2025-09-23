@@ -11,7 +11,8 @@ import {
   Zap,
   CheckCircle,
   AlertTriangle,
-  Info
+  Info,
+  Dna
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -118,10 +119,14 @@ const COMPLIANCE_ALERTS: ComplianceAlert[] = [
 ];
 
 const AnalysisCard: React.FC<{ data: LivestockAnalysisData }> = ({ data }) => {
-  const getConfidenceBadgeColor = (confidence: number) => {
-    if (confidence >= 90) return 'bg-green-100 text-green-800';
-    if (confidence >= 80) return 'bg-yellow-100 text-yellow-800';
-    return 'bg-red-100 text-red-800';
+  const getConfidenceBadgeClass = (confidence: number) => {
+    if (confidence >= 90) {
+      return 'bg-green-100 text-green-800';
+    } else if (confidence >= 80) {
+      return 'bg-yellow-100 text-yellow-800';
+    } else {
+      return 'bg-red-100 text-red-800';
+    }
   };
 
   return (
@@ -132,7 +137,7 @@ const AnalysisCard: React.FC<{ data: LivestockAnalysisData }> = ({ data }) => {
             <CardTitle className="text-lg">{data.species} - {data.breed}</CardTitle>
             <CardDescription>AI Analysis Results</CardDescription>
           </div>
-          <Badge className={getConfidenceBadgeColor(data.confidence)}>
+          <Badge className={getConfidenceBadgeClass(data.confidence)}>
             {data.confidence}% confidence
           </Badge>
         </div>
@@ -177,8 +182,8 @@ const AnalysisCard: React.FC<{ data: LivestockAnalysisData }> = ({ data }) => {
           <div>
             <h4 className="font-medium text-gray-900 mb-2">Trait Analysis</h4>
             <div className="space-y-2">
-              {data.traits.map((trait, index) => (
-                <div key={index} className="flex items-center justify-between py-1">
+              {data.traits.map((trait) => (
+                <div key={trait.name} className="flex items-center justify-between py-1">
                   <span className="text-sm text-gray-700">{trait.name}</span>
                   <div className="flex items-center gap-2">
                     <div className="w-16 bg-gray-200 rounded-full h-1.5">
@@ -198,8 +203,8 @@ const AnalysisCard: React.FC<{ data: LivestockAnalysisData }> = ({ data }) => {
           <div>
             <h4 className="font-medium text-gray-900 mb-2">AI Recommendations</h4>
             <ul className="space-y-1">
-              {data.recommendations.slice(0, 2).map((rec, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
+              {data.recommendations.slice(0, 2).map((rec) => (
+                <li key={rec} className="flex items-start gap-2 text-sm text-gray-600">
                   <CheckCircle className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
                   {rec}
                 </li>
@@ -266,9 +271,50 @@ const ComplianceAlertCard: React.FC<{ alert: ComplianceAlert }> = ({ alert }) =>
 };
 
 export const LivestockIntelligence: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'analysis' | 'upload' | 'reports' | 'compliance'>('analysis');
+  const [activeTab, setActiveTab] = useState<'analysis' | 'upload' | 'reports' | 'compliance' | 'breeding'>('analysis');
   const [analysisData] = useState(MOCK_ANALYSIS_DATA);
   const [complianceAlerts] = useState(COMPLIANCE_ALERTS);
+  const [selectedBaseBreed, setSelectedBaseBreed] = useState<string>('');
+  const [selectedBreedingGoal, setSelectedBreedingGoal] = useState<string>('');
+
+  const BREEDING_GOALS = [
+    'Improve Breeding Potential',
+    'Improve Health Score',
+    'Increase Size & Weight',
+    'Enhance Muscle Definition',
+  ];
+
+  const breedingRecommendations = useMemo(() => {
+    if (!selectedBaseBreed || !selectedBreedingGoal) {
+      return [];
+    }
+
+    const baseBreed = analysisData.find(b => b.id === selectedBaseBreed);
+    if (!baseBreed) {
+      return [];
+    }
+
+    const potentialPartners = analysisData.filter(b => b.id !== selectedBaseBreed && b.species === baseBreed.species);
+
+    const getScore = (breed: LivestockAnalysisData, goal: string) => {
+      switch (goal) {
+        case 'Improve Breeding Potential':
+          return breed.breedingPotential;
+        case 'Improve Health Score':
+          return breed.healthScore;
+        case 'Increase Size & Weight':
+          return breed.traits.find(t => t.name === 'Size & Weight')?.score || 0;
+        case 'Enhance Muscle Definition':
+          return breed.traits.find(t => t.name === 'Muscle Definition')?.score || 0;
+        default:
+          return 0;
+      }
+    };
+
+    return potentialPartners
+      .sort((a, b) => getScore(b, selectedBreedingGoal) - getScore(a, selectedBreedingGoal))
+      .slice(0, 3);
+  }, [selectedBaseBreed, selectedBreedingGoal, analysisData]);
 
   return (
     <div className="space-y-6">
@@ -338,13 +384,14 @@ export const LivestockIntelligence: React.FC = () => {
               { id: 'analysis', label: 'AI Analysis', icon: Brain },
               { id: 'upload', label: 'Upload & Scan', icon: Camera },
               { id: 'reports', label: 'Reports', icon: BarChart3 },
-              { id: 'compliance', label: 'Compliance Alerts', icon: AlertTriangle }
+              { id: 'compliance', label: 'Compliance Alerts', icon: AlertTriangle },
+              { id: 'breeding', label: 'Breeding Advisor', icon: Dna }
             ].map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as 'analysis' | 'upload' | 'reports' | 'compliance')}
+                  onClick={() => setActiveTab(tab.id as 'analysis' | 'upload' | 'reports' | 'compliance' | 'breeding')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
                     activeTab === tab.id
                       ? 'border-green-500 text-green-600'
@@ -386,17 +433,20 @@ export const LivestockIntelligence: React.FC = () => {
                 </p>
               </div>
 
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-green-400 transition-colors">
+              <label className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-green-400 transition-colors w-full block cursor-pointer">
                 <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h4 className="text-lg font-medium text-gray-900 mb-2">Drop your images here</h4>
                 <p className="text-gray-600 mb-4">or click to browse files</p>
-                <Button className="bg-green-600 hover:bg-green-700">
-                  Choose Files
-                </Button>
+                <input type="file" className="hidden" />
+                <div className="inline-block">
+                  <Button className="bg-green-600 hover:bg-green-700 pointer-events-none">
+                    Choose Files
+                  </Button>
+                </div>
                 <p className="text-xs text-gray-500 mt-4">
                   Supports JPG, PNG, WebP up to 10MB each. Best results with clear, well-lit photos.
                 </p>
-              </div>
+              </label>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-blue-50 p-4 rounded-lg">
@@ -439,8 +489,8 @@ export const LivestockIntelligence: React.FC = () => {
                   { title: 'Health Assessment Summary', date: '2025-09-15', type: 'PDF', size: '1.8 MB' },
                   { title: 'Market Value Analysis', date: '2025-09-20', type: 'Excel', size: '890 KB' },
                   { title: 'Compliance Checklist', date: '2025-09-22', type: 'PDF', size: '1.2 MB' },
-                ].map((report, index) => (
-                  <Card key={index}>
+                ].map((report) => (
+                  <Card key={report.title}>
                     <CardContent className="pt-6">
                       <div className="flex items-start justify-between mb-3">
                         <div>
@@ -475,6 +525,93 @@ export const LivestockIntelligence: React.FC = () => {
                 {complianceAlerts.map((alert) => (
                   <ComplianceAlertCard key={alert.id} alert={alert} />
                 ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'breeding' && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold">Breeding Advisor</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Select Your Breeding Pair</CardTitle>
+                    <CardDescription>Choose a base animal and your desired improvement goal.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <label htmlFor="base-breed" className="block text-sm font-medium text-gray-700 mb-1">
+                        Base Breed
+                      </label>
+                      <select
+                        id="base-breed"
+                        value={selectedBaseBreed}
+                        onChange={(e) => setSelectedBaseBreed(e.target.value)}
+                        className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
+                      >
+                        <option value="">Select a breed...</option>
+                        {analysisData.map(animal => (
+                          <option key={animal.id} value={animal.id}>
+                            {animal.breed} ({animal.species})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="breeding-goal" className="block text-sm font-medium text-gray-700 mb-1">
+                        Breeding Goal
+                      </label>
+                      <select
+                        id="breeding-goal"
+                        value={selectedBreedingGoal}
+                        onChange={(e) => setSelectedBreedingGoal(e.target.value)}
+                        className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
+                      >
+                        <option value="">Select a goal...</option>
+                        {BREEDING_GOALS.map(goal => (
+                          <option key={goal} value={goal}>
+                            {goal}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Breeding Recommendations</CardTitle>
+                    <CardDescription>Suggested pairings to achieve your goal.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {!selectedBaseBreed || !selectedBreedingGoal ? (
+                      <p className="text-gray-500">Select a base breed and a goal to see recommendations.</p>
+                    ) : breedingRecommendations.length > 0 ? (
+                      <div className="space-y-3">
+                        {breedingRecommendations.map(rec => (
+                          <div key={rec.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                            <div>
+                              <p className="font-semibold">{rec.breed}</p>
+                              <p className="text-sm text-gray-600">{rec.species}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-semibold text-green-600">
+                                {
+                                  selectedBreedingGoal === 'Improve Breeding Potential' ? `${rec.breedingPotential}%` :
+                                  selectedBreedingGoal === 'Improve Health Score' ? `${rec.healthScore}%` :
+                                  `${rec.traits.find(t => t.name === selectedBreedingGoal.replace('Increase ', '').replace('Enhance ', ''))?.score || 0}%`
+                                }
+                              </p>
+                              <p className="text-xs text-gray-500">Match Score</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-500">No suitable partners found for this goal.</p>
+                    )}
+                  </CardContent>
+                </Card>
               </div>
             </div>
           )}

@@ -9,8 +9,8 @@ import {
   Settings,
   MessageCircle,
   Shield,
-  X,
-  Brain
+  Brain,
+  X
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -38,9 +38,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, on
     <>
       {/* Mobile overlay */}
       {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+        <button
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden w-full h-full"
           onClick={onClose}
+          aria-label="Close sidebar"
         />
       )}
       
