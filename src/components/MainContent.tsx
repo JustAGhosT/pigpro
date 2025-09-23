@@ -8,6 +8,7 @@ import { Resources } from './Resources';
 import { News } from './News';
 import { ComplianceCanvas } from './ComplianceCanvas';
 import { LivestockIntelligence } from './LivestockIntelligence';
+import { DairyCheeseManagement } from './dairy/DairyCheeseManagement';
 
 interface MainContentProps {
   activeTab: string;
@@ -33,6 +34,8 @@ export const MainContent: React.FC<MainContentProps> = ({ activeTab }) => {
       return <ComplianceCanvas />;
     case 'intelligence':
       return <LivestockIntelligence />;
+    case 'dairy':
+      return <DairyCheeseManagement />;
     case 'settings':
       return (
         <div className="space-y-6">
