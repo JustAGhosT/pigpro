@@ -118,6 +118,16 @@ const COMPLIANCE_ALERTS: ComplianceAlert[] = [
 ];
 
 const AnalysisCard: React.FC<{ data: LivestockAnalysisData }> = ({ data }) => {
+  const getConfidenceBadgeClass = (confidence: number) => {
+    if (confidence >= 90) {
+      return 'bg-green-100 text-green-800';
+    } else if (confidence >= 80) {
+      return 'bg-yellow-100 text-yellow-800';
+    } else {
+      return 'bg-red-100 text-red-800';
+    }
+  };
+
   return (
     <Card className="hover:shadow-lg transition-shadow">
       <CardHeader>
@@ -126,11 +136,7 @@ const AnalysisCard: React.FC<{ data: LivestockAnalysisData }> = ({ data }) => {
             <CardTitle className="text-lg">{data.species} - {data.breed}</CardTitle>
             <CardDescription>AI Analysis Results</CardDescription>
           </div>
-          <Badge className={`${
-            data.confidence >= 90 ? 'bg-green-100 text-green-800' :
-            data.confidence >= 80 ? 'bg-yellow-100 text-yellow-800' :
-            'bg-red-100 text-red-800'
-          }`}>
+          <Badge className={getConfidenceBadgeClass(data.confidence)}>
             {data.confidence}% confidence
           </Badge>
         </div>
@@ -175,8 +181,8 @@ const AnalysisCard: React.FC<{ data: LivestockAnalysisData }> = ({ data }) => {
           <div>
             <h4 className="font-medium text-gray-900 mb-2">Trait Analysis</h4>
             <div className="space-y-2">
-              {data.traits.map((trait, index) => (
-                <div key={index} className="flex items-center justify-between py-1">
+              {data.traits.map((trait) => (
+                <div key={trait.name} className="flex items-center justify-between py-1">
                   <span className="text-sm text-gray-700">{trait.name}</span>
                   <div className="flex items-center gap-2">
                     <div className="w-16 bg-gray-200 rounded-full h-1.5">
@@ -196,8 +202,8 @@ const AnalysisCard: React.FC<{ data: LivestockAnalysisData }> = ({ data }) => {
           <div>
             <h4 className="font-medium text-gray-900 mb-2">AI Recommendations</h4>
             <ul className="space-y-1">
-              {data.recommendations.slice(0, 2).map((rec, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
+              {data.recommendations.slice(0, 2).map((rec) => (
+                <li key={rec} className="flex items-start gap-2 text-sm text-gray-600">
                   <CheckCircle className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
                   {rec}
                 </li>
@@ -384,17 +390,20 @@ export const LivestockIntelligence: React.FC = () => {
                 </p>
               </div>
 
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-green-400 transition-colors">
+              <label className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-green-400 transition-colors w-full block cursor-pointer">
                 <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h4 className="text-lg font-medium text-gray-900 mb-2">Drop your images here</h4>
                 <p className="text-gray-600 mb-4">or click to browse files</p>
-                <Button className="bg-green-600 hover:bg-green-700">
-                  Choose Files
-                </Button>
+                <input type="file" className="hidden" />
+                <div className="inline-block">
+                  <Button className="bg-green-600 hover:bg-green-700 pointer-events-none">
+                    Choose Files
+                  </Button>
+                </div>
                 <p className="text-xs text-gray-500 mt-4">
                   Supports JPG, PNG, WebP up to 10MB each. Best results with clear, well-lit photos.
                 </p>
-              </div>
+              </label>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-blue-50 p-4 rounded-lg">
@@ -437,8 +446,8 @@ export const LivestockIntelligence: React.FC = () => {
                   { title: 'Health Assessment Summary', date: '2025-09-15', type: 'PDF', size: '1.8 MB' },
                   { title: 'Market Value Analysis', date: '2025-09-20', type: 'Excel', size: '890 KB' },
                   { title: 'Compliance Checklist', date: '2025-09-22', type: 'PDF', size: '1.2 MB' },
-                ].map((report, index) => (
-                  <Card key={index}>
+                ].map((report) => (
+                  <Card key={report.title}>
                     <CardContent className="pt-6">
                       <div className="flex items-start justify-between mb-3">
                         <div>

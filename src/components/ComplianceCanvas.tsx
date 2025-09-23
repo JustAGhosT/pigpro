@@ -283,6 +283,108 @@ const SAMPLE_SOPS: ComplianceSOP[] = [
   }
 ];
 
+const PermitCard: React.FC<{ permit: CompliancePermit }> = ({ permit }) => (
+  <Card className="p-6">
+    <div className="flex items-start justify-between mb-4">
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">{permit.name}</h3>
+        <div className="flex flex-wrap gap-2 mb-3">
+          {permit.applies_to.map((animal) => {
+            const animalData = LIVESTOCK_TYPES.find(t => t.id === animal);
+            return (
+              <Badge key={animal} className={animalData?.color || 'bg-gray-100 text-gray-800'}>
+                {animalData?.label}
+              </Badge>
+            );
+          })}
+          <Badge className={
+            permit.compliance_level === 'mandatory' ? 'bg-red-100 text-red-800' :
+            permit.compliance_level === 'recommended' ? 'bg-yellow-100 text-yellow-800' :
+            'bg-blue-100 text-blue-800'
+          }>
+            {permit.compliance_level}
+          </Badge>
+        </div>
+        <p className="text-gray-600 text-sm mb-3">
+          <strong>Applies to:</strong> {permit.who}
+        </p>
+        <p className="text-gray-700">{permit.core}</p>
+      </div>
+      <div className="flex gap-2">
+        {permit.compliance_level === 'mandatory' && (
+          <AlertTriangle className="h-5 w-5 text-red-500" />
+        )}
+        <CheckCircle className="h-5 w-5 text-green-500" />
+      </div>
+    </div>
+    <div className="border-t pt-4">
+      <div className="grid md:grid-cols-2 gap-4 text-sm">
+        <div>
+          <strong className="text-gray-900">Issuing Authority:</strong>
+          <p className="text-gray-600">{permit.issuing_authority}</p>
+        </div>
+        <div>
+          <strong className="text-gray-900">Required Documents:</strong>
+          <p className="text-gray-600">{permit.docs}</p>
+        </div>
+      </div>
+    </div>
+  </Card>
+);
+
+const SopCard: React.FC<{ sop: ComplianceSOP }> = ({ sop }) => (
+  <Card className="p-6">
+    <div className="flex items-start justify-between mb-4">
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">{sop.title}</h3>
+        <div className="flex flex-wrap gap-2 mb-3">
+          {sop.animal_types.map((animal) => {
+            const animalData = LIVESTOCK_TYPES.find(t => t.id === animal);
+            return (
+              <Badge key={animal} className={animalData?.color || 'bg-gray-100 text-gray-800'}>
+                {animalData?.label}
+              </Badge>
+            );
+          })}
+          <Badge className="bg-purple-100 text-purple-800">
+            {sop.category}
+          </Badge>
+        </div>
+        <p className="text-gray-700 mb-4">{sop.description}</p>
+      </div>
+      <FileText className="h-5 w-5 text-blue-500" />
+    </div>
+
+    <div className="grid md:grid-cols-2 gap-6">
+      <div>
+        <h4 className="font-medium text-gray-900 mb-2">Key Steps:</h4>
+        <ul className="space-y-1 text-sm text-gray-600">
+          {sop.steps.map((step, index) => (
+            <li key={`step-${index}`} className="flex items-start gap-2">
+              <span className="w-5 h-5 bg-green-100 text-green-600 rounded-full text-xs flex items-center justify-center mt-0.5 flex-shrink-0">
+                {index + 1}
+              </span>
+              {step}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h4 className="font-medium text-gray-900 mb-2">Requirements:</h4>
+        <ul className="space-y-1 text-sm text-gray-600">
+          {sop.requirements.map((req, index) => (
+            <li key={`req-${index}`} className="flex items-start gap-2">
+              <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+              {req}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </Card>
+);
+
 export const ComplianceCanvas: React.FC = () => {
   const [selectedStrategy, setSelectedStrategy] = useState<'forward-looking' | 'conservative'>('conservative');
   const [selectedAnimals, setSelectedAnimals] = useState<string[]>([]);
@@ -484,52 +586,7 @@ export const ComplianceCanvas: React.FC = () => {
             {activeTab === 'permits' ? (
               <div className="space-y-4">
                 {filteredPermits.map((permit) => (
-                  <Card key={permit.id} className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{permit.name}</h3>
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          {permit.applies_to.map((animal) => {
-                            const animalData = LIVESTOCK_TYPES.find(t => t.id === animal);
-                            return (
-                              <Badge key={animal} className={animalData?.color || 'bg-gray-100 text-gray-800'}>
-                                {animalData?.label}
-                              </Badge>
-                            );
-                          })}
-                          <Badge className={
-                            permit.compliance_level === 'mandatory' ? 'bg-red-100 text-red-800' :
-                            permit.compliance_level === 'recommended' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-blue-100 text-blue-800'
-                          }>
-                            {permit.compliance_level}
-                          </Badge>
-                        </div>
-                        <p className="text-gray-600 text-sm mb-3">
-                          <strong>Applies to:</strong> {permit.who}
-                        </p>
-                        <p className="text-gray-700">{permit.core}</p>
-                      </div>
-                      <div className="flex gap-2">
-                        {permit.compliance_level === 'mandatory' && (
-                          <AlertTriangle className="h-5 w-5 text-red-500" />
-                        )}
-                        <CheckCircle className="h-5 w-5 text-green-500" />
-                      </div>
-                    </div>
-                    <div className="border-t pt-4">
-                      <div className="grid md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <strong className="text-gray-900">Issuing Authority:</strong>
-                          <p className="text-gray-600">{permit.issuing_authority}</p>
-                        </div>
-                        <div>
-                          <strong className="text-gray-900">Required Documents:</strong>
-                          <p className="text-gray-600">{permit.docs}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
+                  <PermitCard key={permit.id} permit={permit} />
                 ))}
                 {filteredPermits.length === 0 && (
                   <div className="text-center py-8">
@@ -540,56 +597,7 @@ export const ComplianceCanvas: React.FC = () => {
             ) : (
               <div className="space-y-4">
                 {filteredSOPs.map((sop) => (
-                  <Card key={sop.id} className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{sop.title}</h3>
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          {sop.animal_types.map((animal) => {
-                            const animalData = LIVESTOCK_TYPES.find(t => t.id === animal);
-                            return (
-                              <Badge key={animal} className={animalData?.color || 'bg-gray-100 text-gray-800'}>
-                                {animalData?.label}
-                              </Badge>
-                            );
-                          })}
-                          <Badge className="bg-purple-100 text-purple-800">
-                            {sop.category}
-                          </Badge>
-                        </div>
-                        <p className="text-gray-700 mb-4">{sop.description}</p>
-                      </div>
-                      <FileText className="h-5 w-5 text-blue-500" />
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div>
-                        <h4 className="font-medium text-gray-900 mb-2">Key Steps:</h4>
-                        <ul className="space-y-1 text-sm text-gray-600">
-                          {sop.steps.map((step, index) => (
-                            <li key={index} className="flex items-start gap-2">
-                              <span className="w-5 h-5 bg-green-100 text-green-600 rounded-full text-xs flex items-center justify-center mt-0.5 flex-shrink-0">
-                                {index + 1}
-                              </span>
-                              {step}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      <div>
-                        <h4 className="font-medium text-gray-900 mb-2">Requirements:</h4>
-                        <ul className="space-y-1 text-sm text-gray-600">
-                          {sop.requirements.map((req, index) => (
-                            <li key={index} className="flex items-start gap-2">
-                              <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                              {req}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </Card>
+                  <SopCard key={sop.id} sop={sop} />
                 ))}
                 {filteredSOPs.length === 0 && (
                   <div className="text-center py-8">
