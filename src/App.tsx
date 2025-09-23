@@ -10,6 +10,7 @@ import { Resources } from './components/Resources';
 import { News } from './components/News';
 import { LandingPage } from './components/LandingPage';
 import { AuthModal } from './components/AuthModal';
+import { ComplianceCanvas } from './components/ComplianceCanvas';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -49,6 +50,8 @@ function App() {
         return <Resources />;
       case 'news':
         return <News />;
+      case 'compliance':
+        return <ComplianceCanvas />;
       case 'settings':
         return (
           <div className="space-y-6">

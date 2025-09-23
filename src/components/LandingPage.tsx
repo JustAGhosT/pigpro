@@ -61,9 +61,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onSignIn
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-green-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">P</span>
+                <span className="text-white font-bold text-lg">L</span>
               </div>
-              <span className="text-xl font-bold text-gray-900">Poultry Club SA</span>
+              <span className="text-xl font-bold text-gray-900">Livestock Club SA</span>
             </div>
             <div className="flex items-center space-x-4">
               <button 
@@ -90,12 +90,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onSignIn
             <div>
               <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
                 Welcome to the
-                <span className="text-green-700 block">Poultry Club</span>
+                <span className="text-green-700 block">Livestock Club</span>
                 South Africa
               </h1>
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Dedicated to promoting and encouraging show poultry in Southern Africa.
-                Join our community of passionate breeders and enthusiasts preserving heritage breeds.
+                Dedicated to promoting excellence in livestock breeding across South Africa.
+                Join our community of passionate breeders raising chickens, pigs, goats, rabbits, and more.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
@@ -135,7 +135,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onSignIn
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Category:</span>
-                      <span className="font-medium text-green-600">Chicken</span>
+                      <span className="font-medium text-green-600">Poultry</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Origin:</span>
@@ -160,11 +160,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onSignIn
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Everything You Need for Show Poultry Excellence
+              Everything You Need for Livestock Excellence
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              From comprehensive breed information to event management and community networking,
-              Poultry Club SA provides all the resources you need for successful poultry breeding.
+              From comprehensive breed information to compliance management and community networking,
+              Livestock Club SA provides all the resources you need for successful livestock operations.
             </p>
           </div>
 
@@ -172,12 +172,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onSignIn
             <FeatureCard
               icon={<Award className="h-6 w-6 text-green-700" />}
               title="Breed Encyclopedia"
-              description="Comprehensive database of poultry breeds with detailed characteristics, standards, and imagery."
+              description="Comprehensive database of livestock breeds including chickens, pigs, goats, and rabbits with detailed characteristics and standards."
             />
             <FeatureCard
               icon={<TrendingUp className="h-6 w-6 text-green-700" />}
-              title="Show Calendar"
-              description="Stay updated on upcoming poultry shows, competitions, and club events across South Africa."
+              title="Event Calendar"
+              description="Stay updated on upcoming livestock shows, competitions, and club events across South Africa."
             />
             <FeatureCard
               icon={<Users className="h-6 w-6 text-green-700" />}
@@ -191,13 +191,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onSignIn
             />
             <FeatureCard
               icon={<CheckCircle className="h-6 w-6 text-green-700" />}
-              title="Standards Compliance"
-              description="Ensure your birds meet official breed standards with detailed guidelines and requirements."
+              title="Regulatory Compliance"
+              description="Navigate complex livestock regulations with our comprehensive compliance framework and guidance system."
             />
             <FeatureCard
               icon={<Star className="h-6 w-6 text-green-700" />}
               title="Expert Guidance"
-              description="Get advice from experienced judges and breeders to improve your breeding program."
+              description="Get advice from experienced judges and breeders to improve your breeding program and ensure compliance."
             />
           </div>
         </div>
@@ -208,10 +208,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onSignIn
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Trusted by South African Poultry Enthusiasts
+              Trusted by South African Livestock Enthusiasts
             </h2>
             <p className="text-xl text-gray-600">
-              See what our members say about the Poultry Club SA community
+              See what our members say about the Livestock Club SA community
             </p>
           </div>
 
@@ -245,7 +245,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onSignIn
             Ready to Join Our Community?
           </h2>
           <p className="text-xl text-green-100 mb-8">
-            Join hundreds of South African poultry enthusiasts who are passionate about preserving and promoting show poultry.
+            Join hundreds of South African livestock enthusiasts who are passionate about excellence in livestock breeding and compliance.
           </p>
           <button
             onClick={onGetStarted}
@@ -267,12 +267,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onSignIn
             <div>
               <div className="flex items-center space-x-3 mb-4">
                 <div className="w-8 h-8 bg-green-700 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold">P</span>
+                  <span className="text-white font-bold">L</span>
                 </div>
-                <span className="text-lg font-bold">Poultry Club SA</span>
+                <span className="text-lg font-bold">Livestock Club SA</span>
               </div>
               <p className="text-gray-400">
-                Dedicated to promoting and encouraging show poultry in Southern Africa.
+                Dedicated to promoting excellence in livestock breeding and regulatory compliance across Southern Africa.
               </p>
             </div>
             <div>
@@ -301,7 +301,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onSignIn
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Poultry Club South Africa. All rights reserved.</p>
+            <p>&copy; 2024 Livestock Club South Africa. All rights reserved.</p>
           </div>
         </div>
       </footer>
