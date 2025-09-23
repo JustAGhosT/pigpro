@@ -20,6 +20,51 @@ export interface PoultryBreed {
   };
 }
 
+export interface Breed {
+  id: string;
+  name: string;
+  origin: string;
+  category: 'chicken' | 'duck' | 'goose' | 'turkey' | 'guinea-fowl' | 'pigeon' | 'pig' | 'goat' | 'rabbit';
+  description: string;
+  traits: string[];
+  weight: {
+    male: string;
+    female: string;
+  };
+  eggProduction?: string;
+  milkProduction?: string;
+  temperament: string;
+  rating: number;
+  contributors: number;
+  imageUrl: string;
+  compliance: {
+    ndImmunisation?: boolean;
+    pdmaRequirements?: string[];
+    exportConsiderations?: string[];
+  };
+  intelligence: {
+    breedingPotential: number;
+    marketDemand: 'high' | 'medium' | 'low';
+    adaptability: number;
+    maintenanceLevel: 'low' | 'medium' | 'high';
+  };
+  commonHealthConcerns?: string[];
+}
+
+export interface Stat {
+  title: string;
+  value: string;
+  change: string;
+  trend: 'up' | 'down';
+}
+
+export interface Task {
+  title: string;
+  description: string;
+  priority: 'high' | 'medium' | 'low';
+  dueDate: string;
+}
+
 export interface Member {
   id: string;
   firstName: string;

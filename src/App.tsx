@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
-import { Dashboard } from './components/Dashboard';
-import { BreedEncyclopedia } from './components/BreedEncyclopedia';
-import { Events } from './components/Events';
-import { Members } from './components/Members';
-import { Community } from './components/Community';
-import { Resources } from './components/Resources';
-import { News } from './components/News';
 import { LandingPage } from './components/LandingPage';
 import { AuthModal } from './components/AuthModal';
-import { ComplianceCanvas } from './components/ComplianceCanvas';
-import { LivestockIntelligence } from './components/LivestockIntelligence';
+import { MainContent } from './components/MainContent';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -33,44 +25,6 @@ function App() {
   const handleAuthenticated = () => {
     setIsAuthenticated(true);
     setShowAuthModal(false);
-  };
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'dashboard':
-        return <Dashboard />;
-      case 'breeds':
-        return <BreedEncyclopedia />;
-      case 'events':
-        return <Events />;
-      case 'members':
-        return <Members />;
-      case 'community':
-        return <Community />;
-      case 'resources':
-        return <Resources />;
-      case 'news':
-        return <News />;
-      case 'compliance':
-        return <ComplianceCanvas />;
-      case 'intelligence':
-        return <LivestockIntelligence />;
-      case 'settings':
-        return (
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-              <p className="text-gray-600 mt-1">Manage your account and preferences</p>
-            </div>
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Settings</h3>
-              <p className="text-gray-600">Settings panel coming soon...</p>
-            </div>
-          </div>
-        );
-      default:
-        return <Dashboard />;
-    }
   };
 
   if (!isAuthenticated) {
@@ -104,7 +58,7 @@ function App() {
         
         <main className="flex-1 p-6 md:ml-64">
           <div className="max-w-7xl mx-auto">
-            {renderContent()}
+            <MainContent activeTab={activeTab} />
           </div>
         </main>
       </div>
