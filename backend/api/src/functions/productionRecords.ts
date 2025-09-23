@@ -27,10 +27,10 @@ export async function createProductionRecord(request: HttpRequest, context: Invo
     context.log(`Http function processed request for url "${request.url}"`);
 
     try {
-        const newRecordData = await request.json() as Omit<ProductionRecord, 'id' | 'created_at'>;
+        const newRecordData = await request.json() as Partial<ProductionRecord>;
 
         // Basic validation
-        if (!newRecordData || !newRecordData.species_id || !newRecordData.event_type || !newRecordData.date) {
+        if (newRecordData?.species_id == null || newRecordData?.event_type == null || newRecordData?.date == null) {
             return {
                 status: 400,
                 jsonBody: { error: "Missing required fields: species_id, event_type, date are required." }
