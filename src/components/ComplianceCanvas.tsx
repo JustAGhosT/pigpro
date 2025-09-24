@@ -14,6 +14,7 @@ import {
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
+import { AnimalBadges } from './AnimalBadges';
 
 interface CompliancePermit {
   id: string;
@@ -289,14 +290,7 @@ const PermitCard: React.FC<{ permit: CompliancePermit }> = ({ permit }) => (
       <div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">{permit.name}</h3>
         <div className="flex flex-wrap gap-2 mb-3">
-          {permit.applies_to.map((animal) => {
-            const animalData = LIVESTOCK_TYPES.find(t => t.id === animal);
-            return (
-              <Badge key={animal} className={animalData?.color || 'bg-gray-100 text-gray-800'}>
-                {animalData?.label}
-              </Badge>
-            );
-          })}
+          <AnimalBadges animalIds={permit.applies_to} />
           <Badge className={(() => {
             switch (permit.compliance_level) {
               case 'mandatory':
@@ -343,14 +337,7 @@ const SopCard: React.FC<{ sop: ComplianceSOP }> = ({ sop }) => (
       <div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">{sop.title}</h3>
         <div className="flex flex-wrap gap-2 mb-3">
-          {sop.animal_types.map((animal) => {
-            const animalData = LIVESTOCK_TYPES.find(t => t.id === animal);
-            return (
-              <Badge key={animal} className={animalData?.color || 'bg-gray-100 text-gray-800'}>
-                {animalData?.label}
-              </Badge>
-            );
-          })}
+          <AnimalBadges animalIds={sop.animal_types} />
           <Badge className="bg-purple-100 text-purple-800">
             {sop.category}
           </Badge>
@@ -390,6 +377,48 @@ const SopCard: React.FC<{ sop: ComplianceSOP }> = ({ sop }) => (
   </Card>
 );
 
+const filterPermits = (
+  permits: CompliancePermit[],
+  selectedStrategy: 'forward-looking' | 'conservative',
+  selectedAnimals: string[],
+  selectedActivities: string[],
+  searchTerm: string
+) => {
+  return permits.filter(permit => {
+    const matchesStrategy = permit.category === selectedStrategy;
+    const matchesAnimals =
+      selectedAnimals.length === 0 ||
+      permit.applies_to.some(animal => selectedAnimals.includes(animal));
+    const matchesActivities =
+      selectedActivities.length === 0 ||
+      permit.activity.some(activity => selectedActivities.includes(activity));
+    const matchesSearch =
+      searchTerm === '' ||
+      permit.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      permit.core.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return matchesStrategy && matchesAnimals && matchesActivities && matchesSearch;
+  });
+};
+
+const filterSOPs = (
+  sops: ComplianceSOP[],
+  selectedAnimals: string[],
+  searchTerm: string
+) => {
+  return sops.filter(sop => {
+    const matchesAnimals =
+      selectedAnimals.length === 0 ||
+      sop.animal_types.some(animal => selectedAnimals.includes(animal));
+    const matchesSearch =
+      searchTerm === '' ||
+      sop.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      sop.description.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return matchesAnimals && matchesSearch;
+  });
+};
+
 export const ComplianceCanvas: React.FC = () => {
   const [selectedStrategy, setSelectedStrategy] = useState<'forward-looking' | 'conservative'>('conservative');
   const [selectedAnimals, setSelectedAnimals] = useState<string[]>([]);
@@ -397,32 +426,22 @@ export const ComplianceCanvas: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState<'permits' | 'sops'>('permits');
 
-  const filteredPermits = useMemo(() => {
-    return SAMPLE_PERMITS.filter(permit => {
-      const matchesStrategy = permit.category === selectedStrategy;
-      const matchesAnimals = selectedAnimals.length === 0 ||
-        permit.applies_to.some(animal => selectedAnimals.includes(animal));
-      const matchesActivities = selectedActivities.length === 0 ||
-        permit.activity.some(activity => selectedActivities.includes(activity));
-      const matchesSearch = searchTerm === '' ||
-        permit.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        permit.core.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredPermits = useMemo(
+    () =>
+      filterPermits(
+        SAMPLE_PERMITS,
+        selectedStrategy,
+        selectedAnimals,
+        selectedActivities,
+        searchTerm
+      ),
+    [selectedStrategy, selectedAnimals, selectedActivities, searchTerm]
+  );
 
-      return matchesStrategy && matchesAnimals && matchesActivities && matchesSearch;
-    });
-  }, [selectedStrategy, selectedAnimals, selectedActivities, searchTerm]);
-
-  const filteredSOPs = useMemo(() => {
-    return SAMPLE_SOPS.filter(sop => {
-      const matchesAnimals = selectedAnimals.length === 0 ||
-        sop.animal_types.some(animal => selectedAnimals.includes(animal));
-      const matchesSearch = searchTerm === '' ||
-        sop.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        sop.description.toLowerCase().includes(searchTerm.toLowerCase());
-
-      return matchesAnimals && matchesSearch;
-    });
-  }, [selectedAnimals, searchTerm]);
+  const filteredSOPs = useMemo(
+    () => filterSOPs(SAMPLE_SOPS, selectedAnimals, searchTerm),
+    [selectedAnimals, searchTerm]
+  );
 
   const handleAnimalToggle = (animalId: string) => {
     setSelectedAnimals(prev =>
