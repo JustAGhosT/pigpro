@@ -1,77 +1,98 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import { randomUUID } from "node:crypto";
-import { reportJobsDb } from "../lib/inMemoryDb";
-import { ReportJob } from "../types/domain";
+import { query } from "../lib/db/client";
+import { getUserTier } from "../lib/auth";
 
 // POST /api/v1/reports/investor
-export async function createInvestorReport(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
+export async function generateInvestorReport(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
-
     try {
-        const params = await request.json();
+        const userTier = getUserTier();
+        if (userTier === 'free') {
+            return { status: 403, jsonBody: { error: "Investor reports are a premium feature. Please upgrade." } };
+        }
 
-        const newJob: ReportJob = {
-            id: randomUUID(),
-            type: 'investor_pdf',
-            status: 'pending',
-            params_json: JSON.stringify(params),
-            requested_by: 'user-1', // In a real app, this would come from auth
-            created_at: new Date(),
-        };
+        const params = await request.json().catch(() => ({})); // Allow empty body
 
-        reportJobsDb.push(newJob);
-
-        // In a real app, this would trigger a background worker.
-        // We'll simulate a delay and then update the job status.
-        setTimeout(() => {
-            const jobIndex = reportJobsDb.findIndex(j => j.id === newJob.id);
-            if (jobIndex !== -1) {
-                reportJobsDb[jobIndex].status = 'completed';
-                reportJobsDb[jobIndex].uri = `/reports/investor-report-${newJob.id}.pdf`;
-                context.log(`Report job ${newJob.id} completed.`);
-            }
-        }, 10000); // Simulate a 10-second report generation time
+        // Create a job record in the database
+        const jobResult = await query(
+            `INSERT INTO report_jobs (type, status, params_json) VALUES ('investor_report', 'pending', $1) RETURNING id`,
+            [params]
+        );
+        const jobId = jobResult.rows[0].id;
 
         return {
             status: 202, // Accepted
-            jsonBody: { jobId: newJob.id, message: "Report generation started." }
+            jsonBody: {
+                message: "Report generation job accepted. Poll the job status endpoint for progress.",
+                jobId: jobId,
+            }
         };
-
     } catch (error) {
-        context.log('Error creating investor report job:', error);
+        context.log('Error creating report job:', error);
         return { status: 500, body: "Internal Server Error" };
     }
 }
 
-// GET /api/v1/jobs/{id}
-export async function getJobStatus(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
+// GET /api/v1/reports/p-and-l
+export async function getPLReport(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
-    const jobId = request.params.id;
+    try {
+        const { from, to } = request.query;
+        if (!from || !to) {
+            return { status: 400, jsonBody: { error: "'from' and 'to' date query parameters are required." } };
+        }
 
-    if (!jobId) {
-        return { status: 400, jsonBody: { error: "Job ID is required in the URL." } };
+        const queryStr = `
+            SELECT
+                c.name as "categoryName",
+                tx.type,
+                SUM(tx.base_amount_cached) as "total"
+            FROM financial_transactions tx
+            JOIN categories c ON tx.category_id = c.id
+            WHERE tx.date >= $1 AND tx.date <= $2
+            GROUP BY c.name, tx.type;
+        `;
+        const result = await query(queryStr, [from, to]);
+
+        const incomeByCategory: Record<string, number> = {};
+        const expenseByCategory: Record<string, number> = {};
+        let totalIncome = 0;
+        let totalExpense = 0;
+
+        result.rows.forEach(row => {
+            const amount = parseFloat(row.total);
+            if (row.type === 'income') {
+                incomeByCategory[row.categoryName] = amount;
+                totalIncome += amount;
+            } else {
+                expenseByCategory[row.categoryName] = amount;
+                totalExpense += amount;
+            }
+        });
+
+        const report = {
+            period: { from, to },
+            income: { total: totalIncome, byCategory: incomeByCategory },
+            expense: { total: totalExpense, byCategory: expenseByCategory },
+            netProfit: totalIncome - totalExpense,
+        };
+        return { jsonBody: report };
+    } catch (error) {
+        context.log('Error generating P&L report:', error);
+        return { status: 500, body: "Internal Server Error" };
     }
-
-    const job = reportJobsDb.find(j => j.id === jobId);
-
-    if (!job) {
-        return { status: 404, jsonBody: { error: "Job not found." } };
-    }
-
-    return { jsonBody: job };
 }
 
-
-app.http('createInvestorReport', {
+app.http('generateInvestorReport', {
     methods: ['POST'],
-    route: 'api/v1/reports/investor',
+    route: 'v1/reports/investor',
     authLevel: 'anonymous',
-    handler: createInvestorReport
+    handler: generateInvestorReport
 });
 
-app.http('getJobStatus', {
+app.http('getPLReport', {
     methods: ['GET'],
-    route: 'api/v1/jobs/{id}',
+    route: 'v1/reports/p-and-l',
     authLevel: 'anonymous',
-    handler: getJobStatus
+    handler: getPLReport
 });

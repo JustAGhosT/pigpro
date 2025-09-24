@@ -12,8 +12,7 @@ import {
   Brain,
   X,
   LeafyGreen,
-  ClipboardList,
-  DollarSign
+  TrendingUp, // New Icon
 } from 'lucide-react';
 import { LIVESTOCK_DATA } from '@/lib/livestock-data';
 
@@ -32,8 +31,7 @@ const hasDairyAnimals = () => {
 
 const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: Home },
-  { id: 'production', label: 'Production', icon: ClipboardList },
-  { id: 'financials', label: 'Financials', icon: DollarSign },
+  { id: 'prod-econ', label: 'Prod & Econ', icon: TrendingUp },
   { id: 'breeds', label: 'Breed Database', icon: BookOpen },
   ...(hasDairyAnimals() ? [{ id: 'dairy', label: 'Dairy & Cheese', icon: LeafyGreen }] : []),
   { id: 'intelligence', label: 'Livestock Intelligence', icon: Brain },
