@@ -7,10 +7,9 @@ import { Resources } from './Resources';
 import { News } from './News';
 import { ComplianceCanvas } from './ComplianceCanvas';
 import { LivestockIntelligence } from './LivestockIntelligence';
-import { ProductionPage } from './production/ProductionPage';
 import { DairyCheeseManagement } from './dairy/DairyCheeseManagement';
-import { FinancialsPage } from './financials/FinancialsPage';
 import { DashboardPage } from './dashboard/DashboardPage';
+import ProductionEconomicsPage from './production-economics/ProductionEconomicsPage';
 
 interface MainContentProps {
   activeTab: string;
@@ -20,10 +19,8 @@ export const MainContent: React.FC<MainContentProps> = ({ activeTab }) => {
   switch (activeTab) {
     case 'dashboard':
       return <DashboardPage />;
-    case 'production':
-      return <ProductionPage />;
-    case 'financials':
-      return <FinancialsPage />;
+    case 'prod-econ':
+      return <ProductionEconomicsPage />;
     case 'breeds':
       return <BreedEncyclopedia />;
     case 'events':

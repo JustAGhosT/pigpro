@@ -1,6 +1,3 @@
-// NOTE: These types are copied from the backend's domain.ts file.
-// In a real-world monorepo, these would be in a shared package.
-
 export interface Species {
   id: string;
   name: string;
@@ -13,7 +10,7 @@ export interface Group {
   id: string;
   name: string;
   species_id: string;
-  location_id: string;
+  location_id: string; // Assuming location is managed elsewhere
   tags: string[];
   active: boolean;
 }
@@ -29,7 +26,19 @@ export interface Animal {
   tags: string[];
 }
 
-export type ProductionEvent = 'birth' | 'death' | 'weight' | 'egg_count' | 'milk_volume' | 'sale' | 'purchase' | 'feed_intake' | 'cull' | 'treatment' | 'transfer' | 'grazing_move';
+export type ProductionEvent =
+  | 'birth'
+  | 'death'
+  | 'weight'
+  | 'egg_count'
+  | 'milk_volume'
+  | 'sale'
+  | 'purchase'
+  | 'feed_intake'
+  | 'cull'
+  | 'treatment'
+  | 'transfer'
+  | 'grazing_move';
 
 export interface ProductionRecord {
   id: string;
@@ -38,7 +47,7 @@ export interface ProductionRecord {
   group_id?: string;
   event_type: ProductionEvent;
   event_subtype?: string;
-  date: string; // Using string for date to simplify form handling
+  date: string;
   quantity?: number;
   unit?: string;
   weight_value?: number;
@@ -47,14 +56,14 @@ export interface ProductionRecord {
   milk_volume?: number;
   milk_unit?: 'L' | 'gal';
   notes?: string;
-  attachments: string[]; // URLs to attachments
+  attachments: string[]; // URLs
   source: {
     imported: boolean;
     origin?: string;
     file_id?: string;
   };
   created_by: string; // User ID
-  created_at: string; // Using string for date
+  created_at: string;
 }
 
 export interface FinancialTransaction {
@@ -70,21 +79,52 @@ export interface FinancialTransaction {
   date: string;
   vendor_or_buyer?: string;
   memo?: string;
-  attachments: string[];
-  created_by: string;
+  attachments: string[]; // URLs
+  created_by: string; // User ID
   created_at: string;
 }
 
 export interface Category {
-  id:string;
+  id: string;
   name: string;
   type: 'income' | 'expense';
   parent_id?: string;
   is_active: boolean;
 }
 
-export interface KpiData {
-  totalRevenue: number;
-  totalExpense: number;
-  grossMargin: number;
+export interface FxRate {
+  id: string;
+  date: string;
+  currency: string;
+  rate_to_base: number;
+}
+
+export interface AnalyticsSnapshot {
+  id:string;
+  period_start: string;
+  period_end: string;
+  species_id?: string;
+  group_id?: string;
+  kpis: {
+    adg?: number;
+    mortality?: number;
+    egg_per_hen_day?: number;
+    litter_size?: number;
+    milk_per_animal?: number;
+    revenue: number;
+    expense: number;
+    profit: number;
+    profit_per_unit?: number;
+  };
+  generated_at: string;
+}
+
+export interface ReportJob {
+  id: string;
+  type: 'investor_pdf' | 'csv_export';
+  params_json: string;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  uri?: string; // URL to the generated report
+  requested_by: string; // User ID
+  created_at: string;
 }
