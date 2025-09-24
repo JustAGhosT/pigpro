@@ -1,6 +1,5 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { query } from "../lib/db/client";
-import { Group } from "@my-farm/domain";
 import { getUserTier, checkTierLimit, FREE_TIER_LIMITS } from "../lib/auth";
 
 // GET /api/v1/groups
@@ -29,12 +28,12 @@ export async function createGroup(request: HttpRequest, context: InvocationConte
 
         // --- Tier Check ---
         const countResult = await query('SELECT COUNT(*) FROM groups');
-        const groupCount = parseInt(countResult.rows[0].count, 10);
+        const groupCount = Number.parseInt(countResult.rows[0].count, 10);
         if (!checkTierLimit(userTier, groupCount, FREE_TIER_LIMITS.groups)) {
             return { status: 403, jsonBody: { error: `Free tier limit of ${FREE_TIER_LIMITS.groups} groups reached. Please upgrade.` } };
         }
 
-        const { name, species_id, location_id, tags } = await request.json() as any;
+        const { name, species_id, location_id, tags } = await request.json();
         if (!name || !species_id) {
             return { status: 400, jsonBody: { error: "Name and species_id are required." } };
         }

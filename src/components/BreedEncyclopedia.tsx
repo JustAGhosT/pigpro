@@ -1,19 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Search, Star, Plus, Eye, Users, X } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
+import React, { useMemo, useState } from 'react';
+import { Search } from 'lucide-react';
+import { Card, CardContent } from './ui/card';
 import { Input } from './ui/input';
-import { Badge } from './ui/badge';
 import { breeds } from '../lib/data';
-import { Breed } from '../lib/types';
 import { BreedCard } from './BreedCard';
-import { BreedDetailModal } from './BreedDetailModal';
 
 /** ===== Flatten + Normalize LIVESTOCK_DATA ===== */
 function normalizeBreed(raw: any, livestockType: string, category: string, index: number): UIBreed {
   const id =
     (typeof raw?.id === 'string' && raw.id) ||
-    `${livestockType}-${category}-${(raw?.name ?? 'item').toString().toLowerCase().replace(/\s+/g, '-')}-${index}`;
+    `${livestockType}-${category}-${(raw?.name ?? 'item').toString().toLowerCase().replaceAll(/\s+/g, '-')}-${index}`;
 
   const characteristics: Characteristics | undefined =
     raw?.characteristics && typeof raw.characteristics === 'object'
@@ -50,23 +46,19 @@ export const BreedEncyclopedia: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLivestock, setSelectedLivestock] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  // eslint-disable-next-line no-unused-vars
-  const [sortBy, setSortBy] = useState('name');
-  // eslint-disable-next-line no-unused-vars
-  const [selectedOrigin, setSelectedOrigin] = useState('all');
-  // eslint-disable-next-line no-unused-vars
-  const [selectedTemperament, setSelectedTemperament] = useState('all');
-  // eslint-disable-next-line no-unused-vars
-  const [selectedTrait, setSelectedTrait] = useState('all');
+  const [sortBy] = useState('name');
+  const [selectedOrigin] = useState('all');
+  const [selectedTemperament] = useState('all');
+  const [selectedTrait] = useState('all');
   const [expandedBreed, setExpandedBreed] = useState<string | null>(null);
 
-  const { categories, origins, temperaments, allTraits } = useMemo(() => {
+  const { categories } = useMemo(() => {
     const categories = ['all', ...Array.from(new Set(breeds.map(b => b.category)))];
-    const origins = ['all', ...Array.from(new Set(breeds.map(b => b.origin)))];
-    const temperaments = ['all', ...Array.from(new Set(breeds.map(b => b.temperament)))];
-    const allTraits = ['all', ...Array.from(new Set(breeds.flatMap(b => b.traits)))];
-    return { categories, origins, temperaments, allTraits };
-  }, [breeds]);
+    ['all', ...Array.from(new Set(breeds.map(b => b.origin)))];
+    ['all', ...Array.from(new Set(breeds.map(b => b.temperament)))];
+    ['all', ...Array.from(new Set(breeds.flatMap(b => b.traits)))];
+    return { categories };
+  }, []);
   const livestockTypes = useMemo(() => ['all', ...Array.from(new Set(breeds.map(b => b.livestockType)))], []);
 
   const filteredBreeds = useMemo(() => {

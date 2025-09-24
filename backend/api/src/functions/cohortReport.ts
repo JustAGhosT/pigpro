@@ -36,11 +36,11 @@ export async function getCohortReport(request: HttpRequest, context: InvocationC
         // --- Calculate cohort-level KPIs ---
         const totalCost = finResult.rows
             .filter(t => t.type === 'expense')
-            .reduce((sum, t) => sum + parseFloat(t.base_amount_cached), 0);
+            .reduce((sum, t) => sum + Number.parseFloat(t.base_amount_cached), 0);
 
         const totalRevenue = finResult.rows
             .filter(t => t.type === 'income')
-            .reduce((sum, t) => sum + parseFloat(t.base_amount_cached), 0);
+            .reduce((sum, t) => sum + Number.parseFloat(t.base_amount_cached), 0);
 
         const cohortSummary = {
             groupName: group.name,

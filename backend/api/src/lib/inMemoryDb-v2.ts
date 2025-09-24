@@ -46,7 +46,7 @@ export const categoriesDb: Category[] = [
 ];
 
 export const fxRatesDb: FxRate[] = [
-    { id: randomUUID(), date: new Date().toISOString(), currency: 'USD', rate_to_base: 1.0 },
+    { id: randomUUID(), date: new Date().toISOString(), currency: 'USD', rate_to_base: 1 },
     { id: randomUUID(), date: new Date().toISOString(), currency: 'EUR', rate_to_base: 1.1 },
     { id: randomUUID(), date: new Date().toISOString(), currency: 'ZAR', rate_to_base: 0.065 },
 ];

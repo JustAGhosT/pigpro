@@ -1,6 +1,5 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -38,7 +37,7 @@ export const AddRecordForm: React.FC = () => {
   const [formData, setFormData] = useState<any>({});
 
   // Data states for dropdowns
-  const [species, setSpecies] = useState<Species[]>([]);
+  const [, setSpecies] = useState<Species[]>([]);
   const [groups, setGroups] = useState<Group[]>([]);
   const [animals, setAnimals] = useState<Animal[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -126,11 +125,10 @@ export const AddRecordForm: React.FC = () => {
       setShowForm(false);
       setSelectedEventTypeInfo(null);
       setFormData({});
-      // TODO: Add a success toast/notification
-      // TODO: Trigger a refetch of the data on the page
+      // TODO: Implement a notification system to show success/error messages
     } catch (error) {
       console.error('Submission failed:', error);
-      // TODO: Add an error toast/notification
+      // TODO: Implement a notification system to show success/error messages
     } finally {
       setIsSubmitting(false);
     }

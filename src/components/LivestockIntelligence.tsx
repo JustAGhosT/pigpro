@@ -392,11 +392,10 @@ export const LivestockIntelligence: React.FC = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as 'analysis' | 'upload' | 'reports' | 'compliance' | 'breeding')}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
-                    activeTab === tab.id
-                      ? 'border-green-500 text-green-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${activeTab === tab.id
+                    ? 'border-green-500 text-green-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
                 >
                   <Icon className="h-4 w-4" />
                   {tab.label}
@@ -596,11 +595,15 @@ export const LivestockIntelligence: React.FC = () => {
                             </div>
                             <div className="text-right">
                               <p className="font-semibold text-green-600">
-                                {
-                                  selectedBreedingGoal === 'Improve Breeding Potential' ? `${rec.breedingPotential}%` :
-                                  selectedBreedingGoal === 'Improve Health Score' ? `${rec.healthScore}%` :
-                                  `${rec.traits.find(t => t.name === selectedBreedingGoal.replace('Increase ', '').replace('Enhance ', ''))?.score || 0}%`
-                                }
+                                {(() => {
+                                  if (selectedBreedingGoal === 'Improve Breeding Potential') {
+                                    return `${rec.breedingPotential}%`;
+                                  } else if (selectedBreedingGoal === 'Improve Health Score') {
+                                    return `${rec.healthScore}%`;
+                                  } else {
+                                    return `${rec.traits.find(t => t.name === selectedBreedingGoal.replace('Increase ', '').replace('Enhance ', ''))?.score || 0}%`;
+                                  }
+                                })()}
                               </p>
                               <p className="text-xs text-gray-500">Match Score</p>
                             </div>

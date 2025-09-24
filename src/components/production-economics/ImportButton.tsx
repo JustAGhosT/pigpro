@@ -24,10 +24,10 @@ export const ImportButton: React.FC = () => {
           setJobId(null);
           alert('Import failed. Check server logs for details.');
         }
-      } catch (error) {
+      } catch (error: any) {
         clearInterval(interval);
         setIsImporting(false);
-        alert('Error checking import status.');
+        alert(`Error checking import status: ${error.message}`);
       }
     }, 3000); // Poll every 3 seconds
   };

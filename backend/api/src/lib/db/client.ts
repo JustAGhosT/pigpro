@@ -8,7 +8,7 @@ const pool = new Pool({
   user: process.env.PGUSER || 'user',
   password: process.env.PGPASSWORD || 'password',
   database: process.env.PGDATABASE || 'farmdb',
-  port: process.env.PGPORT ? parseInt(process.env.PGPORT, 10) : 5432,
+  port: process.env.PGPORT ? Number.parseInt(process.env.PGPORT, 10) : 5432,
 });
 
 pool.on('connect', () => {

@@ -2,7 +2,7 @@ import { app, InvocationContext, Timer } from "@azure/functions";
 import { query } from "../lib/db/client";
 import { fileContentStore } from "./imports"; // To get the CSV content
 import Papa from "papaparse";
-import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { PDFDocument, StandardFonts } from "pdf-lib";
 
 // This function simulates a background worker processing one job at a time.
 export async function processJobQueue(myTimer: Timer, context: InvocationContext): Promise<void> {
@@ -32,7 +32,7 @@ export async function processJobQueue(myTimer: Timer, context: InvocationContext
             const { data } = Papa.parse(csvString, { header: true, skipEmptyLines: true });
 
             // In a real transaction, you'd use a transaction block
-            for (const row of data as any[]) {
+            for (const _ of data as any[]) {
                 await query(
                     `INSERT INTO production_records (species_id, event_type, date, ...) VALUES (...)`,
                     // ...params
@@ -45,7 +45,7 @@ export async function processJobQueue(myTimer: Timer, context: InvocationContext
             const pdfDoc = await PDFDocument.create();
             const page = pdfDoc.addPage();
             page.drawText('This is your asynchronously generated report!', { x: 50, y: 700, font: await pdfDoc.embedFont(StandardFonts.Helvetica), size: 16 });
-            const pdfBytes = await pdfDoc.save();
+            await pdfDoc.save();
 
             // In a real app, you would upload `pdfBytes` to blob storage and get a URL.
             // Here, we'll just simulate it.

@@ -16,7 +16,7 @@ const ProductionEconomicsPage: React.FC = () => {
   const isGeneratingReport = !!reportJobId;
 
   const handleExport = (type: 'production' | 'financials') => {
-    window.location.href = `/api/v1/export/${type}.csv`;
+    globalThis.location.href = `/api/v1/export/${type}.csv`;
   };
 
   const pollReportJob = (id: string) => {
@@ -33,10 +33,10 @@ const ProductionEconomicsPage: React.FC = () => {
             setReportJobId(null);
             alert('Report generation failed.');
         }
-      } catch (e) {
+      } catch (e: any) {
         clearInterval(interval);
         setReportJobId(null);
-        alert('Error checking report status.');
+        alert(`Error checking report status: ${e.message}`);
       }
     }, 3000);
   };
