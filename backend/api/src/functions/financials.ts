@@ -1,6 +1,5 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { query } from "../lib/db/client";
-import { FinancialTransaction } from "@my-farm/domain";
 
 // GET /api/v1/financial-transactions
 export async function getFinancialTransactions(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
@@ -36,13 +35,13 @@ export async function getFinancialTransactions(request: HttpRequest, context: In
 export async function createFinancialTransaction(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
     try {
-        const tx = await request.json() as any;
+        const tx = await request.json();
         if (!tx.category_id || !tx.type || !tx.amount || !tx.currency || !tx.date) {
             return { status: 400, jsonBody: { error: "category_id, type, amount, currency, and date are required." } };
         }
 
         // In a real app, you'd look up the FX rate. For now, we'll assume it's 1 if not provided.
-        const fx_rate_to_base = tx.fx_rate_to_base || 1.0;
+        const fx_rate_to_base = tx.fx_rate_to_base || 1;
         const base_amount_cached = tx.amount * fx_rate_to_base;
 
         const result = await query(
@@ -78,7 +77,7 @@ export async function updateFinancialTransaction(request: HttpRequest, context: 
         const { category_id, type, amount, currency, date, vendor_or_buyer, memo } = tx;
 
         // Recalculate base amount if amount or currency changes
-        const fx_rate_to_base = tx.fx_rate_to_base || 1.0;
+        const fx_rate_to_base = tx.fx_rate_to_base || 1;
         const base_amount_cached = amount * fx_rate_to_base;
 
         const result = await query(

@@ -1,6 +1,5 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { query } from "../lib/db/client";
-import { Animal } from "@my-farm/domain";
 import { getUserTier, checkTierLimit, FREE_TIER_LIMITS } from "../lib/auth";
 
 // GET /api/v1/animals
@@ -44,12 +43,12 @@ export async function createAnimal(request: HttpRequest, context: InvocationCont
 
         // --- Tier Check ---
         const countResult = await query('SELECT COUNT(*) FROM animals');
-        const animalCount = parseInt(countResult.rows[0].count, 10);
+        const animalCount = Number.parseInt(countResult.rows[0].count, 10);
         if (!checkTierLimit(userTier, animalCount, FREE_TIER_LIMITS.animals)) {
             return { status: 403, jsonBody: { error: `Free tier limit of ${FREE_TIER_LIMITS.animals} animals reached. Please upgrade.` } };
         }
 
-        const { external_id, species_id, group_id, sex, dob, status, tags } = await request.json() as any;
+        const { external_id, species_id, group_id, sex, dob, status, tags } = await request.json();
         if (!species_id || !sex || !status) {
             return { status: 400, jsonBody: { error: "species_id, sex, and status are required." } };
         }
@@ -82,7 +81,7 @@ export async function updateAnimal(request: HttpRequest, context: InvocationCont
 
     try {
         // For PATCH, we only update fields that are provided.
-        const { external_id, group_id, sex, dob, status, tags } = await request.json() as any;
+        const { external_id, group_id, sex, dob, status, tags } = await request.json();
 
         // This is a bit more complex in SQL. We need to build the query dynamically.
         const existingResult = await query('SELECT * FROM animals WHERE id = $1', [animalId]);
@@ -92,12 +91,12 @@ export async function updateAnimal(request: HttpRequest, context: InvocationCont
         const existingAnimal = existingResult.rows[0];
 
         const updatedAnimal = {
-            external_id: external_id !== undefined ? external_id : existingAnimal.external_id,
-            group_id: group_id !== undefined ? group_id : existingAnimal.group_id,
-            sex: sex !== undefined ? sex : existingAnimal.sex,
-            dob: dob !== undefined ? dob : existingAnimal.dob,
-            status: status !== undefined ? status : existingAnimal.status,
-            tags: tags !== undefined ? tags : existingAnimal.tags,
+            external_id: external_id === undefined ? existingAnimal.external_id : external_id,
+            group_id: group_id === undefined ? existingAnimal.group_id : group_id,
+            sex: sex === undefined ? existingAnimal.sex : sex,
+            dob: dob === undefined ? existingAnimal.dob : dob,
+            status: status === undefined ? existingAnimal.status : status,
+            tags: tags === undefined ? existingAnimal.tags : tags,
         };
 
         const result = await query(

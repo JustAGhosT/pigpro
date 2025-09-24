@@ -59,8 +59,8 @@ export async function getPLReport(request: HttpRequest, context: InvocationConte
         let totalIncome = 0;
         let totalExpense = 0;
 
-        result.rows.forEach(row => {
-            const amount = parseFloat(row.total);
+        for (const row of result.rows) {
+            const amount = Number.parseFloat(row.total);
             if (row.type === 'income') {
                 incomeByCategory[row.categoryName] = amount;
                 totalIncome += amount;
@@ -68,7 +68,7 @@ export async function getPLReport(request: HttpRequest, context: InvocationConte
                 expenseByCategory[row.categoryName] = amount;
                 totalExpense += amount;
             }
-        });
+        }
 
         const report = {
             period: { from, to },

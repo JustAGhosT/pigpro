@@ -33,7 +33,6 @@ const StatCard = ({ title, value, icon: Icon, note }: { title: string, value: st
 );
 
 
-import { Button } from '@/components/ui/button';
 import { TimeSeriesChart } from './TimeSeriesChart';
 
 interface TimeSeriesData {

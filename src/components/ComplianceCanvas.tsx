@@ -297,11 +297,16 @@ const PermitCard: React.FC<{ permit: CompliancePermit }> = ({ permit }) => (
               </Badge>
             );
           })}
-          <Badge className={
-            permit.compliance_level === 'mandatory' ? 'bg-red-100 text-red-800' :
-            permit.compliance_level === 'recommended' ? 'bg-yellow-100 text-yellow-800' :
-            'bg-blue-100 text-blue-800'
-          }>
+          <Badge className={(() => {
+            switch (permit.compliance_level) {
+              case 'mandatory':
+                return 'bg-red-100 text-red-800';
+              case 'recommended':
+                return 'bg-yellow-100 text-yellow-800';
+              default:
+                return 'bg-blue-100 text-blue-800';
+            }
+          })()}>
             {permit.compliance_level}
           </Badge>
         </div>
@@ -360,7 +365,7 @@ const SopCard: React.FC<{ sop: ComplianceSOP }> = ({ sop }) => (
         <h4 className="font-medium text-gray-900 mb-2">Key Steps:</h4>
         <ul className="space-y-1 text-sm text-gray-600">
           {sop.steps.map((step, index) => (
-            <li key={`step-${index}`} className="flex items-start gap-2">
+            <li key={step} className="flex items-start gap-2">
               <span className="w-5 h-5 bg-green-100 text-green-600 rounded-full text-xs flex items-center justify-center mt-0.5 flex-shrink-0">
                 {index + 1}
               </span>
@@ -373,8 +378,8 @@ const SopCard: React.FC<{ sop: ComplianceSOP }> = ({ sop }) => (
       <div>
         <h4 className="font-medium text-gray-900 mb-2">Requirements:</h4>
         <ul className="space-y-1 text-sm text-gray-600">
-          {sop.requirements.map((req, index) => (
-            <li key={`req-${index}`} className="flex items-start gap-2">
+          {sop.requirements.map((req) => (
+            <li key={req} className="flex items-start gap-2">
               <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
               {req}
             </li>

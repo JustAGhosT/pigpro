@@ -64,15 +64,15 @@ export async function getKpis(request: HttpRequest, context: InvocationContext):
 
 
         const kpis = {
-            totalRevenue: parseFloat(totalRevenue),
-            totalExpense: parseFloat(totalExpense),
-            grossMargin: parseFloat(totalRevenue) - parseFloat(totalExpense),
-            totalAnimals: parseInt(totalAnimals, 10),
+            totalRevenue: Number.parseFloat(totalRevenue),
+            totalExpense: Number.parseFloat(totalExpense),
+            grossMargin: Number.parseFloat(totalRevenue) - Number.parseFloat(totalExpense),
+            totalAnimals: Number.parseInt(totalAnimals, 10),
             adg,
             mortality,
-            avgLitterSize: parseFloat(avgLitterSize),
-            totalEggs: parseInt(totalEggs, 10),
-            totalMilk: parseFloat(totalMilk),
+            avgLitterSize: Number.parseFloat(avgLitterSize),
+            totalEggs: Number.parseInt(totalEggs, 10),
+            totalMilk: Number.parseFloat(totalMilk),
         };
 
         return { jsonBody: kpis };
@@ -117,8 +117,8 @@ export async function getTimeSeries(request: HttpRequest, context: InvocationCon
     // Ensure numbers are not returned as strings from the DB driver
     const monthlyData = result.rows.map(r => ({
         ...r,
-        revenue: parseFloat(r.revenue),
-        expense: parseFloat(r.expense),
+        revenue: Number.parseFloat(r.revenue),
+        expense: Number.parseFloat(r.expense),
     }));
 
     return { jsonBody: monthlyData };

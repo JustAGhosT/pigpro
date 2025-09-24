@@ -3,10 +3,10 @@ import { describe, it, expect, vi } from 'vitest';
 import { Dashboard } from './Dashboard';
 
 // Mock the fetch function
-global.fetch = vi.fn();
+globalThis.fetch = vi.fn();
 
 const createFetchResponse = (data: any) => {
-  return { json: () => new Promise((resolve) => resolve(data)), ok: true };
+  return { json: () => Promise.resolve(data), ok: true };
 };
 
 describe('Dashboard', () => {

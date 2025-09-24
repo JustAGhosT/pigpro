@@ -1,6 +1,5 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { query } from "../lib/db/client";
-import Papa from "papaparse";
 
 // A temporary in-memory store to simulate blob storage for file content
 export const fileContentStore: Record<string, string> = {};

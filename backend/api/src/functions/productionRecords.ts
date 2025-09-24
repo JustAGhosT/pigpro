@@ -1,6 +1,5 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { query } from "../lib/db/client";
-import { ProductionRecord } from "@my-farm/domain";
 
 // GET /api/v1/production-records
 export async function getProductionRecords(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
@@ -36,7 +35,7 @@ export async function getProductionRecords(request: HttpRequest, context: Invoca
 export async function createProductionRecord(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
     try {
-        const record = await request.json() as any;
+        const record = await request.json();
 
         // Basic validation
         if (!record.species_id || !record.event_type || !record.date) {
