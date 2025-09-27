@@ -82,11 +82,11 @@ cp apps/api/.env.example apps/api/.env
 # Edit apps/api/.env with your database credentials
 
 # Initialize the database
-npm run db:init
+npm run db:init:ps  # or npm run db:init:bash on Linux/Mac
 
 # Start development servers
 npm run frontend    # Terminal 1: Frontend (http://localhost:5173)
-npm run backend:dev # Terminal 2: API (http://localhost:7073)
+npm run api         # Terminal 2: API (http://localhost:7073)
 ```
 
 ## 📁 Project Structure
