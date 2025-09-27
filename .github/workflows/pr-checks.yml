@@ -59,7 +59,9 @@ jobs:
         run: npm ci
 
       - name: Run API tests
-        run: npm run test
+        run: |
+          cd apps/api
+          npm run test:run
 
       - name: Run frontend tests
         run: |
