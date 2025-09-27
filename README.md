@@ -2,10 +2,10 @@
 
 > A comprehensive livestock marketplace and management platform for South African farmers
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/JustAGhosT/pigpro)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/JustAGhosT/pigpro/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.6.3-blue)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-18.3.1-blue)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.5.3-blue)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18.3.1-blue)](https://react.dev/)
 
 ## 🚀 Features
 
@@ -91,8 +91,8 @@ npm run api         # Terminal 2: API (http://localhost:7073)
 
 ## 📁 Project Structure
 
-```
-livestock-club-sa/
+```text
+pigpro/
 ├── apps/
 │   ├── frontend/              # React application
 │   │   ├── src/
