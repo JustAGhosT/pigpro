@@ -48,12 +48,15 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "PGHOST=${{ secrets.PGHOST }}" >> $GITHUB_ENV
-          echo "PGPORT=${{ secrets.PGPORT }}" >> $GITHUB_ENV
-          echo "PGUSER=${{ secrets.PGUSER }}" >> $GITHUB_ENV
-          echo "PGPASSWORD=${{ secrets.PGPASSWORD }}" >> $GITHUB_ENV
-          echo "PGDATABASE=${{ secrets.PGDATABASE }}" >> $GITHUB_ENV
-          echo "BLOB_BASE_URL=${{ secrets.BLOB_BASE_URL }}" >> $GITHUB_ENV
+          cat >> "$GITHUB_ENV" << EOF
+          PGHOST=${{ secrets.PGHOST }}
+          PGPORT=${{ secrets.PGPORT }}
+          PGUSER=${{ secrets.PGUSER }}
+          PGPASSWORD=${{ secrets.PGPASSWORD }}
+          PGDATABASE=${{ secrets.PGDATABASE }}
+          PGSSLMODE=${{ secrets.PGSSLMODE || 'require' }}
+          BLOB_BASE_URL=${{ secrets.BLOB_BASE_URL }}
+          EOF
 
       - name: Run database initialization
         run: |
@@ -65,14 +68,14 @@ jobs:
           cd apps/api
           node -e "
           const { Client } = require('pg');
-          
+
           // Configure SSL based on environment variables
           const sslMode = process.env.PGSSLMODE || process.env.PGSSL_REQUIRE;
           const sslConfig = sslMode && sslMode.toLowerCase() !== 'disable' ? {
             rejectUnauthorized: true,
             ...(process.env.PGSSL_CERT && { ca: process.env.PGSSL_CERT })
           } : false;
-          
+
           const client = new Client({
             host: process.env.PGHOST,
             port: process.env.PGPORT,
@@ -128,11 +131,14 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "PGHOST=${{ secrets.PGHOST }}" >> $GITHUB_ENV
-          echo "PGPORT=${{ secrets.PGPORT }}" >> $GITHUB_ENV
-          echo "PGUSER=${{ secrets.PGUSER }}" >> $GITHUB_ENV
-          echo "PGPASSWORD=${{ secrets.PGPASSWORD }}" >> $GITHUB_ENV
-          echo "PGDATABASE=${{ secrets.PGDATABASE }}" >> $GITHUB_ENV
+          cat >> "$GITHUB_ENV" << EOF
+          PGHOST=${{ secrets.PGHOST }}
+          PGPORT=${{ secrets.PGPORT }}
+          PGUSER=${{ secrets.PGUSER }}
+          PGPASSWORD=${{ secrets.PGPASSWORD }}
+          PGDATABASE=${{ secrets.PGDATABASE }}
+          PGSSLMODE=${{ secrets.PGSSLMODE || 'require' }}
+          EOF
 
       - name: Seed database with sample data
         run: |
@@ -197,18 +203,18 @@ jobs:
     if: always()
 
     steps:
-             - name: Notify Teams
-               uses: skitionek/notify-microsoft-teams@master
-               with:
-                   webhook_url: ${{ secrets.TEAMS_WEBHOOK }}
-                   message: |
-                       🗄️ **Database Migration Complete**
+      - name: Notify Teams
+        uses: skitionek/notify-microsoft-teams@master
+        with:
+          webhook_url: ${{ secrets.TEAMS_WEBHOOK }}
+          message: |
+            🗄️ **Database Migration Complete**
 
-                       **Environment:** ${{ github.event.inputs.environment || (github.ref == 'refs/heads/main' && 'production' || 'development') }}
-                       **Status:** ${{ job.status }}
+            **Environment:** ${{ github.event.inputs.environment || (github.ref == 'refs/heads/main' && 'production' || 'development') }}
+            **Status:** ${{ job.status }}
 
-                       **Migration:** ${{ needs.migrate-database.result }}
-                       **Seeding:** ${{ needs.seed-data.result }}
+            **Migration:** ${{ needs.migrate-database.result }}
+            **Seeding:** ${{ needs.seed-data.result }}
 
-                       **Commit:** ${{ github.sha }}
-                       **Triggered by:** ${{ github.actor }}
+            **Commit:** ${{ github.sha }}
+            **Triggered by:** ${{ github.actor }}
