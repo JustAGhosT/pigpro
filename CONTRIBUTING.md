@@ -108,12 +108,11 @@ export async function getListings(req: HttpRequest): Promise<HttpResponseInit> {
 ### Running Tests
 
 ```bash
-# Run all tests
-npm run test
+# Run all tests (aggregated)
+npm run test:all
 
-# Run specific test suites
-npm run test:api
-npm run test:frontend
+# Run API tests specifically
+npm --workspace=apps/api run test:run
 
 # Run with coverage
 npm run test:coverage
@@ -156,7 +155,7 @@ src/
 
 ### Backend Structure
 
-```
+```text
 apps/api/src/
 ├── functions/           # Azure Functions endpoints
 ├── lib/                # Shared utilities
