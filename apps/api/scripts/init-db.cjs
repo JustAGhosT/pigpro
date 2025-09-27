@@ -13,7 +13,7 @@ async function run() {
   const port = Number(process.env.PGPORT || 5432);
   const user = getEnv('PGUSER', 'user');
   const password = getEnv('PGPASSWORD', 'password');
-  const database = getEnv('PGDATABASE', 'farmdb');
+  const database = getEnv('PGDATABASE', 'livestockdb');
   const sslRequired = (process.env.PGSSLMODE || '').toLowerCase() === 'require';
 
   const common = {

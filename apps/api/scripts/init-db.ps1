@@ -12,7 +12,7 @@ if (-not $PgHost) { $PgHost = "localhost" }
 if (-not $PgPort) { $PgPort = "5432" }
 if (-not $PgUser) { $PgUser = "user" }
 if (-not $PgPassword) { $PgPassword = "password" }
-if (-not $PgDatabase) { $PgDatabase = "farmdb" }
+if (-not $PgDatabase) { $PgDatabase = "livestockdb" }
 
 Write-Host ("Initializing Postgres database {0} on {1}:{2} as {3}" -f $PgDatabase, $PgHost, $PgPort, $PgUser)
 

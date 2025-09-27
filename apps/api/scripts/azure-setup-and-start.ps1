@@ -31,14 +31,14 @@ if ($firstLooksLikeSub -and -not $subLooksLikeGuid) {
   if ($originalSubscriptionParam -and $originalSubscriptionParam -notmatch $guidRegex) {
     $Database = $originalSubscriptionParam
   } elseif (-not $Database) {
-    $Database = 'farmdb'
+    $Database = 'livestockdb'
   }
   if ($args.Count -ge 8) { $BackendPort = [int]$args[7] }
 }
 
-if (-not $ResourceGroup) { $ResourceGroup = "pigpro-rg" }
+if (-not $ResourceGroup) { $ResourceGroup = "livestock-rg" }
 if (-not $AdminUser) { $AdminUser = "pgadmin" }
-if (-not $Database) { $Database = "farmdb" }
+if (-not $Database) { $Database = "livestockdb" }
 
 # Provision server + DB, set env vars, and init schema
 & "$PSScriptRoot/azure-init-db.ps1" `

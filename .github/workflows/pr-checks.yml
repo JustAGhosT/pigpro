@@ -5,7 +5,7 @@ on:
     branches: [main, develop]
 
 env:
-  NODE_VERSION: "18"
+  NODE_VERSION: "20"
 
 jobs:
   lint-and-format:
@@ -28,7 +28,13 @@ jobs:
       - name: Run ESLint
         run: |
           cd apps/frontend && npm run lint
-          cd ../api && npm run lint || echo "No lint script in API"
+          cd ../api
+          if node -e "console.log(require('./package.json').scripts.lint ? 'exists' : 'missing')" | grep -q "exists"; then
+            echo "Running API lint script..."
+            npm run lint
+          else
+            echo "No lint script found in API package.json"
+          fi
 
       - name: Check TypeScript
         run: |
@@ -56,7 +62,14 @@ jobs:
         run: npm run test
 
       - name: Run frontend tests
-        run: cd apps/frontend && npm run test || echo "No frontend tests configured"
+        run: |
+          cd apps/frontend
+          if node -e "console.log(require('./package.json').scripts.test ? 'exists' : 'missing')" | grep -q "exists"; then
+            echo "Running frontend test script..."
+            npm run test
+          else
+            echo "No test script found in frontend package.json"
+          fi
 
       - name: Upload test results
         uses: actions/upload-artifact@v4

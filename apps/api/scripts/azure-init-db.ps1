@@ -12,7 +12,7 @@ $ErrorActionPreference = "Stop"
 
 if (-not $Location) { $Location = "eastus" }
 if (-not $AdminUser) { $AdminUser = "pgadmin" }
-if (-not $Database) { $Database = "farmdb" }
+if (-not $Database) { $Database = "livestockdb" }
 
 # Helpers
 function New-RandomLower {
@@ -44,8 +44,8 @@ function New-StrongPassword {
 }
 
 # Auto-populate values if omitted
-if (-not $ResourceGroup) { $ResourceGroup = "pigpro-rg" }
-if (-not $ServerName) { $ServerName = ("pigpro-pg-" + (New-RandomLower -Length 8)) }
+if (-not $ResourceGroup) { $ResourceGroup = "livestock-rg" }
+if (-not $ServerName) { $ServerName = ("livestock-pg-" + (New-RandomLower -Length 8)) }
 if (-not $AdminPassword) { $AdminPassword = (New-StrongPassword -Length 20) }
 
 # Validate/sanitize names to avoid Azure CLI errors
@@ -56,8 +56,8 @@ if ($AdminUser -notmatch '^[A-Za-z][A-Za-z0-9]*$') {
 }
 # Database must start with a letter and contain only letters, numbers, and underscore
 if ($Database -notmatch '^[A-Za-z][A-Za-z0-9_]*$') {
-  Write-Host "Invalid database name '$Database'. Falling back to 'farmdb'."
-  $Database = 'farmdb'
+  Write-Host "Invalid database name '$Database'. Falling back to 'livestockdb'."
+  $Database = 'livestockdb'
 }
 
 Write-Host "Creating resource group $ResourceGroup in $Location (if not exists)"

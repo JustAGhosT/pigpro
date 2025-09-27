@@ -16,7 +16,7 @@ function New-RandomLower {
   return $sb
 }
 
-if (-not $ResourceGroup) { $ResourceGroup = "pigpro-rg" }
+if (-not $ResourceGroup) { $ResourceGroup = "livestock-rg" }
 if (-not $Location) { $Location = "eastus" }
 if (-not $StorageAccountName) { $StorageAccountName = ("livestocksa" + (New-RandomLower -Length 8)) }
 

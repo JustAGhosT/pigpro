@@ -5,7 +5,7 @@ HOST="${PGHOST:-localhost}"
 PORT="${PGPORT:-5432}"
 USER="${PGUSER:-user}"
 PASSWORD="${PGPASSWORD:-password}"
-DATABASE="${PGDATABASE:-farmdb}"
+DATABASE="${PGDATABASE:-livestockdb}"
 
 export PGPASSWORD="$PASSWORD"
 
