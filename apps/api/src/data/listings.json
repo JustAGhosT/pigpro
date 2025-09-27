@@ -1,0 +1,119 @@
+[
+  {
+    "id": "1",
+    "title": "Rhode Island Red Hens - Show Quality",
+    "promoted": true,
+    "likes": 5,
+    "price": 450,
+    "currency": "ZAR",
+    "image": "/images/rhode-island-red-chickens.jpg",
+    "location": "Cape Town, WC",
+    "rating": 4.8,
+    "reviews": 24,
+    "category": "Poultry",
+    "breed": "Rhode Island Red",
+    "age": "6 months",
+    "gender": "Female",
+    "isVerified": true,
+    "description": "Excellent laying hens with proven bloodlines.",
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "title": "Boer Goat Breeding Stock",
+    "promoted": false,
+    "likes": 12,
+    "price": 2500,
+    "currency": "ZAR",
+    "image": "/images/boer-goat.webp",
+    "location": "Pretoria, GP",
+    "rating": 4.9,
+    "reviews": 18,
+    "category": "Goats",
+    "breed": "Boer",
+    "age": "2 years",
+    "gender": "Male",
+    "isVerified": true,
+    "description": "Premium Boer goat breeding stock with excellent genetics.",
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "title": "Large White Piglets",
+    "promoted": false,
+    "likes": 3,
+    "price": 800,
+    "currency": "ZAR",
+    "image": "/images/large-white-pigs.jpg",
+    "location": "Durban, KZN",
+    "rating": 4.6,
+    "reviews": 12,
+    "category": "Pigs",
+    "breed": "Large White",
+    "age": "8 weeks",
+    "gender": "Mixed",
+    "isVerified": true,
+    "description": "Healthy Large White piglets ready for weaning.",
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "4",
+    "title": "Angora Rabbit Breeding Pair",
+    "promoted": false,
+    "likes": 1,
+    "price": 1200,
+    "currency": "ZAR",
+    "image": "/images/angora-rabbit-pair.jpeg",
+    "location": "Bloemfontein, FS",
+    "rating": 4.7,
+    "reviews": 8,
+    "category": "Rabbits",
+    "breed": "Angora",
+    "age": "1 year",
+    "gender": "Pair",
+    "isVerified": true,
+    "description": "Angora rabbits with excellent wool quality.",
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  }
+  ,
+  {"id":"5","title":"Free-range Broiler Chickens","promoted":false,"likes":2,"price":120,"currency":"ZAR","image":"/images/chicken-broiler.jpg","location":"Cape Town, WC","rating":4.3,"reviews":10,"category":"Poultry","breed":"Broiler","age":"10 weeks","gender":"Mixed","isVerified":true,"description":"Healthy broilers ready for market.","createdAt":"2025-01-01T00:00:00.000Z"}
+  ,
+  {"id":"6","title":"Kalahari Red Goats","promoted":true,"likes":8,"price":3500,"currency":"ZAR","image":"/images/goat-kalahari-red.jpg","location":"Johannesburg, GP","rating":4.7,"reviews":15,"category":"Goats","breed":"Kalahari Red","age":"1.5 years","gender":"Mixed","isVerified":true,"description":"Top genetics for meat production.","createdAt":"2025-01-01T00:00:00.000Z"}
+  ,
+  {"id":"7","title":"Dorper Sheep Ewes","promoted":false,"likes":6,"price":2800,"currency":"ZAR","image":"/images/sheep-dorper.jpg","location":"Bloemfontein, FS","rating":4.5,"reviews":9,"category":"Sheep","breed":"Dorper","age":"2 years","gender":"Female","isVerified":true,"description":"Hardy Dorper ewes, excellent mothers.","createdAt":"2025-01-01T00:00:00.000Z"}
+  ,
+  {"id":"8","title":"Nguni Heifers","promoted":true,"likes":9,"price":9500,"currency":"ZAR","image":"/images/cattle-nguni.jpg","location":"Durban, KZN","rating":4.8,"reviews":14,"category":"Cattle","breed":"Nguni","age":"2 years","gender":"Female","isVerified":true,"description":"Traditional Nguni heifers with strong traits.","createdAt":"2025-01-01T00:00:00.000Z"}
+  ,
+  {"id":"9","title":"Landrace Piglets","promoted":false,"likes":4,"price":700,"currency":"ZAR","image":"/images/pig-landrace.jpg","location":"Pretoria, GP","rating":4.4,"reviews":11,"category":"Pigs","breed":"Landrace","age":"7 weeks","gender":"Mixed","isVerified":true,"description":"Fast-growing Landrace piglets.","createdAt":"2025-01-01T00:00:00.000Z"}
+  ,
+  {"id":"10","title":"New Zealand Rabbits","promoted":false,"likes":1,"price":350,"currency":"ZAR","image":"/images/rabbit-newzealand.jpg","location":"Cape Town, WC","rating":4.2,"reviews":6,"category":"Rabbits","breed":"New Zealand","age":"5 months","gender":"Mixed","isVerified":true,"description":"Calm temperament, good meat yield.","createdAt":"2025-01-01T00:00:00.000Z"}
+  ,
+  {"id":"11","title":"Rhode Island Red Pullets","promoted":false,"likes":3,"price":220,"currency":"ZAR","image":"/images/chicken-pullets.jpg","location":"Port Elizabeth, EC","rating":4.1,"reviews":7,"category":"Poultry","breed":"Rhode Island Red","age":"16 weeks","gender":"Female","isVerified":true,"description":"Ready-to-lay pullets.","createdAt":"2025-01-01T00:00:00.000Z"}
+  ,
+  {"id":"12","title":"Saanen Dairy Goats","promoted":true,"likes":10,"price":4200,"currency":"ZAR","image":"/images/goat-saanen.jpg","location":"Stellenbosch, WC","rating":4.9,"reviews":21,"category":"Goats","breed":"Saanen","age":"3 years","gender":"Female","isVerified":true,"description":"High milk yield Saanen goats.","createdAt":"2025-01-01T00:00:00.000Z"}
+  ,
+  {"id":"13","title":"Bonsmara Bulls","promoted":false,"likes":5,"price":18000,"currency":"ZAR","image":"/images/cattle-bonsmara.jpg","location":"Kimberley, NC","rating":4.6,"reviews":10,"category":"Cattle","breed":"Bonsmara","age":"3 years","gender":"Male","isVerified":true,"description":"Registered Bonsmara bulls.","createdAt":"2025-01-01T00:00:00.000Z"}
+  ,
+  {"id":"14","title":"Merino Sheep Rams","promoted":false,"likes":2,"price":3200,"currency":"ZAR","image":"/images/sheep-merino.jpg","location":"Beaufort West, WC","rating":4.3,"reviews":8,"category":"Sheep","breed":"Merino","age":"2 years","gender":"Male","isVerified":true,"description":"Quality wool producers.","createdAt":"2025-01-01T00:00:00.000Z"}
+  ,
+  {"id":"15","title":"Brahman Heifers","promoted":true,"likes":7,"price":12000,"currency":"ZAR","image":"/images/cattle-brahman.jpg","location":"Pietermaritzburg, KZN","rating":4.7,"reviews":13,"category":"Cattle","breed":"Brahman","age":"2 years","gender":"Female","isVerified":true,"description":"Heat-tolerant Brahman heifers.","createdAt":"2025-01-01T00:00:00.000Z"}
+  ,
+  {"id":"16","title":"Tamworth Pigs","promoted":false,"likes":3,"price":1500,"currency":"ZAR","image":"/images/pig-tamworth.jpg","location":"George, WC","rating":4.2,"reviews":5,"category":"Pigs","breed":"Tamworth","age":"1 year","gender":"Mixed","isVerified":true,"description":"Traditional outdoor pigs.","createdAt":"2025-01-01T00:00:00.000Z"}
+  ,
+  {"id":"17","title":"Californian Rabbits","promoted":false,"likes":2,"price":300,"currency":"ZAR","image":"/images/rabbit-californian.jpg","location":"Pretoria, GP","rating":4.1,"reviews":4,"category":"Rabbits","breed":"Californian","age":"4 months","gender":"Mixed","isVerified":true,"description":"Great meat breed.","createdAt":"2025-01-01T00:00:00.000Z"}
+  ,
+  {"id":"18","title":"Sussex Chickens","promoted":false,"likes":2,"price":180,"currency":"ZAR","image":"/images/chicken-sussex.jpg","location":"Bloemfontein, FS","rating":4.0,"reviews":6,"category":"Poultry","breed":"Sussex","age":"20 weeks","gender":"Mixed","isVerified":true,"description":"Dual-purpose Sussex chickens.","createdAt":"2025-01-01T00:00:00.000Z"}
+  ,
+  {"id":"19","title":"Alpine Goats","promoted":false,"likes":3,"price":3800,"currency":"ZAR","image":"/images/goat-alpine.jpg","location":"Cape Town, WC","rating":4.5,"reviews":9,"category":"Goats","breed":"Alpine","age":"2 years","gender":"Female","isVerified":true,"description":"Strong dairy line Alpines.","createdAt":"2025-01-01T00:00:00.000Z"}
+  ,
+  {"id":"20","title":"KuneKune Pigs","promoted":false,"likes":4,"price":2200,"currency":"ZAR","image":"/images/pig-kunekune.jpg","location":"Durban, KZN","rating":4.3,"reviews":7,"category":"Pigs","breed":"KuneKune","age":"10 months","gender":"Mixed","isVerified":true,"description":"Docile small-scale pigs.","createdAt":"2025-01-01T00:00:00.000Z"},
+  {"id":"21","title":"African Barbel Fish","promoted":false,"likes":6,"price":150,"currency":"ZAR","image":"/images/barbel-1.jpg","location":"Bloemfontein, FS","rating":4.4,"reviews":8,"category":"Fish","breed":"African Barbel","age":"6 months","gender":"Mixed","isVerified":true,"description":"Freshwater barbel for aquaculture.","createdAt":"2025-01-01T00:00:00.000Z"},
+  {"id":"22","title":"Koi Carp","promoted":true,"likes":12,"price":800,"currency":"ZAR","image":"/images/koi-1.jpg","location":"Cape Town, WC","rating":4.7,"reviews":15,"category":"Fish","breed":"Koi","age":"1 year","gender":"Mixed","isVerified":true,"description":"Ornamental koi carp with beautiful colors.","createdAt":"2025-01-01T00:00:00.000Z"},
+  {"id":"23","title":"Tilapia Fingerlings","promoted":false,"likes":5,"price":25,"currency":"ZAR","image":"/images/tilapia-1.jpg","location":"Durban, KZN","rating":4.2,"reviews":12,"category":"Fish","breed":"Tilapia","age":"2 months","gender":"Mixed","isVerified":true,"description":"Fast-growing tilapia fingerlings.","createdAt":"2025-01-01T00:00:00.000Z"},
+  {"id":"24","title":"Superworm Larvae","promoted":false,"likes":8,"price":45,"currency":"ZAR","image":"/images/superworms-1.jpg","location":"Johannesburg, GP","rating":4.5,"reviews":6,"category":"Insects","breed":"Superworm","age":"3 months","gender":"Mixed","isVerified":true,"description":"High-protein superworm larvae for feed.","createdAt":"2025-01-01T00:00:00.000Z"},
+  {"id":"25","title":"Mealworm Colony","promoted":false,"likes":4,"price":35,"currency":"ZAR","image":"/images/mealworms-1.jpg","location":"Pretoria, GP","rating":4.1,"reviews":5,"category":"Insects","breed":"Mealworm","age":"2 months","gender":"Mixed","isVerified":true,"description":"Live mealworm colony for breeding.","createdAt":"2025-01-01T00:00:00.000Z"},
+  {"id":"26","title":"Chilean Rose Tarantula","promoted":true,"likes":15,"price":450,"currency":"ZAR","image":"/images/tarantula-1.jpg","location":"Cape Town, WC","rating":4.8,"reviews":9,"category":"Arachnids","breed":"Chilean Rose","age":"1 year","gender":"Female","isVerified":true,"description":"Docile pet tarantula species.","createdAt":"2025-01-01T00:00:00.000Z"},
+  {"id":"27","title":"Emperor Scorpion","promoted":false,"likes":7,"price":280,"currency":"ZAR","image":"/images/scorpion-1.jpg","location":"Durban, KZN","rating":4.3,"reviews":4,"category":"Arachnids","breed":"Emperor Scorpion","age":"8 months","gender":"Mixed","isVerified":true,"description":"Large, impressive scorpion species.","createdAt":"2025-01-01T00:00:00.000Z"}
+]
+
+

@@ -1,0 +1,41 @@
+// Extracted from frontend src/lib/livestock-data.ts for backend serving
+{
+  "poultry": {
+    "label": "Poultry",
+    "icon": "🐔"
+  },
+  "cattle": {
+    "label": "Cattle",
+    "icon": "🐄"
+  },
+  "goats": {
+    "label": "Goats",
+    "icon": "🐐"
+  },
+  "sheep": {
+    "label": "Sheep",
+    "icon": "🐑"
+  },
+  "pigs": {
+    "label": "Pigs",
+    "icon": "🐷"
+  },
+  "rabbits": {
+    "label": "Rabbits",
+    "icon": "🐰"
+  },
+  "fish": {
+    "label": "Fish",
+    "icon": "🐟"
+  },
+  "insects": {
+    "label": "Insects",
+    "icon": "🐛"
+  },
+  "arachnids": {
+    "label": "Arachnids",
+    "icon": "🕷️"
+  }
+}
+
+

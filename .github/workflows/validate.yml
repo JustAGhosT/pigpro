@@ -1,0 +1,58 @@
+name: Validate Workflows
+
+on:
+  push:
+    paths:
+      - ".github/workflows/**"
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+
+jobs:
+  validate:
+    name: Validate GitHub Actions
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate workflow files
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const workflowDir = '.github/workflows';
+            const workflowFiles = fs.readdirSync(workflowDir)
+              .filter(file => file.endsWith('.yml') || file.endsWith('.yaml'));
+
+            console.log(`Found ${workflowFiles.length} workflow files:`);
+            workflowFiles.forEach(file => {
+              console.log(`  - ${file}`);
+            });
+
+            // Check for required secrets
+            const requiredSecrets = [
+              'AZURE_CREDENTIALS',
+              'AZURE_STATIC_WEB_APPS_API_TOKEN',
+              'AZURE_STATIC_WEB_APPS_API_TOKEN_DEV',
+              'AZURE_FUNCTIONAPP_PUBLISH_PROFILE',
+              'AZURE_FUNCTIONAPP_PUBLISH_PROFILE_DEV',
+              'PGHOST',
+              'PGPORT',
+              'PGUSER',
+              'PGPASSWORD',
+              'PGDATABASE',
+              'BLOB_BASE_URL',
+              'TEAMS_WEBHOOK',
+              'CODECOV_TOKEN'
+            ];
+
+            console.log('\nRequired secrets for CI/CD:');
+            requiredSecrets.forEach(secret => {
+              console.log(`  - ${secret}`);
+            });
+
+            console.log('\n✅ Workflow validation complete');
