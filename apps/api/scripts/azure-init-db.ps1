@@ -129,12 +129,13 @@ if (-not $dbExists) {
 Write-Host "Allowing public access from current IP"
 try {
     # Prefer --server (broadly supported)
+    $clientIp = (Invoke-RestMethod -Uri 'https://api.ipify.org?format=json').ip
     az postgres flexible-server firewall-rule create `
         --resource-group $ResourceGroup `
         --name "$ServerName-allow-ip" `
         --server $ServerName `
-        --start-ip-address 0.0.0.0 `
-        --end-ip-address 255.255.255.255 | Out-Null
+        --start-ip-address $clientIp `
+        --end-ip-address $clientIp | Out-Null
 }
 catch {
     # Fallback to --server-name
