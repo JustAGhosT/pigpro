@@ -31,10 +31,10 @@ and information for contributors.
 
    ```bash
    # Copy environment template
-   cp backend/api/.env.example backend/api/.env
+   cp apps/api/.env.example apps/api/.env
 
    # Edit with your configuration
-   nano backend/api/.env
+   nano apps/api/.env
    ```
 
 4. **Initialize Database**
@@ -49,8 +49,8 @@ and information for contributors.
    # Terminal 1: Frontend
    npm run frontend
 
-   # Terminal 2: Backend
-   npm run backend:dev
+   # Terminal 2: API (runs on :7073)
+   npm run api
    ```
 
 ## 📋 Development Guidelines
@@ -157,7 +157,7 @@ src/
 ### Backend Structure
 
 ```
-backend/api/src/
+apps/api/src/
 ├── functions/           # Azure Functions endpoints
 ├── lib/                # Shared utilities
 ├── data/               # Mock data and schemas
