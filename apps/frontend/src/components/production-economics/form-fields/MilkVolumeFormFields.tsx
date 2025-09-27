@@ -1,11 +1,11 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 import { Animal, Group } from '@my-farm/domain';
 import React from 'react';
@@ -53,9 +53,13 @@ export const MilkVolumeFormFields: React.FC<MilkVolumeFormFieldsProps> = ({
       </div>
 
       <div>
-        <Label htmlFor="milk_unit">Unit</Label>
-        <Select name="milk_unit" onValueChange={(value) => onSelectChange('milk_unit', value)} value={formData.milk_unit || ''} required>
-          <SelectTrigger id="milk_unit">
+        <Label htmlFor="milk_unit" id="milk_unit-label">Unit</Label>
+        <Select onValueChange={(value) => onSelectChange('milk_unit', value)} value={formData.milk_unit || ''}>
+          <SelectTrigger 
+            id="milk_unit"
+            aria-labelledby="milk_unit-label"
+            aria-required="true"
+          >
             <SelectValue placeholder="Select unit..." />
           </SelectTrigger>
           <SelectContent>
@@ -63,6 +67,13 @@ export const MilkVolumeFormFields: React.FC<MilkVolumeFormFieldsProps> = ({
             <SelectItem value="gal">Gallons (gal)</SelectItem>
           </SelectContent>
         </Select>
+        {/* Hidden input for form submission and validation */}
+        <input 
+          type="hidden" 
+          name="milk_unit" 
+          value={formData.milk_unit || ''} 
+          required 
+        />
       </div>
     </div>
   );

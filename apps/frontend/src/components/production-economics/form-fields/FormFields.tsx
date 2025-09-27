@@ -29,9 +29,13 @@ export const AnimalSelect: React.FC<AnimalSelectProps> = ({
 }) => {
   return (
     <div>
-      <Label htmlFor="animal-select">{label}{required && ' *'}</Label>
+      <Label htmlFor="animal-select" id="animal-select-label">{label}{required && ' *'}</Label>
       <Select onValueChange={onValueChange} value={value}>
-        <SelectTrigger id="animal-select">
+        <SelectTrigger 
+          id="animal-select"
+          aria-labelledby="animal-select-label"
+          aria-required={required}
+        >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
@@ -42,6 +46,13 @@ export const AnimalSelect: React.FC<AnimalSelectProps> = ({
           ))}
         </SelectContent>
       </Select>
+      {/* Hidden input for form submission and validation */}
+      <input 
+        type="hidden" 
+        name="animal_id" 
+        value={value || ''} 
+        required={required}
+      />
     </div>
   );
 };
@@ -65,9 +76,13 @@ export const GroupSelect: React.FC<GroupSelectProps> = ({
 }) => {
   return (
     <div>
-      <Label htmlFor="group-select">{label}{required && ' *'}</Label>
+      <Label htmlFor="group-select" id="group-select-label">{label}{required && ' *'}</Label>
       <Select onValueChange={onValueChange} value={value}>
-        <SelectTrigger id="group-select">
+        <SelectTrigger 
+          id="group-select"
+          aria-labelledby="group-select-label"
+          aria-required={required}
+        >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
@@ -78,6 +93,13 @@ export const GroupSelect: React.FC<GroupSelectProps> = ({
           ))}
         </SelectContent>
       </Select>
+      {/* Hidden input for form submission and validation */}
+      <input 
+        type="hidden" 
+        name="group_id" 
+        value={value || ''} 
+        required={required}
+      />
     </div>
   );
 };

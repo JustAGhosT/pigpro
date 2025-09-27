@@ -1,4 +1,3 @@
-// Extracted from frontend src/lib/livestock-data.ts for backend serving
 {
   "poultry": {
     "label": "Poultry",
