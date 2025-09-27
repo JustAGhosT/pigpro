@@ -9,15 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { AnimalSelect, DateField } from './FormFields';
 
 interface WeightFormFieldsProps {
   animals: Animal[];
@@ -29,26 +21,16 @@ interface WeightFormFieldsProps {
 export const WeightFormFields: React.FC<WeightFormFieldsProps> = ({ animals, formData, onChange, onSelectChange }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4 mt-4">
-      <div>
-        <Label htmlFor="animal-select">Animal</Label>
-        <Select name="animal_id" onValueChange={(value) => onSelectChange('animal_id', value)} value={formData.animal_id || ''}>
-          <SelectTrigger id="animal-select">
-            <SelectValue placeholder="Select an animal..." />
-          </SelectTrigger>
-          <SelectContent>
-            {animals.map(animal => (
-              <SelectItem key={animal.id} value={animal.id}>
-                {animal.external_id || `(ID: ${animal.id.substring(0, 6)})`}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <AnimalSelect
+        animals={animals}
+        value={formData.animal_id || ''}
+        onValueChange={(value) => onSelectChange('animal_id', value)}
+      />
 
-      <div>
-        <Label htmlFor="date">Date</Label>
-        <Input id="date" type="datetime-local" name="date" value={formData.date || ''} onChange={onChange} />
-      </div>
+      <DateField
+        value={formData.date || ''}
+        onChange={onChange}
+      />
 
       <div>
         <Label htmlFor="weight_value">Weight</Label>

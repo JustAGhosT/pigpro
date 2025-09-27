@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { AnimalSelect, DateField } from './FormFields';
 
 interface MilkVolumeFormFieldsProps {
   animals: Animal[];
@@ -43,26 +44,17 @@ export const MilkVolumeFormFields: React.FC<MilkVolumeFormFieldsProps> = ({
         </Select>
       </div>
 
-       <div>
-        <Label htmlFor="animal-select">Animal (Optional)</Label>
-        <Select name="animal_id" onValueChange={(value) => onSelectChange('animal_id', value)} value={formData.animal_id || ''}>
-          <SelectTrigger id="animal-select">
-            <SelectValue placeholder="Select an animal..." />
-          </SelectTrigger>
-          <SelectContent>
-            {animals.map(animal => (
-              <SelectItem key={animal.id} value={animal.id}>
-                {animal.external_id || `(ID: ${animal.id.substring(0, 6)})`}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <AnimalSelect
+        animals={animals}
+        value={formData.animal_id || ''}
+        onValueChange={(value) => onSelectChange('animal_id', value)}
+        label="Animal (Optional)"
+      />
 
-      <div>
-        <Label htmlFor="date">Date</Label>
-        <Input id="date" type="datetime-local" name="date" value={formData.date || ''} onChange={onChange} required/>
-      </div>
+      <DateField
+        value={formData.date || ''}
+        onChange={onChange}
+      />
 
       <div>
         <Label htmlFor="milk_volume">Milk Volume</Label>
