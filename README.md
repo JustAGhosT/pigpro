@@ -2,7 +2,7 @@
 
 > A comprehensive livestock marketplace and management platform for South African farmers
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/your-username/livestock-club-sa)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/JustAGhosT/pigpro)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6.3-blue)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3.1-blue)](https://reactjs.org/)
@@ -78,8 +78,8 @@ cd pigpro
 npm install
 
 # Set up environment variables
-cp backend/api/.env.example backend/api/.env
-# Edit backend/api/.env with your database credentials
+cp apps/api/.env.example apps/api/.env
+# Edit apps/api/.env with your database credentials
 
 # Initialize the database
 npm run db:init
@@ -277,7 +277,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-- **GitHub Issues**: [Create an issue](https://github.com/your-username/livestock-club-sa/issues)
+- **GitHub Issues**: [Create an issue](https://github.com/JustAGhosT/pigpro/issues)
 - **Documentation**: [Project Structure](PROJECT_STRUCTURE.md)
 - **Email**: support@livestockclubsa.co.za
 
