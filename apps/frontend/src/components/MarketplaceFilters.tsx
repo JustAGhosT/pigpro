@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ChevronDown, Filter, Grid3X3, List, LocateFixed, Search, X } from 'lucide-react';
+import { ChevronDown, Filter, Grid, List, LocateFixed, Search, X } from 'lucide-react';
 import React from 'react';
 
 type Props = {
@@ -220,7 +220,7 @@ export const MarketplaceFilters: React.FC<Props> = ({
                 className={`p-2 px-3 ${viewMode === 'grid' ? 'bg-green-100 text-green-700' : 'text-gray-600 hover:bg-gray-50'}`}
                 title="Grid view"
               >
-                <Grid3X3 className="h-4 w-4" />
+                <Grid className="h-4 w-4" />
               </button>
               <button
                 onClick={() => onViewChange('list')}

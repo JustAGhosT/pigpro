@@ -1,14 +1,15 @@
-import React from 'react';
-import { Animal, Group } from '@my-farm/domain';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '@/components/ui/select';
+import { Animal, Group } from '@my-farm/domain';
+import React from 'react';
+import { AnimalSelect, DateField, GroupSelect } from './FormFields';
 
 interface MilkVolumeFormFieldsProps {
   animals: Animal[];
@@ -27,42 +28,24 @@ export const MilkVolumeFormFields: React.FC<MilkVolumeFormFieldsProps> = ({
 }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4 mt-4">
-      <div>
-        <Label htmlFor="group-select">Group (Optional)</Label>
-        <Select name="group_id" onValueChange={(value) => onSelectChange('group_id', value)} value={formData.group_id || ''}>
-          <SelectTrigger id="group-select">
-            <SelectValue placeholder="Select a group..." />
-          </SelectTrigger>
-          <SelectContent>
-            {groups.map(group => (
-              <SelectItem key={group.id} value={group.id}>
-                {group.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <GroupSelect
+        groups={groups}
+        value={formData.group_id || ''}
+        onValueChange={(value) => onSelectChange('group_id', value)}
+        label="Group (Optional)"
+      />
 
-       <div>
-        <Label htmlFor="animal-select">Animal (Optional)</Label>
-        <Select name="animal_id" onValueChange={(value) => onSelectChange('animal_id', value)} value={formData.animal_id || ''}>
-          <SelectTrigger id="animal-select">
-            <SelectValue placeholder="Select an animal..." />
-          </SelectTrigger>
-          <SelectContent>
-            {animals.map(animal => (
-              <SelectItem key={animal.id} value={animal.id}>
-                {animal.external_id || `(ID: ${animal.id.substring(0, 6)})`}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <AnimalSelect
+        animals={animals}
+        value={formData.animal_id || ''}
+        onValueChange={(value) => onSelectChange('animal_id', value)}
+        label="Animal (Optional)"
+      />
 
-      <div>
-        <Label htmlFor="date">Date</Label>
-        <Input id="date" type="datetime-local" name="date" value={formData.date || ''} onChange={onChange} required/>
-      </div>
+      <DateField
+        value={formData.date || ''}
+        onChange={onChange}
+      />
 
       <div>
         <Label htmlFor="milk_volume">Milk Volume</Label>
