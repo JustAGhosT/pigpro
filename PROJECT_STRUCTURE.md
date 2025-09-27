@@ -7,7 +7,7 @@ Azure Functions.
 
 ## Architecture
 
-````
+```text
 livestock-club-sa/
 ├── apps/                          # Application packages
 │   ├── frontend/                  # React frontend application
@@ -35,7 +35,7 @@ livestock-club-sa/
 ├── scripts/                      # Root-level scripts
 ├── package.json                  # Root package.json (workspace)
 └── README.md
-``
+```
 
 ## Migration Plan
 
