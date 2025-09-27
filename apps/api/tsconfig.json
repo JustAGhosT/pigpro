@@ -17,14 +17,22 @@
     }
   },
   "include": [
-    "src/functions/index.ts",
     "src/functions/listings.ts",
-    "src/functions/livestock.ts"
+    "src/functions/livestock.ts",
+    "src/data/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
     "src/lib/**",
-    "src/functions/**/!(*index|*listings|*livestock).ts"
+    "src/functions/analytics.ts",
+    "src/functions/animals.ts",
+    "src/functions/categories.ts",
+    "src/functions/financials.ts",
+    "src/functions/groups.ts",
+    "src/functions/productionRecords.ts",
+    "src/functions/reports.ts"
   ]
 }

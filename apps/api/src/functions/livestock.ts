@@ -4,14 +4,32 @@ import path from 'path';
 
 // Serve static domain data from JSON moved to backend
 function loadLivestock() {
-  // Use __dirname for reliable path resolution in Azure Functions
-  const dataPath = path.join(__dirname, '..', 'data', 'livestock-data.json');
-  try { 
-    return JSON.parse(fs.readFileSync(dataPath, 'utf-8')); 
-  } catch (error) {
-    console.warn('Failed to load livestock-data.json:', error);
-    return {}; 
+  // Try multiple paths for reliable file loading in Azure Functions
+  const possiblePaths = [
+    // Development path (relative to source)
+    path.join(process.cwd(), 'src', 'data', 'livestock-data.json'),
+    // Azure Functions path (relative to function directory)
+    path.join(__dirname, '..', 'data', 'livestock-data.json'),
+    // Alternative Azure Functions path
+    path.join(__dirname, '..', '..', 'src', 'data', 'livestock-data.json'),
+    // Fallback path
+    path.join(process.cwd(), 'apps', 'api', 'src', 'data', 'livestock-data.json')
+  ];
+
+  for (const dataPath of possiblePaths) {
+    try {
+      if (fs.existsSync(dataPath)) {
+        const data = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+        console.log(`Successfully loaded livestock data from: ${dataPath}`);
+        return data;
+      }
+    } catch (error) {
+      console.warn(`Failed to load livestock-data.json from ${dataPath}:`, error);
+    }
   }
+  
+  console.error('Failed to load livestock-data.json from any of the attempted paths:', possiblePaths);
+  return {};
 }
 const livestockData = loadLivestock();
 
