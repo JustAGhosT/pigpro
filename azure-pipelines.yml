@@ -31,8 +31,8 @@ stages:
       displayName: 'Install dependencies'
       
     - script: |
-        npm run test
-      displayName: 'Run API tests'
+        npm run test:all
+      displayName: 'Run all tests'
       
     - script: |
         cd apps/frontend
@@ -76,13 +76,13 @@ stages:
       
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: 'apps/frontend/dist'
-        artifact: 'frontend-dist'
+        targetPath: 'apps/frontend'
+        artifact: 'frontend-app'
         
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: 'apps/api/dist'
-        artifact: 'api-dist'
+        targetPath: 'apps/api'
+        artifact: 'api-app'
 
 - stage: DeployDev
   displayName: 'Deploy to Development'
@@ -97,10 +97,10 @@ stages:
         deploy:
           steps:
           - download: current
-            artifact: frontend-dist
+            artifact: frontend-app
             
           - download: current
-            artifact: api-dist
+            artifact: api-app
             
           - task: AzureFunctionApp@1
             displayName: 'Deploy Azure Function'
@@ -108,13 +108,13 @@ stages:
               azureSubscription: $(azureServiceConnection)
               appType: 'functionApp'
               appName: '$(functionAppName)-dev'
-              package: '$(Pipeline.Workspace)/api-dist'
+              package: '$(Pipeline.Workspace)/api-app'
               
           - task: AzureStaticWebApp@1
             displayName: 'Deploy Static Web App'
             inputs:
               azure_subscription: $(azureServiceConnection)
-              app_location: '/apps/frontend'
+              app_location: '$(Pipeline.Workspace)/frontend-app'
               output_location: 'dist'
               skip_app_build: true
 
@@ -131,10 +131,10 @@ stages:
         deploy:
           steps:
           - download: current
-            artifact: frontend-dist
+            artifact: frontend-app
             
           - download: current
-            artifact: api-dist
+            artifact: api-app
             
           - task: AzureFunctionApp@1
             displayName: 'Deploy Azure Function'
@@ -142,13 +142,13 @@ stages:
               azureSubscription: $(azureServiceConnection)
               appType: 'functionApp'
               appName: $(functionAppName)
-              package: '$(Pipeline.Workspace)/api-dist'
+              package: '$(Pipeline.Workspace)/api-app'
               
           - task: AzureStaticWebApp@1
             displayName: 'Deploy Static Web App'
             inputs:
               azure_subscription: $(azureServiceConnection)
-              app_location: '/apps/frontend'
+              app_location: '$(Pipeline.Workspace)/frontend-app'
               output_location: 'dist'
               skip_app_build: true
               
