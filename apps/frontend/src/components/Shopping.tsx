@@ -234,12 +234,18 @@ export const Shopping: React.FC = () => {
   const toggleFavorite = (productId: string) => {
     // allow liking without auth for now; persist to backend
     try {
+      // Find the current product to determine the correct delta
+      const currentProduct = products.find(p => p.id === productId);
+      if (!currentProduct) return;
+      
+      const delta = currentProduct.isFavorite ? -1 : 1;
+      
       setProducts(prev => prev.map(product => 
         product.id === productId 
-          ? { ...product, isFavorite: !product.isFavorite, likes: (product.likes || 0) + (product.isFavorite ? -1 : 1) }
+          ? { ...product, isFavorite: !product.isFavorite, likes: (product.likes || 0) + delta }
           : product
       ));
-      fetch(`/api/v1/listings/${productId}/like`, { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ delta: 1 }) })
+      fetch(`/api/v1/listings/${productId}/like`, { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ delta }) })
         .catch(() => {});
       clearError();
     } catch (err) {
