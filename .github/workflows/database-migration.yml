@@ -66,35 +66,37 @@ jobs:
       - name: Verify database schema
         run: |
           cd apps/api
-          node -e "
+          node <<'NODE'
           const { Client } = require('pg');
 
           // Configure SSL based on environment variables
           const sslMode = process.env.PGSSLMODE || process.env.PGSSL_REQUIRE;
-          const sslConfig = sslMode && sslMode.toLowerCase() !== 'disable' ? {
-            rejectUnauthorized: true,
-            ...(process.env.PGSSL_CERT && { ca: process.env.PGSSL_CERT })
-          } : false;
+          const sslConfig = sslMode && sslMode.toLowerCase() !== 'disable'
+            ? { rejectUnauthorized: true, ...(process.env.PGSSL_CERT && { ca: process.env.PGSSL_CERT }) }
+            : false;
 
           const client = new Client({
             host: process.env.PGHOST,
-            port: process.env.PGPORT,
+            port: Number(process.env.PGPORT),
             user: process.env.PGUSER,
             password: process.env.PGPASSWORD,
             database: process.env.PGDATABASE,
             ssl: sslConfig
           });
 
-          client.connect().then(() => {
-            return client.query('SELECT COUNT(*) FROM listings');
-          }).then(result => {
-            console.log('Listings count:', result.rows[0].count);
-            return client.end();
-          }).catch(err => {
-            console.error('Database verification failed:', err);
-            process.exit(1);
-          });
-          "
+          (async () => {
+            try {
+              await client.connect();
+              const { rows } = await client.query('SELECT COUNT(*)::int AS count FROM listings');
+              console.log('Listings count:', rows[0].count);
+            } catch (err) {
+              console.error('Database verification failed:', err);
+              process.exit(1);
+            } finally {
+              await client.end();
+            }
+          })();
+          NODE
 
       - name: Upload migration logs
         uses: actions/upload-artifact@v4
@@ -143,58 +145,57 @@ jobs:
       - name: Seed database with sample data
         run: |
           cd apps/api
-          node -e "
+          node <<'NODE'
           const fs = require('fs');
           const path = require('path');
           const { Client } = require('pg');
 
           // Configure SSL based on environment variables
           const sslMode = process.env.PGSSLMODE || process.env.PGSSL_REQUIRE;
-          const sslConfig = sslMode && sslMode.toLowerCase() !== 'disable' ? {
-            rejectUnauthorized: true,
-            ...(process.env.PGSSL_CERT && { ca: process.env.PGSSL_CERT })
-          } : false;
+          const sslConfig = sslMode && sslMode.toLowerCase() !== 'disable'
+            ? { rejectUnauthorized: true, ...(process.env.PGSSL_CERT && { ca: process.env.PGSSL_CERT }) }
+            : false;
 
           const client = new Client({
             host: process.env.PGHOST,
-            port: process.env.PGPORT,
+            port: Number(process.env.PGPORT),
             user: process.env.PGUSER,
             password: process.env.PGPASSWORD,
             database: process.env.PGDATABASE,
             ssl: sslConfig
           });
 
-          client.connect().then(() => {
-            return client.query('SELECT COUNT(*) FROM listings');
-          }).then(result => {
-            const count = parseInt(result.rows[0].count);
-            if (count === 0) {
-              console.log('Seeding database with sample data...');
-              const listings = JSON.parse(fs.readFileSync(path.join(__dirname, 'src/data/listings.json'), 'utf8'));
-              
-              const insertPromises = listings.map(listing => {
-                const { id, ...data } = listing;
-                const columns = Object.keys(data).join(', ');
-                const values = Object.values(data).map(v => typeof v === 'string' ? \`'\${v.replace(/'/g, \"''\")}'\` : v).join(', ');
-                const placeholders = Object.keys(data).map((_, i) => \`$\${i + 1}\`).join(', ');
-                
-                return client.query(
-                  \`INSERT INTO listings (\${columns}) VALUES (\${placeholders}) ON CONFLICT (id) DO NOTHING\`,
-                  Object.values(data)
-                );
-              });
-              
-              return Promise.all(insertPromises);
-            } else {
-              console.log(\`Database already has \${count} listings\`);
+          (async () => {
+            try {
+              await client.connect();
+              const { rows } = await client.query('SELECT COUNT(*)::int AS count FROM listings');
+              const count = rows[0].count;
+              if (count === 0) {
+                console.log('Seeding database with sample data...');
+                const listings = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src/data/listings.json'), 'utf8'));
+                await client.query('BEGIN');
+                for (const listing of listings) {
+                  const { id, ...data } = listing;
+                  const cols = Object.keys(data);
+                  const placeholders = cols.map((_, i) => `$${i + 1}`).join(', ');
+                  await client.query(
+                    `INSERT INTO listings (${cols.join(', ')}) VALUES (${placeholders}) ON CONFLICT (id) DO NOTHING`,
+                    Object.values(data)
+                  );
+                }
+                await client.query('COMMIT');
+              } else {
+                console.log(`Database already has ${count} listings`);
+              }
+            } catch (err) {
+              try { await client.query('ROLLBACK'); } catch {}
+              console.error('Seeding failed:', err);
+              process.exit(1);
+            } finally {
+              await client.end();
             }
-          }).then(() => {
-            return client.end();
-          }).catch(err => {
-            console.error('Seeding failed:', err);
-            process.exit(1);
-          });
-          "
+          })();
+          NODE
 
   notify:
     name: Notify Migration Status
