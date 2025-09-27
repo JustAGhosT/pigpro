@@ -1,3 +1,15 @@
+<#
+.SYNOPSIS
+    Creates Azure PostgreSQL Flexible Server and initializes database schema.
+
+.PARAMETER PersistEnv
+    If specified, persists environment variables to system registry for future PowerShell sessions.
+    Default: false (variables are set for current session only).
+
+.EXAMPLE
+    .\azure-init-db.ps1 -SubscriptionId "12345" -PersistEnv
+#>
+
 param(
     [string]$ResourceGroup,
     [string]$Location,
@@ -5,7 +17,8 @@ param(
     [string]$AdminUser,
     [string]$AdminPassword,
     [string]$Database,
-    [string]$SubscriptionId
+    [string]$SubscriptionId,
+    [switch]$PersistEnv
 )
 
 $ErrorActionPreference = "Stop"
@@ -138,20 +151,21 @@ try {
         --end-ip-address $clientIp | Out-Null
 }
 catch {
-    # Fallback to --server-name
+    # Fallback to --server-name with client IP only (not 0.0.0.0/0)
     az postgres flexible-server firewall-rule create `
         --resource-group $ResourceGroup `
         --name "$ServerName-allow-ip" `
         --server-name $ServerName `
-        --start-ip-address 0.0.0.0 `
-        --end-ip-address 255.255.255.255 | Out-Null
+        --start-ip-address $clientIp `
+        --end-ip-address $clientIp | Out-Null
 }
 
 Write-Host "Done. Use these env vars:"
 Write-Host "PGHOST=$ServerName.postgres.database.azure.com"
 Write-Host "PGUSER=$adminLogin"
-Write-Host "PGPASSWORD=$AdminPassword"
+Write-Host "PGPASSWORD=<REDACTED>"
 Write-Host "PGDATABASE=$Database"
+Write-Host "Note: PGPASSWORD is set in environment. Use a secure method to access it (e.g., secret manager or secure env export)."
 Write-Host "PGPORT=5432"
 Write-Host "PGSSLMODE=require"
 
@@ -163,17 +177,21 @@ $env:PGDATABASE = $Database
 $env:PGPORT = "5432"
 $env:PGSSLMODE = "require"
 
-# Persist env vars for future sessions
-try {
-  setx PGHOST "$ServerName.postgres.database.azure.com" | Out-Null
-  setx PGUSER "$adminLogin" | Out-Null
-  setx PGPASSWORD "$AdminPassword" | Out-Null
-  setx PGDATABASE "$Database" | Out-Null
-  setx PGPORT "5432" | Out-Null
-  setx PGSSLMODE "require" | Out-Null
-  Write-Host "Environment variables set for current session and persisted for future sessions (open a new shell to pick up persisted values)."
-} catch {
-  Write-Host "Warning: Failed to persist env vars with setx. They are set for current session only."
+# Persist env vars for future sessions (opt-in only)
+if ($PersistEnv) {
+  try {
+    setx PGHOST "$ServerName.postgres.database.azure.com" | Out-Null
+    setx PGUSER "$adminLogin" | Out-Null
+    setx PGPASSWORD "$AdminPassword" | Out-Null
+    setx PGDATABASE "$Database" | Out-Null
+    setx PGPORT "5432" | Out-Null
+    setx PGSSLMODE "require" | Out-Null
+    Write-Host "Environment variables set for current session and persisted for future sessions (open a new shell to pick up persisted values)."
+  } catch {
+    Write-Host "Warning: Failed to persist env vars with setx. They are set for current session only."
+  }
+} else {
+  Write-Host "Environment variables set for current session only. Use -PersistEnv flag to persist for future sessions."
 }
 
 # Automatically initialize DB schema via Node script
