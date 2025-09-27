@@ -7,9 +7,8 @@
  * by creating proper directories, moving files, and updating configurations.
  */
 
-import fs from 'fs';
-import path from 'path';
-
+const fs = require('fs');
+const path = require('path');
 // Colors for console output
 const colors = {
   reset: '\x1b[0m',
