@@ -174,7 +174,7 @@ az functionapp config appsettings set \
 
 ```bash
 # Build the API
-cd backend/api
+cd apps/api
 npm run build
 
 # Deploy to Azure
@@ -193,8 +193,9 @@ az staticwebapp create \
   --source "https://github.com/your-username/livestock-club-sa" \
   --location "Central US" \
   --branch "main" \
-  --app-location "/" \
-  --output-location "dist"
+  --app-location "apps/frontend" \
+  --output-location "dist" \
+  --api-location "apps/api"
 ```
 
 ### 2. Configure Build Settings
@@ -230,9 +231,9 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: 'upload'
-          app_location: '/'
+          app_location: 'apps/frontend'
           output_location: 'dist'
-          api_location: 'backend/api'
+          api_location: 'apps/api'
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -268,7 +269,7 @@ export PGPORT="5432"
 export PGSSLMODE="require"
 
 # Run database initialization
-cd backend/api
+cd apps/api
 npm run db:init
 ```
 
