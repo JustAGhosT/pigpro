@@ -205,7 +205,8 @@ jobs:
 
     steps:
       - name: Notify Teams
-        uses: skitionek/notify-microsoft-teams@master
+        if: always()
+        uses: skitionek/notify-microsoft-teams@b1b3e4b
         with:
           webhook_url: ${{ secrets.TEAMS_WEBHOOK }}
           message: |
