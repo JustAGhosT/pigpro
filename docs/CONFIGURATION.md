@@ -7,6 +7,7 @@ This guide explains how to configure the Livestock Club SA application using env
 ## Required Configuration
 
 ### Database Configuration
+
 ```bash
 # PostgreSQL Database Settings
 PGHOST=localhost
@@ -26,12 +27,14 @@ PGSSLMODE=require
 ```
 
 ### Storage Configuration
+
 ```bash
 # Blob Storage Base URL for Images
 BLOB_BASE_URL=https://yourstorageaccount.blob.core.windows.net/livestock-images
 ```
 
 ### API Configuration
+
 ```bash
 # Function App Settings
 FUNCTIONS_WORKER_RUNTIME=node
@@ -41,6 +44,7 @@ AzureWebJobsStorage=UseDevelopmentStorage=true
 ## Development Setup
 
 ### 1. Create Environment File
+
 ```bash
 # Copy the template
 cp backend/api/.env.example backend/api/.env
@@ -50,6 +54,7 @@ nano backend/api/.env
 ```
 
 ### 2. Local Development
+
 ```bash
 # Set environment variables
 export PGHOST=localhost
@@ -66,6 +71,7 @@ npm run backend:dev
 ## Production Configuration
 
 ### Azure Function App Settings
+
 Configure these in the Azure portal under Function App > Configuration > Application settings:
 
 ```bash
@@ -85,6 +91,7 @@ FUNCTIONS_WORKER_RUNTIME=node
 ```
 
 ### Static Web App Configuration
+
 Configure these in the Azure portal under Static Web App > Configuration:
 
 ```bash
@@ -98,12 +105,14 @@ NODE_ENV=production
 ## Security Configuration
 
 ### JWT Configuration
+
 ```bash
 # JWT Secret (use a strong random string in production)
 JWT_SECRET=your-super-secret-jwt-key
 ```
 
 ### CORS Configuration
+
 ```bash
 # Allowed origins (comma-separated)
 CORS_ORIGINS=https://livestock-club-sa.azurestaticapps.net,https://livestockclubsa.co.za
@@ -112,6 +121,7 @@ CORS_ORIGINS=https://livestock-club-sa.azurestaticapps.net,https://livestockclub
 ## Feature Flags
 
 ### Enable/Disable Features
+
 ```bash
 # Feature toggles
 ENABLE_SOCIAL_LOGIN=true
@@ -124,6 +134,7 @@ ENABLE_IMAGE_UPLOAD=true
 ## Monitoring Configuration
 
 ### Application Insights
+
 ```bash
 # Application Insights
 APPINSIGHTS_INSTRUMENTATIONKEY=your-instrumentation-key
@@ -131,6 +142,7 @@ APPLICATIONINSIGHTS_CONNECTION_STRING=your-connection-string
 ```
 
 ### Error Tracking
+
 ```bash
 # Sentry (Optional)
 SENTRY_DSN=your-sentry-dsn
@@ -139,6 +151,7 @@ SENTRY_DSN=your-sentry-dsn
 ## Configuration Validation
 
 ### Check Configuration
+
 ```bash
 # Validate environment variables
 npm run config:validate
@@ -155,6 +168,7 @@ npm run storage:test
 ### Environment-Specific Configs
 
 #### Development
+
 ```bash
 # .env.development
 NODE_ENV=development
@@ -163,6 +177,7 @@ LOG_LEVEL=debug
 ```
 
 #### Staging
+
 ```bash
 # .env.staging
 NODE_ENV=staging
@@ -171,6 +186,7 @@ LOG_LEVEL=info
 ```
 
 #### Production
+
 ```bash
 # .env.production
 NODE_ENV=production
@@ -179,6 +195,7 @@ LOG_LEVEL=error
 ```
 
 ### Configuration Loading Order
+
 1. Default values
 2. Environment-specific files
 3. Environment variables
@@ -189,6 +206,7 @@ LOG_LEVEL=error
 ### Common Issues
 
 #### Database Connection Issues
+
 ```bash
 # Test connection
 psql -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT
@@ -198,6 +216,7 @@ echo $PGSSLMODE
 ```
 
 #### Storage Issues
+
 ```bash
 # Test blob storage
 curl -I $BLOB_BASE_URL/test-image.jpg
@@ -207,6 +226,7 @@ az storage account show --name yourstorageaccount
 ```
 
 #### Function App Issues
+
 ```bash
 # Check function app logs
 az functionapp log tail --name your-function-app
@@ -216,6 +236,7 @@ az functionapp config appsettings list --name your-function-app
 ```
 
 ### Configuration Debugging
+
 ```bash
 # Print current configuration (without secrets)
 npm run config:debug
@@ -227,18 +248,21 @@ npm run config:validate
 ## Best Practices
 
 ### Security
+
 - Never commit `.env` files to version control
 - Use strong passwords and secrets
 - Rotate secrets regularly
 - Use Azure Key Vault for production secrets
 
 ### Performance
+
 - Use connection pooling for database
 - Configure appropriate timeouts
 - Set up caching where appropriate
 - Monitor resource usage
 
 ### Reliability
+
 - Use health checks
 - Configure proper error handling
 - Set up monitoring and alerting
@@ -247,6 +271,7 @@ npm run config:validate
 ## Configuration Scripts
 
 ### Setup Scripts
+
 ```bash
 # Initialize development environment
 npm run setup:dev
@@ -259,6 +284,7 @@ npm run config:validate
 ```
 
 ### Migration Scripts
+
 ```bash
 # Migrate configuration
 npm run config:migrate
@@ -273,6 +299,7 @@ npm run config:restore
 ## Environment Templates
 
 ### Minimal Configuration
+
 ```bash
 # Minimum required for development
 PGHOST=localhost
@@ -283,6 +310,7 @@ BLOB_BASE_URL=http://localhost:10000/devstoreaccount1
 ```
 
 ### Full Configuration
+
 ```bash
 # Complete configuration with all features
 PGHOST=your-host
@@ -300,6 +328,7 @@ APPINSIGHTS_INSTRUMENTATIONKEY=your-key
 ## Support
 
 For configuration issues:
+
 - Check the logs for specific error messages
 - Validate environment variables
 - Test individual components

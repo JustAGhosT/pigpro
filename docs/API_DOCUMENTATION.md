@@ -2,17 +2,21 @@
 
 ## Overview
 
-The Livestock Club SA API provides endpoints for managing livestock marketplace data, user authentication, and system operations.
+The Livestock Club SA API provides endpoints for managing livestock marketplace data, user
+authentication, and system operations.
 
 **Base URL**: `https://your-api.azurewebsites.net/api/v1`
 
 ## Authentication
 
 ### Guest Access
+
 Most endpoints support guest access for browsing without authentication.
 
 ### Authenticated Access
+
 Some endpoints require authentication via JWT tokens:
+
 ```http
 Authorization: Bearer <jwt_token>
 ```
@@ -22,9 +26,11 @@ Authorization: Bearer <jwt_token>
 ### Livestock Data
 
 #### GET /livestock
+
 Get all livestock categories with metadata.
 
 **Response:**
+
 ```json
 {
   "poultry": {
@@ -32,7 +38,7 @@ Get all livestock categories with metadata.
     "icon": "🐔"
   },
   "cattle": {
-    "label": "Cattle", 
+    "label": "Cattle",
     "icon": "🐄"
   },
   "goats": {
@@ -69,9 +75,11 @@ Get all livestock categories with metadata.
 ### Listings
 
 #### GET /listings
+
 Get marketplace listings with optional filtering.
 
 **Query Parameters:**
+
 - `q` (string): Search query
 - `category` (string): Livestock category
 - `minPrice` (number): Minimum price filter
@@ -84,11 +92,13 @@ Get marketplace listings with optional filtering.
 - `maxKm` (number): Maximum distance in kilometers
 
 **Example Request:**
+
 ```http
 GET /listings?category=Fish&minPrice=100&maxPrice=500&minRating=4.0
 ```
 
 **Response:**
+
 ```json
 [
   {
@@ -114,9 +124,11 @@ GET /listings?category=Fish&minPrice=100&maxPrice=500&minRating=4.0
 ```
 
 #### POST /listings
+
 Create a new listing.
 
 **Request Body:**
+
 ```json
 {
   "title": "Test Fish - API Test",
@@ -133,6 +145,7 @@ Create a new listing.
 ```
 
 **Response:**
+
 ```json
 {
   "id": "28",
@@ -156,9 +169,11 @@ Create a new listing.
 ```
 
 #### PUT /listings/{id}
+
 Update an existing listing.
 
 **Request Body:**
+
 ```json
 {
   "title": "Updated Title",
@@ -168,6 +183,7 @@ Update an existing listing.
 ```
 
 **Response:**
+
 ```json
 {
   "id": "28",
@@ -191,9 +207,11 @@ Update an existing listing.
 ```
 
 #### POST /listings/{id}/like
+
 Like or unlike a listing.
 
 **Request Body:**
+
 ```json
 {
   "delta": 1
@@ -201,6 +219,7 @@ Like or unlike a listing.
 ```
 
 **Response:**
+
 ```json
 {
   "id": "28",
@@ -226,6 +245,7 @@ Like or unlike a listing.
 ## Data Models
 
 ### Listing
+
 ```typescript
 interface Listing {
   id: string;
@@ -249,6 +269,7 @@ interface Listing {
 ```
 
 ### Category
+
 ```typescript
 interface Category {
   label: string;
@@ -259,6 +280,7 @@ interface Category {
 ## Error Responses
 
 ### Standard Error Format
+
 ```json
 {
   "error": "Error message",
@@ -268,6 +290,7 @@ interface Category {
 ```
 
 ### HTTP Status Codes
+
 - `200` - Success
 - `201` - Created
 - `400` - Bad Request
@@ -278,6 +301,7 @@ interface Category {
 ### Common Error Examples
 
 #### 400 Bad Request
+
 ```json
 {
   "error": "Invalid request data",
@@ -287,6 +311,7 @@ interface Category {
 ```
 
 #### 404 Not Found
+
 ```json
 {
   "error": "Listing not found",
@@ -296,6 +321,7 @@ interface Category {
 ```
 
 #### 500 Internal Server Error
+
 ```json
 {
   "error": "Database connection failed",
@@ -311,6 +337,7 @@ interface Category {
 - **Premium Users**: 5000 requests per hour
 
 Rate limit headers are included in responses:
+
 ```http
 X-RateLimit-Limit: 1000
 X-RateLimit-Remaining: 999
@@ -322,10 +349,12 @@ X-RateLimit-Reset: 1640995200
 For endpoints that return lists, pagination is supported:
 
 **Query Parameters:**
+
 - `page` (number): Page number (default: 1)
 - `limit` (number): Items per page (default: 20, max: 100)
 
 **Response Headers:**
+
 ```http
 X-Total-Count: 150
 X-Page-Count: 8
@@ -336,6 +365,7 @@ X-Per-Page: 20
 ## Filtering and Sorting
 
 ### Available Filters
+
 - **Text Search**: `q` parameter searches in title and description
 - **Category**: Exact match on category field
 - **Price Range**: `minPrice` and `maxPrice` parameters
@@ -345,7 +375,9 @@ X-Per-Page: 20
 - **Verification**: `verifiedOnly` boolean parameter
 
 ### Sorting
+
 Listings are automatically sorted by:
+
 1. **Promoted status** (promoted listings first)
 2. **Likes count** (descending)
 3. **Creation date** (newest first)
@@ -353,22 +385,27 @@ Listings are automatically sorted by:
 ## Image Management
 
 ### Image URLs
+
 Images are served from Azure Blob Storage with the following URL pattern:
+
 ```
 {BLOB_BASE_URL}/{image_path}
 ```
 
 Example:
+
 ```
 https://livestocksa123abc.blob.core.windows.net/livestock-images/barbel-1.jpg
 ```
 
 ### Supported Formats
+
 - **JPEG** (.jpg, .jpeg)
 - **PNG** (.png)
 - **WebP** (.webp)
 
 ### Image Limits
+
 - **Maximum file size**: 5MB
 - **Maximum dimensions**: 2048x2048 pixels
 - **Multiple images**: Up to 5 images per listing
@@ -376,15 +413,18 @@ https://livestocksa123abc.blob.core.windows.net/livestock-images/barbel-1.jpg
 ## Webhooks
 
 ### Listing Events
+
 Webhooks can be configured for listing events:
 
 **Events:**
+
 - `listing.created`
 - `listing.updated`
 - `listing.deleted`
 - `listing.liked`
 
 **Webhook Payload:**
+
 ```json
 {
   "event": "listing.liked",
@@ -399,6 +439,7 @@ Webhooks can be configured for listing events:
 ## SDKs and Libraries
 
 ### JavaScript/TypeScript
+
 ```bash
 npm install @livestock-club-sa/api-client
 ```
@@ -408,16 +449,17 @@ import { LivestockAPI } from '@livestock-club-sa/api-client';
 
 const api = new LivestockAPI({
   baseUrl: 'https://your-api.azurewebsites.net/api/v1',
-  apiKey: 'your-api-key'
+  apiKey: 'your-api-key',
 });
 
 const listings = await api.listings.get({
   category: 'Fish',
-  minPrice: 100
+  minPrice: 100,
 });
 ```
 
 ### Python
+
 ```bash
 pip install livestock-club-sa-api
 ```
@@ -436,15 +478,19 @@ listings = api.listings.get(category='Fish', min_price=100)
 ## Testing
 
 ### Test Environment
+
 Use the test environment for development and testing:
+
 ```
 https://test-api.azurewebsites.net/api/v1
 ```
 
 ### Test Data
+
 The test environment includes sample data for all categories and features.
 
 ### API Testing Tools
+
 - **Postman**: Import our API collection
 - **Insomnia**: Use our API specification
 - **curl**: Examples provided in documentation
@@ -452,12 +498,15 @@ The test environment includes sample data for all categories and features.
 ## Support
 
 ### API Support
+
 - **Email**: api-support@livestockclubsa.co.za
 - **Documentation**: [API Docs](https://docs.livestockclubsa.co.za)
 - **Status Page**: [API Status](https://status.livestockclubsa.co.za)
 
 ### Rate Limits
+
 If you need higher rate limits, contact support to discuss your requirements.
 
 ### Bug Reports
+
 Report API bugs through GitHub Issues with the `api` label.

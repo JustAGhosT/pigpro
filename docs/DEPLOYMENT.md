@@ -2,7 +2,8 @@
 
 ## Overview
 
-This guide covers deploying the Livestock Club SA application to Azure, including the frontend, backend API, database, and storage services.
+This guide covers deploying the Livestock Club SA application to Azure, including the frontend,
+backend API, database, and storage services.
 
 ## Architecture
 
@@ -22,12 +23,15 @@ This guide covers deploying the Livestock Club SA application to Azure, includin
 ## Prerequisites
 
 ### Required Tools
+
 - **Azure CLI** - [Install Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 - **Node.js 18+** and npm
-- **Azure Functions Core Tools** - [Install Guide](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local)
+- **Azure Functions Core Tools** -
+  [Install Guide](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local)
 - **Git** - For version control
 
 ### Azure Account Setup
+
 1. Create an Azure account
 2. Set up a subscription
 3. Configure Azure CLI authentication
@@ -35,6 +39,7 @@ This guide covers deploying the Livestock Club SA application to Azure, includin
 ## Environment Setup
 
 ### 1. Azure Login
+
 ```bash
 # Login to Azure
 az login
@@ -44,6 +49,7 @@ az account set --subscription "your-subscription-id"
 ```
 
 ### 2. Create Resource Group
+
 ```bash
 # Create resource group
 az group create \
@@ -54,6 +60,7 @@ az group create \
 ## Database Deployment
 
 ### 1. PostgreSQL Flexible Server
+
 ```bash
 # Create PostgreSQL server
 az postgres flexible-server create \
@@ -68,6 +75,7 @@ az postgres flexible-server create \
 ```
 
 ### 2. Create Database
+
 ```bash
 # Create database
 az postgres flexible-server db create \
@@ -77,6 +85,7 @@ az postgres flexible-server db create \
 ```
 
 ### 3. Configure Firewall
+
 ```bash
 # Add firewall rule for Azure services
 az postgres flexible-server firewall-rule create \
@@ -90,6 +99,7 @@ az postgres flexible-server firewall-rule create \
 ## Storage Deployment
 
 ### 1. Create Storage Account
+
 ```bash
 # Create storage account
 az storage account create \
@@ -101,6 +111,7 @@ az storage account create \
 ```
 
 ### 2. Create Container
+
 ```bash
 # Create blob container
 az storage container create \
@@ -110,6 +121,7 @@ az storage container create \
 ```
 
 ### 3. Upload Images
+
 ```bash
 # Upload images
 az storage blob upload-batch \
@@ -121,6 +133,7 @@ az storage blob upload-batch \
 ## Backend API Deployment
 
 ### 1. Create Function App
+
 ```bash
 # Create storage account for function app
 az storage account create \
@@ -141,6 +154,7 @@ az functionapp create \
 ```
 
 ### 2. Configure Application Settings
+
 ```bash
 # Set database connection string
 az functionapp config appsettings set \
@@ -157,6 +171,7 @@ az functionapp config appsettings set \
 ```
 
 ### 3. Deploy Function App
+
 ```bash
 # Build the API
 cd backend/api
@@ -169,6 +184,7 @@ func azure functionapp publish livestock-api
 ## Frontend Deployment
 
 ### 1. Create Static Web App
+
 ```bash
 # Create static web app
 az staticwebapp create \
@@ -182,7 +198,9 @@ az staticwebapp create \
 ```
 
 ### 2. Configure Build Settings
+
 Create `.github/workflows/azure-static-web-apps.yml`:
+
 ```yaml
 name: Azure Static Web Apps CI/CD
 
@@ -197,7 +215,9 @@ on:
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    if:
+      github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action !=
+      'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
@@ -209,10 +229,10 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: "/"
-          output_location: "dist"
-          api_location: "backend/api"
+          action: 'upload'
+          app_location: '/'
+          output_location: 'dist'
+          api_location: 'backend/api'
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -223,11 +243,13 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          action: "close"
+          action: 'close'
 ```
 
 ### 3. Configure Environment Variables
+
 In the Azure portal, set these environment variables for the static web app:
+
 ```bash
 VITE_API_URL=https://livestock-api.azurewebsites.net/api/v1
 ```
@@ -235,6 +257,7 @@ VITE_API_URL=https://livestock-api.azurewebsites.net/api/v1
 ## Database Initialization
 
 ### 1. Run Database Setup
+
 ```bash
 # Set environment variables
 export PGHOST="livestock-pg-server.postgres.database.azure.com"
@@ -252,6 +275,7 @@ npm run db:init
 ## Monitoring and Logging
 
 ### 1. Application Insights
+
 ```bash
 # Create Application Insights
 az monitor app-insights component create \
@@ -261,7 +285,9 @@ az monitor app-insights component create \
 ```
 
 ### 2. Configure Logging
+
 Add to function app settings:
+
 ```bash
 APPINSIGHTS_INSTRUMENTATIONKEY=<your-instrumentation-key>
 APPLICATIONINSIGHTS_CONNECTION_STRING=<your-connection-string>
@@ -270,7 +296,9 @@ APPLICATIONINSIGHTS_CONNECTION_STRING=<your-connection-string>
 ## Security Configuration
 
 ### 1. CORS Settings
+
 Configure CORS for the function app:
+
 ```bash
 az functionapp cors add \
   --name "livestock-api" \
@@ -279,7 +307,9 @@ az functionapp cors add \
 ```
 
 ### 2. Authentication
+
 Configure authentication for the static web app in the Azure portal:
+
 - Enable authentication
 - Configure identity providers (Google, Facebook, Microsoft)
 - Set up redirect URLs
@@ -287,6 +317,7 @@ Configure authentication for the static web app in the Azure portal:
 ## Domain Configuration
 
 ### 1. Custom Domain
+
 ```bash
 # Add custom domain to static web app
 az staticwebapp hostname set \
@@ -296,11 +327,13 @@ az staticwebapp hostname set \
 ```
 
 ### 2. SSL Certificate
+
 SSL certificates are automatically managed by Azure Static Web Apps.
 
 ## Backup and Recovery
 
 ### 1. Database Backup
+
 ```bash
 # Create backup policy
 az postgres flexible-server backup create \
@@ -310,7 +343,9 @@ az postgres flexible-server backup create \
 ```
 
 ### 2. Storage Backup
+
 Configure backup for blob storage:
+
 ```bash
 # Enable soft delete
 az storage blob service-properties update \
@@ -322,6 +357,7 @@ az storage blob service-properties update \
 ## Performance Optimization
 
 ### 1. CDN Configuration
+
 ```bash
 # Create CDN profile
 az cdn profile create \
@@ -331,6 +367,7 @@ az cdn profile create \
 ```
 
 ### 2. Database Optimization
+
 - Configure connection pooling
 - Set up read replicas for read-heavy workloads
 - Monitor query performance
@@ -338,11 +375,13 @@ az cdn profile create \
 ## Scaling
 
 ### 1. Function App Scaling
+
 - Configure auto-scaling rules
 - Set up premium plans for better performance
 - Monitor usage patterns
 
 ### 2. Database Scaling
+
 ```bash
 # Scale up database
 az postgres flexible-server update \
@@ -356,6 +395,7 @@ az postgres flexible-server update \
 ### Common Issues
 
 #### Database Connection Issues
+
 ```bash
 # Test database connection
 psql -h livestock-pg-server.postgres.database.azure.com \
@@ -365,6 +405,7 @@ psql -h livestock-pg-server.postgres.database.azure.com \
 ```
 
 #### Function App Deployment Issues
+
 ```bash
 # Check function app logs
 az functionapp log tail \
@@ -373,11 +414,13 @@ az functionapp log tail \
 ```
 
 #### Static Web App Issues
+
 - Check build logs in GitHub Actions
 - Verify environment variables
 - Check CORS configuration
 
 ### Monitoring
+
 - Use Azure Monitor for application insights
 - Set up alerts for critical metrics
 - Monitor database performance
@@ -385,12 +428,14 @@ az functionapp log tail \
 ## Maintenance
 
 ### Regular Tasks
+
 - Update dependencies monthly
 - Monitor security patches
 - Review and optimize database queries
 - Clean up old blob storage data
 
 ### Updates
+
 ```bash
 # Update function app runtime
 az functionapp config set \
@@ -402,12 +447,14 @@ az functionapp config set \
 ## Cost Optimization
 
 ### Recommendations
+
 - Use consumption plans for function apps
 - Implement auto-shutdown for development resources
 - Monitor and optimize database usage
 - Use lifecycle management for blob storage
 
 ### Cost Monitoring
+
 - Set up cost alerts
 - Use Azure Cost Management
 - Regular cost reviews
@@ -415,11 +462,13 @@ az functionapp config set \
 ## Support
 
 ### Azure Support
+
 - Use Azure support channels
 - Check Azure status page
 - Review Azure documentation
 
 ### Application Support
+
 - Monitor application logs
 - Use Application Insights
 - Set up health checks

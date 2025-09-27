@@ -7,13 +7,17 @@ This document describes the test suite for the Livestock Club SA API endpoints.
 ## Test Structure
 
 ### 1. Unit Tests (`api.test.ts`)
-**Purpose**: Tests the API structure, data validation, and business logic without external dependencies.
+
+**Purpose**: Tests the API structure, data validation, and business logic without external
+dependencies.
 
 **Coverage**:
+
 - ✅ Livestock categories structure (9 categories including Fish, Insects, Arachnids)
 - ✅ Category icons and labels
 - ✅ CRUD operations support
-- ✅ Filtering parameters (q, category, minPrice, maxPrice, minRating, verifiedOnly, city, lat, lng, maxKm)
+- ✅ Filtering parameters (q, category, minPrice, maxPrice, minRating, verifiedOnly, city, lat, lng,
+  maxKm)
 - ✅ New categories (Fish, Insects, Arachnids)
 - ✅ Promoted listings functionality
 - ✅ Like functionality endpoints
@@ -26,9 +30,11 @@ This document describes the test suite for the Livestock Club SA API endpoints.
 - ✅ Meaningful error messages
 
 ### 2. HTTP Integration Tests (`http.test.ts`)
+
 **Purpose**: Tests actual HTTP requests to running API endpoints.
 
 **Coverage**:
+
 - ✅ Livestock data endpoint (`GET /api/v1/livestock`)
 - ✅ Listings endpoint (`GET /api/v1/listings`)
 - ✅ Category filtering (`?category=Fish`)
@@ -37,12 +43,15 @@ This document describes the test suite for the Livestock Club SA API endpoints.
 - ✅ Like functionality (`POST /api/v1/listings/{id}/like`)
 - ✅ Create listing (`POST /api/v1/listings`)
 
-**Note**: HTTP tests gracefully skip if the server is not running, making them suitable for CI/CD environments.
+**Note**: HTTP tests gracefully skip if the server is not running, making them suitable for CI/CD
+environments.
 
 ### 3. Authentication Tests (`auth.test.ts`)
+
 **Purpose**: Tests authentication-related functionality.
 
 **Coverage**:
+
 - ✅ User authentication flow
 - ✅ Role-based access control
 - ✅ Session management
@@ -72,7 +81,8 @@ This document describes the test suite for the Livestock Club SA API endpoints.
 
 ### Data Validation Tested
 
-- **Listing structure**: id, title, price, currency, category, promoted, likes, rating, reviews, isVerified
+- **Listing structure**: id, title, price, currency, category, promoted, likes, rating, reviews,
+  isVerified
 - **Price ranges**: 50-5000 ZAR
 - **Rating ranges**: 1.0-5.0
 - **Category validation**: All 9 categories supported
@@ -82,6 +92,7 @@ This document describes the test suite for the Livestock Club SA API endpoints.
 ## Running Tests
 
 ### Prerequisites
+
 - Node.js and npm installed
 - Azure Functions Core Tools (for HTTP tests)
 
@@ -162,4 +173,6 @@ npm test
 
 ## Conclusion
 
-The test suite provides comprehensive coverage of the API endpoints, ensuring reliability and correctness of the Livestock Club SA marketplace functionality. The tests are designed to be maintainable, fast, and suitable for both development and production environments.
+The test suite provides comprehensive coverage of the API endpoints, ensuring reliability and
+correctness of the Livestock Club SA marketplace functionality. The tests are designed to be
+maintainable, fast, and suitable for both development and production environments.

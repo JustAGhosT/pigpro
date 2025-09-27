@@ -1,164 +1,164 @@
 name: Deploy to Azure Development
 
 on:
-    push:
-        branches: [develop, staging]
-    pull_request:
-        branches: [develop, staging]
+  push:
+    branches: [develop, staging]
+  pull_request:
+    branches: [develop, staging]
 
 env:
-    NODE_VERSION: "18"
-    AZURE_FUNCTIONAPP_NAME: livestock-api-dev
-    AZURE_FUNCTIONAPP_PACKAGE_PATH: apps/api
-    AZURE_STATIC_WEB_APPS_API_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_DEV }}
+  NODE_VERSION: "18"
+  AZURE_FUNCTIONAPP_NAME: livestock-api-dev
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: apps/api
+  AZURE_STATIC_WEB_APPS_API_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_DEV }}
 
 jobs:
-    test:
-        name: Run Tests
-        runs-on: ubuntu-latest
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ env.NODE_VERSION }}
-                  cache: "npm"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
 
-            - name: Install dependencies
-              run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-            - name: Run API tests
-              run: npm run test
+      - name: Run API tests
+        run: npm run test
 
-            - name: Run frontend tests
-              run: cd apps/frontend && npm run test
+      - name: Run frontend tests
+        run: cd apps/frontend && npm run test
 
-            - name: Generate test coverage
-              run: npm run test:coverage
+      - name: Generate test coverage
+        run: npm run test:coverage
 
-            - name: Upload coverage to Codecov
-              uses: codecov/codecov-action@v4
-              with:
-                  token: ${{ secrets.CODECOV_TOKEN }}
-                  files: ./apps/api/coverage/lcov.info
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./apps/api/coverage/lcov.info
 
-    build:
-        name: Build Applications
-        runs-on: ubuntu-latest
-        needs: test
+  build:
+    name: Build Applications
+    runs-on: ubuntu-latest
+    needs: test
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ env.NODE_VERSION }}
-                  cache: "npm"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
 
-            - name: Install dependencies
-              run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-            - name: Build frontend
-              run: npm run frontend:build
-              env:
-                  VITE_API_URL: https://livestock-api-dev.azurewebsites.net/api/v1
+      - name: Build frontend
+        run: npm run frontend:build
+        env:
+          VITE_API_URL: https://livestock-api-dev.azurewebsites.net/api/v1
 
-            - name: Build API
-              run: npm run api:build
+      - name: Build API
+        run: npm run api:build
 
-    deploy-api-dev:
-        name: Deploy API to Development
-        runs-on: ubuntu-latest
-        needs: build
-        if: github.ref == 'refs/heads/develop'
+  deploy-api-dev:
+    name: Deploy API to Development
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/develop'
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ env.NODE_VERSION }}
-                  cache: "npm"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
 
-            - name: Install dependencies
-              run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-            - name: Build API
-              run: npm run api:build
+      - name: Build API
+        run: npm run api:build
 
-            - name: Azure Login
-              uses: azure/login@v2
-              with:
-                  creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-            - name: Deploy to Azure Functions
-              uses: Azure/functions-action@v1
-              with:
-                  app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-                  package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-                  publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE_DEV }}
+      - name: Deploy to Azure Functions
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE_DEV }}
 
-    deploy-frontend-dev:
-        name: Deploy Frontend to Development
-        runs-on: ubuntu-latest
-        needs: build
-        if: github.ref == 'refs/heads/develop'
+  deploy-frontend-dev:
+    name: Deploy Frontend to Development
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/develop'
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ env.NODE_VERSION }}
-                  cache: "npm"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
 
-            - name: Install dependencies
-              run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-            - name: Build frontend
-              run: npm run frontend:build
-              env:
-                  VITE_API_URL: https://livestock-api-dev.azurewebsites.net/api/v1
+      - name: Build frontend
+        run: npm run frontend:build
+        env:
+          VITE_API_URL: https://livestock-api-dev.azurewebsites.net/api/v1
 
-            - name: Deploy to Azure Static Web Apps
-              uses: Azure/static-web-apps-deploy@v1
-              with:
-                  azure_static_web_apps_api_token: ${{ env.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-                  repo_token: ${{ secrets.GITHUB_TOKEN }}
-                  action: "upload"
-                  app_location: "/apps/frontend"
-                  output_location: "dist"
-                  api_location: "/apps/api"
+      - name: Deploy to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ env.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "/apps/frontend"
+          output_location: "dist"
+          api_location: "/apps/api"
 
-    notify:
-        name: Notify Deployment
-        runs-on: ubuntu-latest
-        needs: [deploy-api-dev, deploy-frontend-dev]
-        if: always()
+  notify:
+    name: Notify Deployment
+    runs-on: ubuntu-latest
+    needs: [deploy-api-dev, deploy-frontend-dev]
+    if: always()
 
-        steps:
-            - name: Notify Teams
-              uses: skitionek/notify-microsoft-teams@master
-              with:
-                  webhook_url: ${{ secrets.TEAMS_WEBHOOK }}
-                  message: |
-                      🚀 **Development Deployment Complete**
+    steps:
+      - name: Notify Teams
+        uses: skitionek/notify-microsoft-teams@master
+        with:
+          webhook_url: ${{ secrets.TEAMS_WEBHOOK }}
+          msg: |
+            🚀 **Development Deployment Complete**
 
-                      **Branch:** ${{ github.ref_name }}
-                      **Commit:** ${{ github.sha }}
-                      **Status:** ${{ job.status }}
+            **Branch:** ${{ github.ref_name }}
+            **Commit:** ${{ github.sha }}
+            **Status:** ${{ job.status }}
 
-                      **Frontend:** https://livestock-dev.azurestaticapps.net
-                      **API:** https://livestock-api-dev.azurewebsites.net
+            **Frontend:** https://livestock-dev.azurestaticapps.net
+            **API:** https://livestock-api-dev.azurewebsites.net
 
-                      **Changes:**
-                      ${{ github.event.head_commit.message }}
+            **Changes:**
+            ${{ github.event.head_commit.message }}

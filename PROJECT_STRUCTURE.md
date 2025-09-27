@@ -1,11 +1,13 @@
 # Livestock Club SA - Project Structure
 
 ## Overview
-This is a full-stack livestock marketplace and management platform built with React, TypeScript, and Azure Functions.
+
+This is a full-stack livestock marketplace and management platform built with React, TypeScript, and
+Azure Functions.
 
 ## Architecture
 
-```
+````
 livestock-club-sa/
 ├── apps/                          # Application packages
 │   ├── frontend/                  # React frontend application
@@ -115,9 +117,10 @@ npm run test
 
 # Build for production
 npm run build
-```
+````
 
 ### Deployment
+
 - **Frontend**: Static hosting (Azure Static Web Apps)
 - **API**: Azure Functions
 - **Database**: Azure PostgreSQL Flexible Server
@@ -126,6 +129,7 @@ npm run build
 ## Environment Configuration
 
 ### Required Environment Variables
+
 - `PGHOST` - PostgreSQL host
 - `PGUSER` - PostgreSQL user
 - `PGPASSWORD` - PostgreSQL password
@@ -136,12 +140,14 @@ npm run build
 ## Testing Strategy
 
 ### Test Types
+
 1. **Unit Tests**: Component and utility testing
 2. **Integration Tests**: API endpoint testing
 3. **HTTP Tests**: Live API testing
 4. **Authentication Tests**: Security validation
 
 ### Test Coverage
+
 - API endpoints (26 tests)
 - Data validation
 - Error handling
@@ -151,12 +157,14 @@ npm run build
 ## Performance Considerations
 
 ### Frontend
+
 - Component lazy loading
 - Image optimization
 - Bundle splitting
 - Caching strategies
 
 ### Backend
+
 - Database connection pooling
 - Query optimization
 - Caching layers
@@ -165,12 +173,14 @@ npm run build
 ## Security
 
 ### Authentication
+
 - JWT token management
 - Role-based permissions
 - Session security
 - Social login integration
 
 ### Data Protection
+
 - Input validation
 - SQL injection prevention
 - XSS protection
@@ -179,12 +189,14 @@ npm run build
 ## Monitoring and Logging
 
 ### Application Monitoring
+
 - Error tracking
 - Performance metrics
 - User analytics
 - API usage statistics
 
 ### Logging
+
 - Structured logging
 - Error reporting
 - Audit trails
@@ -193,6 +205,7 @@ npm run build
 ## Future Enhancements
 
 ### Planned Features
+
 - Real-time notifications
 - Advanced analytics
 - Mobile application
@@ -200,6 +213,7 @@ npm run build
 - Inventory management
 
 ### Technical Improvements
+
 - Microservices architecture
 - GraphQL API
 - Advanced caching
