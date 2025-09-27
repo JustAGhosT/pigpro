@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, MapPin, Users, Clock, Plus, Filter, Search } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Badge } from './ui/badge';
+import { Calendar, MapPin, Plus, Search, Users } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { Event } from '../lib/types';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Input } from './ui/input';
 
 // Mock data for events
 const mockEvents: Event[] = [
@@ -216,6 +216,7 @@ export const Events: React.FC = () => {
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
                 className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
+                title="Select event type"
               >
                 <option value="all">All Types</option>
                 <option value="show">Shows</option>

@@ -1,9 +1,9 @@
+import { BookOpen, Download, ExternalLink, FileText, Search, Video } from 'lucide-react';
 import React, { useState } from 'react';
-import { FileText, Download, BookOpen, Video, ExternalLink, Search, Filter } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
 import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Input } from './ui/input';
 
 interface Resource {
   id: string;
@@ -241,6 +241,7 @@ export const Resources: React.FC = () => {
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
+                title="Select resource category"
               >
                 <option value="all">All Categories</option>
                 {categories.map(category => (
@@ -253,6 +254,7 @@ export const Resources: React.FC = () => {
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
                 className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
+                title="Select resource type"
               >
                 <option value="all">All Types</option>
                 {types.map(type => (

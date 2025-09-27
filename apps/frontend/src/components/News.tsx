@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, User, ExternalLink, Search, Filter, Clock } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
+import { Calendar, Clock, ExternalLink, Search, User } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Input } from './ui/input';
 
 interface NewsArticle {
   id: string;
@@ -308,6 +308,7 @@ export const News: React.FC = () => {
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
+                title="Select news category"
               >
                 <option value="all">All Categories</option>
                 {categories.map(category => (

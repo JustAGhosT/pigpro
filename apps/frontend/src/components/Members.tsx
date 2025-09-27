@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Users, Mail, Phone, MapPin, Search, Filter, User, Calendar } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Badge } from './ui/badge';
+import { Calendar, Mail, MapPin, Search, User, Users } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { Member } from '../lib/types';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Input } from './ui/input';
 
 // Mock data for members
 const mockMembers: Member[] = [
@@ -264,6 +264,7 @@ export const Members: React.FC = () => {
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
                 className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
+                title="Select membership type"
               >
                 <option value="all">All Memberships</option>
                 <option value="individual">Individual</option>
@@ -277,6 +278,7 @@ export const Members: React.FC = () => {
                 value={selectedLocation}
                 onChange={(e) => setSelectedLocation(e.target.value)}
                 className="w-full h-9 px-3 py-1 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-700"
+                title="Select location"
               >
                 <option value="all">All Locations</option>
                 {uniqueLocations.map(location => (

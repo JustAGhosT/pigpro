@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Upload } from 'lucide-react';
+import React, { useRef, useState } from 'react';
 
 export const ImportButton: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -77,6 +77,7 @@ export const ImportButton: React.FC = () => {
         onChange={handleFileChange}
         className="hidden"
         accept=".csv"
+        title="Select CSV file to import"
         disabled={isImporting}
       />
     </>

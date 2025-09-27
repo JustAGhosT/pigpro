@@ -150,7 +150,7 @@ jobs:
         uses: skitionek/notify-microsoft-teams@master
         with:
           webhook_url: ${{ secrets.TEAMS_WEBHOOK }}
-          msg: |
+          message: |
             🚀 **Development Deployment Complete**
 
             **Branch:** ${{ github.ref_name }}

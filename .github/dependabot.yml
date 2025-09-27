@@ -8,8 +8,6 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 10
-    reviewers:
-      - "your-team"
     assignees:
       - "your-team"
     commit-message:
@@ -34,8 +32,6 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 5
-    reviewers:
-      - "frontend-team"
     assignees:
       - "frontend-team"
     commit-message:
@@ -69,8 +65,6 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 5
-    reviewers:
-      - "backend-team"
     assignees:
       - "backend-team"
     commit-message:
@@ -104,8 +98,6 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 3
-    reviewers:
-      - "devops-team"
     assignees:
       - "devops-team"
     commit-message:

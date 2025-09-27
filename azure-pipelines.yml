@@ -74,15 +74,15 @@ stages:
         npm run api:build
       displayName: 'Build API'
       
-    - task: PublishBuildArtifacts@1
+    - task: PublishPipelineArtifact@1
       inputs:
-        pathToPublish: 'apps/frontend/dist'
-        artifactName: 'frontend-dist'
+        targetPath: 'apps/frontend/dist'
+        artifact: 'frontend-dist'
         
-    - task: PublishBuildArtifacts@1
+    - task: PublishPipelineArtifact@1
       inputs:
-        pathToPublish: 'apps/api/dist'
-        artifactName: 'api-dist'
+        targetPath: 'apps/api/dist'
+        artifact: 'api-dist'
 
 - stage: DeployDev
   displayName: 'Deploy to Development'
@@ -110,7 +110,7 @@ stages:
               appName: '$(functionAppName)-dev'
               package: '$(Pipeline.Workspace)/api-dist'
               
-          - task: AzureStaticWebApp@0
+          - task: AzureStaticWebApp@1
             displayName: 'Deploy Static Web App'
             inputs:
               azure_subscription: $(azureServiceConnection)
@@ -144,7 +144,7 @@ stages:
               appName: $(functionAppName)
               package: '$(Pipeline.Workspace)/api-dist'
               
-          - task: AzureStaticWebApp@0
+          - task: AzureStaticWebApp@1
             displayName: 'Deploy Static Web App'
             inputs:
               azure_subscription: $(azureServiceConnection)

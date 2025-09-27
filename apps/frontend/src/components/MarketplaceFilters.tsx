@@ -182,7 +182,7 @@ export const MarketplaceFilters: React.FC<Props> = ({
                         ? 'bg-green-100 border-green-400'
                         : 'hover:bg-gray-50 border-gray-200'
                   }`}
-                  aria-pressed={cat.id === 'All' ? (selectedCategories.size === 0 && selectedCategory === 'All') : pressed}
+                  aria-pressed={String(cat.id === 'All' ? (selectedCategories.size === 0 && selectedCategory === 'All') : pressed)}
                   title={cat.id === 'All' ? 'Show all categories' : `Toggle ${cat.id}`}
                 >
                   <span>{cat.emoji}</span>
@@ -246,7 +246,7 @@ export const MarketplaceFilters: React.FC<Props> = ({
           <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
             <div>
               <label className="text-sm font-medium text-gray-700">Minimum rating</label>
-              <select className="mt-2 px-3 py-2 border rounded w-full" value={minRating} onChange={(e)=>onMinRatingChange(Number(e.target.value))}>
+              <select className="mt-2 px-3 py-2 border rounded w-full" value={minRating} onChange={(e)=>onMinRatingChange(Number(e.target.value))} title="Select minimum rating">
                 {[0,3,3.5,4,4.5].map(r => (
                   <option key={r} value={r}>{r === 0 ? 'Any' : `${r}+`}</option>
                 ))}

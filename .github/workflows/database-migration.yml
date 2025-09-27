@@ -182,18 +182,18 @@ jobs:
     if: always()
 
     steps:
-      - name: Notify Teams
-        uses: skitionek/notify-microsoft-teams@master
-        with:
-          webhook_url: ${{ secrets.TEAMS_WEBHOOK }}
-          msg: |
-            🗄️ **Database Migration Complete**
+             - name: Notify Teams
+               uses: skitionek/notify-microsoft-teams@master
+               with:
+                   webhook_url: ${{ secrets.TEAMS_WEBHOOK }}
+                   message: |
+                       🗄️ **Database Migration Complete**
 
-            **Environment:** ${{ github.event.inputs.environment || (github.ref == 'refs/heads/main' && 'production' || 'development') }}
-            **Status:** ${{ job.status }}
+                       **Environment:** ${{ github.event.inputs.environment || (github.ref == 'refs/heads/main' && 'production' || 'development') }}
+                       **Status:** ${{ job.status }}
 
-            **Migration:** ${{ needs.migrate-database.result }}
-            **Seeding:** ${{ needs.seed-data.result }}
+                       **Migration:** ${{ needs.migrate-database.result }}
+                       **Seeding:** ${{ needs.seed-data.result }}
 
-            **Commit:** ${{ github.sha }}
-            **Triggered by:** ${{ github.actor }}
+                       **Commit:** ${{ github.sha }}
+                       **Triggered by:** ${{ github.actor }}

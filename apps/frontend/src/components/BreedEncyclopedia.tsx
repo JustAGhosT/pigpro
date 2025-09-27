@@ -1,9 +1,9 @@
-import React, { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
-import { Card, CardContent } from './ui/card';
-import { Input } from './ui/input';
+import React, { useMemo, useState } from 'react';
 import { breeds } from '../lib/data';
 import { BreedCard } from './BreedCard';
+import { Card, CardContent } from './ui/card';
+import { Input } from './ui/input';
 
 /** ===== Flatten + Normalize LIVESTOCK_DATA ===== */
 function normalizeBreed(raw: any, livestockType: string, category: string, index: number): UIBreed {
@@ -127,6 +127,7 @@ export const BreedEncyclopedia: React.FC = () => {
               setSelectedCategory('all');
             }}
             className="w-full lg:w-48 h-9 px-3 py-1 border border-gray-200 rounded-md text-sm capitalize"
+            title="Select livestock type"
           >
             {livestockTypes.map(type => (
               <option key={type} value={type} className="capitalize">
@@ -140,6 +141,7 @@ export const BreedEncyclopedia: React.FC = () => {
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="w-full lg:w-48 h-9 px-3 py-1 border border-gray-200 rounded-md text-sm capitalize"
             disabled={selectedLivestock === 'all'}
+            title="Select breed category"
           >
             {categories.map(cat => (
               <option key={cat} value={cat} className="capitalize">
