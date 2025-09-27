@@ -17,8 +17,8 @@ and information for contributors.
 1. **Fork and Clone**
 
    ```bash
-   git clone https://github.com/your-username/livestock-club-sa.git
-   cd livestock-club-sa
+   git clone https://github.com/JustAGhosT/pigpro.git
+   cd pigpro
    ```
 
 2. **Install Dependencies**
