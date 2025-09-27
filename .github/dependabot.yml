@@ -8,8 +8,6 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 10
-    assignees:
-      - "your-team"
     commit-message:
       prefix: "chore"
       include: "scope"
@@ -32,8 +30,6 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 5
-    assignees:
-      - "frontend-team"
     commit-message:
       prefix: "chore(frontend)"
       include: "scope"
@@ -65,8 +61,6 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 5
-    assignees:
-      - "backend-team"
     commit-message:
       prefix: "chore(api)"
       include: "scope"
@@ -98,8 +92,6 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 3
-    assignees:
-      - "devops-team"
     commit-message:
       prefix: "chore(ci)"
       include: "scope"
