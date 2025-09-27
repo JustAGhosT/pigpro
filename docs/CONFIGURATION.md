@@ -47,10 +47,10 @@ AzureWebJobsStorage=UseDevelopmentStorage=true
 
 ```bash
 # Copy the template
-cp backend/api/.env.example backend/api/.env
+cp apps/api/.env.example apps/api/.env
 
 # Edit with your values
-nano backend/api/.env
+nano apps/api/.env
 ```
 
 ### 2. Local Development
