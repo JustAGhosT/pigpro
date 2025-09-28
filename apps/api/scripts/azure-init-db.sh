@@ -46,8 +46,11 @@ az postgres flexible-server firewall-rule create \
   --resource-group "$RESOURCE_GROUP" \
   --name "$SERVER_NAME-allow-ip" \
   --server-name "$SERVER_NAME" \
-  --start-ip-address 0.0.0.0 \
-  --end-ip-address 255.255.255.255 >/dev/null
+  --start-ip-address "$ALLOWED_IP_START" \
+  --end-ip-address "$ALLOWED_IP_END" >/dev/null
+# e.g. to allow only Azure services:
+#  --start-ip-address 0.0.0.0 \
+#  --end-ip-address 0.0.0.0 >/dev/null
 
 echo "Done. Set env vars:"
 echo "PGHOST=$SERVER_NAME.postgres.database.azure.com"
