@@ -25,7 +25,7 @@ backend API, database, and storage services.
 ### Required Tools
 
 - **Azure CLI** - [Install Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
-- **Node.js 18+** and npm
+- **Node.js 20 LTS** and npm
 - **Azure Functions Core Tools** -
   [Install Guide](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local)
 - **Git** - For version control
@@ -86,7 +86,7 @@ az postgres flexible-server db create \
 ### 3. Configure Firewall
 
 ```bash
-# Add firewall rule for your IP (replace with your actual IP)
+# Add firewall rule for your specific IP (replace with your actual IP)
 az postgres flexible-server firewall-rule create \
   --resource-group "rg-livestock-club-sa" \
   --name "livestock-pg-server" \
@@ -94,14 +94,11 @@ az postgres flexible-server firewall-rule create \
   --start-ip-address "YOUR_IP_ADDRESS" \
   --end-ip-address "YOUR_IP_ADDRESS"
 
-# Or allow Azure services only (for production)
-az postgres flexible-server firewall-rule create \
-  --resource-group "rg-livestock-club-sa" \
-  --name "livestock-pg-server" \
-  --rule-name "OfficeIP" \
-  --start-ip-address "<YOUR_OFFICE_IP>" \
-  --end-ip-address "<YOUR_OFFICE_IP>"
-# Or use Private Link/VNet integration and skip public rules entirely.
+# For production: Use Private Link/VNet integration for secure access
+# or specify explicit CIDR ranges for your application servers
+```
+
+**Security Note**: Avoid broad "allow Azure services" rules. For production deployments, consider using Azure Private Link or VNet integration for secure database access.
 
 ## Storage Deployment
 
@@ -162,19 +159,49 @@ az functionapp create \
 
 ### 2. Configure Application Settings
 
+#### Option A: Using Azure Key Vault (Recommended)
+
 ```bash
-# Set database connection string
+# Create Key Vault
+az keyvault create \
+  --name "livestock-keyvault" \
+  --resource-group "rg-livestock-club-sa" \
+  --location "southafricanorth"
+
+# Store database password in Key Vault
+az keyvault secret set \
+  --vault-name "livestock-keyvault" \
+  --name "db-password" \
+  --value "Your-Strong-Pwd1!"
+
+# Set application settings with Key Vault references
 az functionapp config appsettings set \
   --name "livestock-api" \
   --resource-group "rg-livestock-club-sa" \
   --settings \
     "PGHOST=livestock-pg-server.postgres.database.azure.com" \
     "PGUSER=pgadmin@livestock-pg-server" \
-    "PGPASSWORD=Your-Strong-Pwd1!" \
+    "PGPASSWORD=@Microsoft.KeyVault(SecretUri=https://livestock-keyvault.vault.azure.net/secrets/db-password/)" \
     "PGDATABASE=livestockdb" \
     "PGPORT=5432" \
     "PGSSLMODE=require" \
     "BLOB_BASE_URL=https://livestockstorage123.blob.core.windows.net/livestock-images"
+```
+
+#### Option B: Using Managed Identity (Alternative)
+
+```bash
+# Enable system-assigned managed identity
+az functionapp identity assign \
+  --name "livestock-api" \
+  --resource-group "rg-livestock-club-sa"
+
+# Grant the Function App access to Key Vault
+az keyvault set-policy \
+  --name "livestock-keyvault" \
+  --resource-group "rg-livestock-club-sa" \
+  --object-id $(az functionapp identity show --name "livestock-api" --resource-group "rg-livestock-club-sa" --query principalId -o tsv) \
+  --secret-permissions get list
 ```
 
 ### 3. Deploy Function App
@@ -193,15 +220,14 @@ func azure functionapp publish livestock-api
 ### 1. Create Static Web App
 
 ```bash
-# Create static web app (without source - connect repo via Azure portal)
+# Create static web app (frontend only - API deployed separately)
 az staticwebapp create \
   --name "livestock-club-sa" \
   --resource-group "rg-livestock-club-sa" \
   --location "Central US" \
   --branch "main" \
   --app-location "apps/frontend" \
-  --output-location "dist" \
-  --api-location "apps/api"
+  --output-location "dist"
 ```
 
 ### 2. Configure Build Settings
@@ -237,7 +263,6 @@ jobs:
           action: 'upload'
           app_location: 'apps/frontend'
           output_location: 'dist'
-          api_location: 'apps/api'
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -343,7 +368,7 @@ SSL certificates are automatically managed by Azure Static Web Apps.
 # Create backup policy
 az postgres flexible-server backup create \
   --resource-group "rg-livestock-club-sa" \
-  --server-name "livestock-pg-server" \
+  --name "livestock-pg-server" \
   --backup-name "daily-backup"
 ```
 
@@ -442,11 +467,17 @@ az functionapp log tail \
 ### Updates
 
 ```bash
-# Update function app runtime
+# Update function app runtime (Linux Consumption)
 az functionapp config set \
   --name "livestock-api" \
   --resource-group "rg-livestock-club-sa" \
-  --node-version "20"
+  --linux-fx-version "node|20"
+
+# Alternative: Set via app settings
+az functionapp config appsettings set \
+  --name "livestock-api" \
+  --resource-group "rg-livestock-club-sa" \
+  --settings "WEBSITE_NODE_DEFAULT_VERSION=~20"
 ```
 
 ## Cost Optimization
