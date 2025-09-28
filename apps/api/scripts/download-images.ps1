@@ -1,5 +1,5 @@
 param(
-  [string]$ImagesDir = "../../../public/images"
+  [string]$ImagesDir = "../../frontend/public/images"
 )
 
 $ErrorActionPreference = "Stop"
