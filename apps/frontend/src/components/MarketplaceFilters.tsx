@@ -14,6 +14,10 @@ type Props = {
   // animal toggles
   selectedCategories: Set<string>;
   onToggleCategory: (id: string) => void;
+  // price range
+  minPrice: number;
+  maxPrice: number;
+  onPriceChange: (min: number, max: number) => void;
   // location & distance
   locationQuery: string;
   onLocationChange: (v: string) => void;
@@ -31,6 +35,13 @@ type Props = {
   onMinRatingChange: (n: number) => void;
   verifiedOnly: boolean;
   onVerifiedOnlyChange: (b: boolean) => void;
+  // additional filters
+  ageRange: { min: number; max: number };
+  onAgeRangeChange: (min: number, max: number) => void;
+  gender: string;
+  onGenderChange: (gender: string) => void;
+  breed: string;
+  onBreedChange: (breed: string) => void;
   // actions
   showFilters: boolean;
   onToggleFilters: () => void;
@@ -47,6 +58,9 @@ export const MarketplaceFilters: React.FC<Props> = ({
   onCategoryChange,
   selectedCategories,
   onToggleCategory,
+  minPrice,
+  maxPrice,
+  onPriceChange,
   locationQuery,
   onLocationChange,
   onLocate,
@@ -61,6 +75,12 @@ export const MarketplaceFilters: React.FC<Props> = ({
   onMinRatingChange,
   verifiedOnly,
   onVerifiedOnlyChange,
+  ageRange,
+  onAgeRangeChange,
+  gender,
+  onGenderChange,
+  breed,
+  onBreedChange,
   showFilters,
   onToggleFilters,
   onSaveFilters,
@@ -72,9 +92,12 @@ export const MarketplaceFilters: React.FC<Props> = ({
     { id: 'Poultry', emoji: '🐔' },
     { id: 'Cattle', emoji: '🐄' },
     { id: 'Goats', emoji: '🐐' },
+    { id: 'Sheep', emoji: '🐑' },
     { id: 'Pigs', emoji: '🐖' },
     { id: 'Rabbits', emoji: '🐇' },
-    { id: 'Sheep', emoji: '🐑' },
+    { id: 'Fish', emoji: '🐟' },
+    { id: 'Insects', emoji: '🐛' },
+    { id: 'Arachnids', emoji: '🕷️' },
   ];
 
   return (
@@ -142,6 +165,31 @@ export const MarketplaceFilters: React.FC<Props> = ({
                   </button>
                 )}
               </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-700">Price Range:</label>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                min={0}
+                value={minPrice}
+                onChange={(e) => onPriceChange(Number(e.target.value), maxPrice)}
+                className="w-20 px-2 py-1 text-sm border border-gray-300 rounded"
+                placeholder="Min"
+                title="Minimum price"
+              />
+              <span className="text-gray-500">-</span>
+              <input
+                type="number"
+                min={0}
+                value={maxPrice}
+                onChange={(e) => onPriceChange(minPrice, Number(e.target.value))}
+                className="w-20 px-2 py-1 text-sm border border-gray-300 rounded"
+                placeholder="Max"
+                title="Maximum price"
+              />
             </div>
           </div>
 
@@ -252,6 +300,52 @@ export const MarketplaceFilters: React.FC<Props> = ({
                 ))}
               </select>
             </div>
+            
+            <div>
+              <label className="text-sm font-medium text-gray-700">Age Range (months)</label>
+              <div className="mt-2 flex items-center gap-2">
+                <input
+                  type="number"
+                  min={0}
+                  value={ageRange.min}
+                  onChange={(e) => onAgeRangeChange(Number(e.target.value), ageRange.max)}
+                  className="w-20 px-2 py-1 text-sm border border-gray-300 rounded"
+                  placeholder="Min"
+                />
+                <span className="text-gray-500">-</span>
+                <input
+                  type="number"
+                  min={0}
+                  value={ageRange.max}
+                  onChange={(e) => onAgeRangeChange(ageRange.min, Number(e.target.value))}
+                  className="w-20 px-2 py-1 text-sm border border-gray-300 rounded"
+                  placeholder="Max"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700">Gender</label>
+              <select className="mt-2 px-3 py-2 border rounded w-full" value={gender} onChange={(e) => onGenderChange(e.target.value)} title="Select gender">
+                <option value="">Any</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Mixed">Mixed</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700">Breed</label>
+              <input
+                type="text"
+                value={breed}
+                onChange={(e) => onBreedChange(e.target.value)}
+                className="mt-2 px-3 py-2 border rounded w-full"
+                placeholder="Enter breed..."
+                title="Filter by breed"
+              />
+            </div>
+
             <div className="flex items-center mt-6 space-x-2">
               <input id="verified" type="checkbox" className="h-4 w-4" checked={verifiedOnly} onChange={(e)=>onVerifiedOnlyChange(e.target.checked)} />
               <label htmlFor="verified" className="text-sm font-medium text-gray-700">Verified sellers only</label>

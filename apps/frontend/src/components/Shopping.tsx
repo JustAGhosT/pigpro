@@ -111,7 +111,7 @@ const mockProducts: Product[] = [
   }
 ];
 
-const categories = ['All', 'Poultry', 'Cattle', 'Goats', 'Pigs', 'Rabbits', 'Sheep'];
+const categories = ['All', 'Poultry', 'Cattle', 'Goats', 'Sheep', 'Pigs', 'Rabbits', 'Fish', 'Insects', 'Arachnids'];
 // sortOptions moved to MarketplaceFilters; keep local state only
 
 export const Shopping: React.FC = () => {
@@ -141,6 +141,9 @@ export const Shopping: React.FC = () => {
   const [priceMax, setPriceMax] = useState<number>(0);
   const [minRating, setMinRating] = useState<number>(0);
   const [verifiedOnly, setVerifiedOnly] = useState<boolean>(false);
+  const [ageRange, setAgeRange] = useState<{ min: number; max: number }>({ min: 0, max: 120 });
+  const [gender, setGender] = useState<string>('');
+  const [breed, setBreed] = useState<string>('');
   // default location empty ("Anywhere")
   const [locationQuery, setLocationQuery] = useState<string>('');
 
@@ -305,6 +308,9 @@ export const Shopping: React.FC = () => {
       const matchesPrice = product.price >= priceMin && product.price <= priceMax;
       const matchesRating = product.rating >= minRating;
       const matchesVerified = !verifiedOnly || product.isVerified;
+      const matchesAge = !product.age || (product.age >= ageRange.min && product.age <= ageRange.max);
+      const matchesGender = !gender || !product.gender || product.gender.toLowerCase() === gender.toLowerCase();
+      const matchesBreed = !breed || !product.breed || product.breed.toLowerCase().includes(breed.toLowerCase());
       const matchesLocation = locationQuery.trim() === '' || product.location.toLowerCase().includes(locationQuery.toLowerCase());
       let matchesDistance = true;
       if (maxDistanceKm > 0 && userLocation) {
@@ -317,7 +323,7 @@ export const Shopping: React.FC = () => {
       // Distance filter only applies if userLocation is known AND a location (city) is present.
       const enableDistance = (maxDistanceKm > 0) && userLocation && locationQuery.trim() !== '';
       const locationOk = enableDistance ? matchesDistance : matchesLocation;
-      return matchesSearch && matchesCategory && matchesPrice && matchesRating && matchesVerified && locationOk;
+      return matchesSearch && matchesCategory && matchesPrice && matchesRating && matchesVerified && matchesAge && matchesGender && matchesBreed && locationOk;
     });
   }, [
     products,
@@ -328,6 +334,9 @@ export const Shopping: React.FC = () => {
     priceMax,
     minRating,
     verifiedOnly,
+    ageRange,
+    gender,
+    breed,
     locationQuery,
     maxDistanceKm,
     userLocation,
@@ -366,6 +375,9 @@ export const Shopping: React.FC = () => {
     setPriceMax(priceBounds.max);
     setMinRating(0);
     setVerifiedOnly(false);
+    setAgeRange({ min: 0, max: 120 });
+    setGender('');
+    setBreed('');
     setLocationQuery('');
     setMaxDistanceKm(0);
   };
@@ -381,6 +393,9 @@ export const Shopping: React.FC = () => {
       priceMax,
       minRating,
       verifiedOnly,
+      ageRange,
+      gender,
+      breed,
       locationQuery,
       maxDistanceKm,
     };
@@ -400,6 +415,11 @@ export const Shopping: React.FC = () => {
       if (typeof f.priceMax === 'number') setPriceMax(f.priceMax);
       if (typeof f.minRating === 'number') setMinRating(f.minRating);
       setVerifiedOnly(!!f.verifiedOnly);
+      if (f.ageRange && typeof f.ageRange.min === 'number' && typeof f.ageRange.max === 'number') {
+        setAgeRange(f.ageRange);
+      }
+      setGender(f.gender ?? '');
+      setBreed(f.breed ?? '');
       setLocationQuery(f.locationQuery ?? '');
       if (typeof f.maxDistanceKm === 'number') setMaxDistanceKm(f.maxDistanceKm);
     } catch (e) {
@@ -663,6 +683,12 @@ export const Shopping: React.FC = () => {
             });
           }
         }}
+        minPrice={priceMin}
+        maxPrice={priceMax}
+        onPriceChange={(min, max) => {
+          setPriceMin(min);
+          setPriceMax(max);
+        }}
         locationQuery={locationQuery}
         onLocationChange={setLocationQuery}
         onLocate={() => {
@@ -683,6 +709,12 @@ export const Shopping: React.FC = () => {
         onMinRatingChange={setMinRating}
         verifiedOnly={verifiedOnly}
         onVerifiedOnlyChange={setVerifiedOnly}
+        ageRange={ageRange}
+        onAgeRangeChange={setAgeRange}
+        gender={gender}
+        onGenderChange={setGender}
+        breed={breed}
+        onBreedChange={setBreed}
         showFilters={showFilters}
         onToggleFilters={() => setShowFilters((s) => !s)}
         onSaveFilters={saveFilters}
