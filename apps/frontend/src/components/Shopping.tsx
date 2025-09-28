@@ -370,14 +370,15 @@ export const Shopping: React.FC = () => {
   const clearAllFilters = () => {
     setSelectedCategory('All');
     setSearchTerm('');
+  const clearAllFilters = () => {
+    setSelectedCategory('All');
+    setSelectedCategories(new Set());
+    setSearchTerm('');
     setSortBy('Newest');
     setPriceMin(priceBounds.min);
     setPriceMax(priceBounds.max);
     setMinRating(0);
     setVerifiedOnly(false);
-    setAgeRange({ min: 0, max: 120 });
-    setGender('');
-    setBreed('');
     setLocationQuery('');
     setMaxDistanceKm(0);
   };
