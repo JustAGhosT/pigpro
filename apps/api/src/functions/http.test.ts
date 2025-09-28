@@ -146,42 +146,57 @@ describe('HTTP API Tests', () => {
     });
   });
 
-  describe('Create Listing Endpoint', () => {
-    it('should create a new listing', async () => {
-      try {
-        const newListing = {
-          title: 'Test Fish - API Test',
-          price: 150,
-          currency: 'ZAR',
-          image: '/images/test-fish.jpg',
-          location: 'Test City, TC',
-          category: 'Fish',
-          breed: 'Test Breed',
-          age: '6 months',
-          gender: 'Mixed',
-          description: 'Test listing created by API test'
-        };
-        
-        const response = await fetch(`${baseUrl}/listings`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(newListing)
-        });
-        
-        expect(response.status).toBe(201);
-        
-        const createdListing = await response.json();
-        expect(createdListing.title).toBe(newListing.title);
-        expect(createdListing.price).toBe(newListing.price);
-        expect(createdListing.category).toBe(newListing.category);
-        expect(createdListing.promoted).toBe(false);
-        expect(createdListing.likes).toBe(0);
-      } catch (error) {
-        console.warn('Server not running, skipping HTTP test:', error.message);
-        expect(true).toBe(true); // Pass the test if server is not running
-      }
-    });
+// at the top of the file (above the describe block)
+const createdIds: string[] = [];
+
+describe('Create Listing Endpoint', () => {
+  it('should create a new listing', async () => {
+    try {
+      const newListing = {
+        title: 'Test Fish - API Test',
+        price: 150,
+        currency: 'ZAR',
+        image: '/images/test-fish.jpg',
+        location: 'Test City, TC',
+        category: 'Fish',
+        breed: 'Test Breed',
+        age: '6 months',
+        gender: 'Mixed',
+        description: 'Test listing created by API test'
+      };
+      
+      const response = await fetch(`${baseUrl}/listings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newListing)
+      });
+      
+      expect(response.status).toBe(201);
+      
+      const createdListing = await response.json();
+      expect(createdListing).toHaveProperty('id');
+      expect(createdListing.currency).toBe(newListing.currency);
+      expect(createdListing.title).toBe(newListing.title);
+      expect(createdListing.price).toBe(newListing.price);
+      expect(createdListing.category).toBe(newListing.category);
+      expect(createdListing.promoted).toBe(false);
+      expect(createdListing.likes).toBe(0);
+      createdIds.push(createdListing.id);
+    } catch (error) {
+      console.warn('Server not running, skipping HTTP test:', error.message);
+      expect(true).toBe(true); // Pass the test if server is not running
+    }
   });
+});
+
+// ensure any created listings get cleaned up
+afterAll(async () => {
+  await Promise.allSettled(
+    createdIds.map((id) =>
+      fetch(`${baseUrl}/listings/${id}`, { method: 'DELETE' })
+    )
+  );
+});
 });
