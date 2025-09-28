@@ -38,7 +38,8 @@ async function run() {
       sslConfig = {
         rejectUnauthorized: true,
         // Use system CA bundle or NODE_EXTRA_CA_CERTS if available
-        ...(process.env.PGSSL_CERT && { ca: process.env.PGSSL_CERT })
+        // Use standardized PGSSLROOTCERT for the CA path (libpq convention)
+        ...(process.env.PGSSLROOTCERT && { ca: process.env.PGSSLROOTCERT })
       };
     }
   }
