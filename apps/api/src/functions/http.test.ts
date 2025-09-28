@@ -1,4 +1,19 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+
+const isNetworkError = (e: unknown) => {
+  const msg = e instanceof Error ? e.message : String(e);
+  return /\b(ECONNREFUSED|ECONNRESET|ENOTFOUND|fetch failed|connect ECONNREFUSED|aborted)\b/i.test(msg);
+};
+
+const fetchWithTimeout = async (url: string, init?: RequestInit, ms = 2000) => {
+  const ctrl = new AbortController();
+  const id = setTimeout(() => ctrl.abort(), ms);
+  try {
+    return await fetch(url, { ...init, signal: ctrl.signal });
+  } finally {
+    clearTimeout(id);
+  }
+};
 
 describe('HTTP API Tests', () => {
   const baseUrl = 'http://localhost:7073/api/v1';
@@ -11,7 +26,7 @@ describe('HTTP API Tests', () => {
   describe('Livestock Data Endpoint', () => {
     it('should return livestock categories', async () => {
       try {
-        const response = await fetch(`${baseUrl}/livestock`);
+        const response = await fetchWithTimeout(`${baseUrl}/livestock`);
         expect(response.status).toBe(200);
         
         const data = await response.json();
@@ -27,8 +42,11 @@ describe('HTTP API Tests', () => {
         expect(data.fish).toHaveProperty('label', 'Fish');
         expect(data.fish).toHaveProperty('icon', '🐟');
       } catch (error) {
-        console.warn('Server not running, skipping HTTP test:', error.message);
-        expect(true).toBe(true); // Pass the test if server is not running
+        if (isNetworkError(error)) {
+          console.warn('Server not running, skipping HTTP test:', (error as Error).message);
+          return; // Skip only when server is unreachable
+        }
+        throw error; // Surface real failures
       }
     });
   });
@@ -36,7 +54,7 @@ describe('HTTP API Tests', () => {
   describe('Listings Endpoint', () => {
     it('should return listings', async () => {
       try {
-        const response = await fetch(`${baseUrl}/listings`);
+        const response = await fetchWithTimeout(`${baseUrl}/listings`);
         expect(response.status).toBe(200);
         
         const data = await response.json();
@@ -52,14 +70,17 @@ describe('HTTP API Tests', () => {
           expect(listing).toHaveProperty('likes');
         }
       } catch (error) {
-        console.warn('Server not running, skipping HTTP test:', error.message);
-        expect(true).toBe(true); // Pass the test if server is not running
+        if (isNetworkError(error)) {
+          console.warn('Server not running, skipping HTTP test:', (error as Error).message);
+          return; // Skip only when server is unreachable
+        }
+        throw error; // Surface real failures
       }
     });
 
     it('should support category filtering', async () => {
       try {
-        const response = await fetch(`${baseUrl}/listings?category=Fish`);
+        const response = await fetchWithTimeout(`${baseUrl}/listings?category=Fish`);
         expect(response.status).toBe(200);
         
         const data = await response.json();
@@ -70,14 +91,17 @@ describe('HTTP API Tests', () => {
           expect(listing.category).toBe('Fish');
         });
       } catch (error) {
-        console.warn('Server not running, skipping HTTP test:', error.message);
-        expect(true).toBe(true); // Pass the test if server is not running
+        if (isNetworkError(error)) {
+          console.warn('Server not running, skipping HTTP test:', (error as Error).message);
+          return; // Skip only when server is unreachable
+        }
+        throw error; // Surface real failures
       }
     });
 
     it('should support price filtering', async () => {
       try {
-        const response = await fetch(`${baseUrl}/listings?minPrice=400&maxPrice=600`);
+        const response = await fetchWithTimeout(`${baseUrl}/listings?minPrice=400&maxPrice=600`);
         expect(response.status).toBe(200);
         
         const data = await response.json();
@@ -89,14 +113,17 @@ describe('HTTP API Tests', () => {
           expect(listing.price).toBeLessThanOrEqual(600);
         });
       } catch (error) {
-        console.warn('Server not running, skipping HTTP test:', error.message);
-        expect(true).toBe(true); // Pass the test if server is not running
+        if (isNetworkError(error)) {
+          console.warn('Server not running, skipping HTTP test:', (error as Error).message);
+          return; // Skip only when server is unreachable
+        }
+        throw error; // Surface real failures
       }
     });
 
     it('should support search query', async () => {
       try {
-        const response = await fetch(`${baseUrl}/listings?q=tarantula`);
+        const response = await fetchWithTimeout(`${baseUrl}/listings?q=tarantula`);
         expect(response.status).toBe(200);
         
         const data = await response.json();
@@ -108,8 +135,11 @@ describe('HTTP API Tests', () => {
           expect(searchText).toContain('tarantula');
         });
       } catch (error) {
-        console.warn('Server not running, skipping HTTP test:', error.message);
-        expect(true).toBe(true); // Pass the test if server is not running
+        if (isNetworkError(error)) {
+          console.warn('Server not running, skipping HTTP test:', (error as Error).message);
+          return; // Skip only when server is unreachable
+        }
+        throw error; // Surface real failures
       }
     });
   });
@@ -118,7 +148,7 @@ describe('HTTP API Tests', () => {
     it('should increment likes for a listing', async () => {
       try {
         // First get a listing to test with
-        const listResponse = await fetch(`${baseUrl}/listings`);
+        const listResponse = await fetchWithTimeout(`${baseUrl}/listings`);
         const listings = await listResponse.json();
         
         if (listings.length > 0) {
@@ -126,7 +156,7 @@ describe('HTTP API Tests', () => {
           const initialLikes = listings[0].likes || 0;
           
           // Like the listing
-          const likeResponse = await fetch(`${baseUrl}/listings/${listingId}/like`, {
+          const likeResponse = await fetchWithTimeout(`${baseUrl}/listings/${listingId}/like`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -140,8 +170,11 @@ describe('HTTP API Tests', () => {
           expect(likedListing.likes).toBe(initialLikes + 1);
         }
       } catch (error) {
-        console.warn('Server not running, skipping HTTP test:', error.message);
-        expect(true).toBe(true); // Pass the test if server is not running
+        if (isNetworkError(error)) {
+          console.warn('Server not running, skipping HTTP test:', (error as Error).message);
+          return; // Skip only when server is unreachable
+        }
+        throw error; // Surface real failures
       }
     });
   });
@@ -165,7 +198,7 @@ describe('Create Listing Endpoint', () => {
         description: 'Test listing created by API test'
       };
       
-      const response = await fetch(`${baseUrl}/listings`, {
+      const response = await fetchWithTimeout(`${baseUrl}/listings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -185,8 +218,11 @@ describe('Create Listing Endpoint', () => {
       expect(createdListing.likes).toBe(0);
       createdIds.push(createdListing.id);
     } catch (error) {
-      console.warn('Server not running, skipping HTTP test:', error.message);
-      expect(true).toBe(true); // Pass the test if server is not running
+      if (isNetworkError(error)) {
+        console.warn('Server not running, skipping HTTP test:', (error as Error).message);
+        return; // Skip only when server is unreachable
+      }
+      throw error; // Surface real failures
     }
   });
 });

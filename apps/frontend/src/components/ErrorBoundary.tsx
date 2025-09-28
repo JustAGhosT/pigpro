@@ -103,18 +103,36 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
+// Helper function to hoist non-React static properties
+const hoistStatics = (target: any, source: any) => {
+  const keys = Object.getOwnPropertyNames(source);
+  keys.forEach(key => {
+    if (key !== 'prototype' && key !== 'name' && key !== 'length' && key !== 'displayName') {
+      try {
+        target[key] = source[key];
+      } catch (e) {
+        // Ignore errors when copying static properties
+      }
+    }
+  });
+  return target;
+};
+
 // Higher-order component for easier usage
 export const withErrorBoundary = <P extends object>(
   Component: React.ComponentType<P>,
   fallback?: ReactNode
 ) => {
-  const WrappedComponent = (props: P) => (
+  const WrappedComponent = React.forwardRef<any, P>((props, ref) => (
     <ErrorBoundary fallback={fallback}>
-      <Component {...props} />
+      <Component {...props} ref={ref} />
     </ErrorBoundary>
-  );
+  ));
   
   WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`;
+  
+  // Hoist non-React static properties from the original component
+  hoistStatics(WrappedComponent, Component);
   
   return WrappedComponent;
 };
