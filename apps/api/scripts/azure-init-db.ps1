@@ -152,9 +152,17 @@ if (-not $dbExists) {
 }
 
 Write-Host "Allowing public access from current IP"
+
+# First, reliably detect the client IP (or fall back to the Azure-services-only token)
 try {
-    # Create firewall rule with correct parameters
     $clientIp = (Invoke-RestMethod -Uri 'https://api.ipify.org?format=json').ip
+} catch {
+    Write-Host "Warning: Failed to detect client IP. Allowing Azure services only."
+    $clientIp = "0.0.0.0"
+}
+
+# Then apply the firewall rule using the determined IP
+try {
     az postgres flexible-server firewall-rule create `
         --resource-group $ResourceGroup `
         --name $ServerName `
