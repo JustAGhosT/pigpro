@@ -1,15 +1,15 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '@/components/ui/select';
 import { Animal } from '@my-farm/domain';
-import { AnimalSelect, DateField } from './FormFields';
 import React from 'react';
+import { AnimalSelect, DateField } from './FormFields';
 
 interface WeightFormFieldsProps {
   animals: Animal[];
