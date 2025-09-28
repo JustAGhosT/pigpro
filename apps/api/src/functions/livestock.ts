@@ -5,28 +5,15 @@ import path from 'path';
 // Serve static domain data from JSON moved to backend
 function loadLivestock() {
   // Try multiple paths for reliable file loading in Azure Functions
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const currentDir = path.dirname(fileURLToPath(import.meta.url));
-
-// Serve static domain data from JSON moved to backend
-function loadLivestock() {
-  // Try multiple paths for reliable file loading in Azure Functions
   const possiblePaths = [
     // Development path (relative to source)
     path.join(process.cwd(), 'src', 'data', 'livestock-data.json'),
     // Azure Functions path (relative to function directory)
-    path.join(currentDir, '..', 'data', 'livestock-data.json'),
+    path.join(__dirname, '..', 'data', 'livestock-data.json'),
     // Alternative Azure Functions path
-    path.join(currentDir, '..', '..', 'src', 'data', 'livestock-data.json'),
+    path.join(__dirname, '..', '..', 'src', 'data', 'livestock-data.json'),
     // Fallback path
     path.join(process.cwd(), 'apps', 'api', 'src', 'data', 'livestock-data.json')
-  ];
-
-  // ... rest of implementation
-}
   ];
 
   for (const dataPath of possiblePaths) {

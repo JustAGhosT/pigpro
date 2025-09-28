@@ -230,7 +230,7 @@ export const MarketplaceFilters: React.FC<Props> = ({
                         ? 'bg-green-100 border-green-400'
                         : 'hover:bg-gray-50 border-gray-200'
                   }`}
-                  aria-pressed={String(cat.id === 'All' ? (selectedCategories.size === 0 && selectedCategory === 'All') : pressed)}
+                  aria-pressed={cat.id === 'All' ? (selectedCategories.size === 0 && selectedCategory === 'All') : pressed}
                   title={cat.id === 'All' ? 'Show all categories' : `Toggle ${cat.id}`}
                 >
                   <span>{cat.emoji}</span>
