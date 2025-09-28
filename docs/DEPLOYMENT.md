@@ -91,10 +91,10 @@ az postgres flexible-server db create \
 az postgres flexible-server firewall-rule create \
   --resource-group "rg-livestock-club-sa" \
   --name "livestock-pg-server" \
-  --rule-name "AllowAzureServices" \
-  --start-ip-address "0.0.0.0" \
-  --end-ip-address "0.0.0.0"
-```
+  --rule-name "OfficeIP" \
+  --start-ip-address "<YOUR_OFFICE_IP>" \
+  --end-ip-address "<YOUR_OFFICE_IP>"
+# Or use Private Link/VNet integration and skip public rules entirely.
 
 ## Storage Deployment
 
