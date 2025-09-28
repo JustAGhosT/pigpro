@@ -1,8 +1,8 @@
 import { app, InvocationContext, Timer } from "@azure/functions";
-import { query } from "../lib/db/client";
-import { fileContentStore } from "./imports"; // To get the CSV content
 import Papa from "papaparse";
 import { PDFDocument, StandardFonts } from "pdf-lib";
+import { query } from "../lib/db/client";
+import { fileContentStore } from "./imports"; // To get the CSV content
 
 // This function simulates a background worker processing one job at a time.
 export async function processJobQueue(myTimer: Timer, context: InvocationContext): Promise<void> {
@@ -32,10 +32,19 @@ export async function processJobQueue(myTimer: Timer, context: InvocationContext
             const { data } = Papa.parse(csvString, { header: true, skipEmptyLines: true });
 
             // In a real transaction, you'd use a transaction block
-            for (const _ of data as any[]) {
+            for (const record of data as any[]) {
+                // Validate and sanitize the record data before inserting
+                const sanitizedRecord = {
+                    species_id: record.species_id || null,
+                    event_type: record.event_type || null,
+                    date: record.date || null,
+                    quantity: record.quantity || null,
+                    notes: record.notes || null
+                };
+                
                 await query(
-                    `INSERT INTO production_records (species_id, event_type, date, ...) VALUES (...)`,
-                    // ...params
+                    `INSERT INTO production_records (species_id, event_type, date, quantity, notes) VALUES ($1, $2, $3, $4, $5)`,
+                    [sanitizedRecord.species_id, sanitizedRecord.event_type, sanitizedRecord.date, sanitizedRecord.quantity, sanitizedRecord.notes]
                 );
             }
             delete fileContentStore[job.id]; // Clean up

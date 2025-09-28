@@ -167,13 +167,22 @@ export const Shopping: React.FC = () => {
 
   React.useEffect(() => {
     if ('geolocation' in navigator) {
+      // Request user permission before accessing location
       navigator.geolocation.getCurrentPosition(
-        (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        () => {
-          // fallback to Pretoria
+        (pos) => {
+          // Only use location if user granted permission
+          setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        },
+        (error) => {
+          // Handle permission denied or other errors gracefully
+          console.log('Geolocation access denied or failed:', error.message);
           setUserLocation(cityCoords['pretoria, gp']);
         },
-        { maximumAge: 600000, timeout: 5000 }
+        { 
+          maximumAge: 600000, // 10 minutes
+          timeout: 5000,
+          enableHighAccuracy: false // Use less accurate but faster location
+        }
       );
     } else {
       setUserLocation(cityCoords['pretoria, gp']);
