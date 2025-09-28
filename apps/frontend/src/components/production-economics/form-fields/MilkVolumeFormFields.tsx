@@ -33,6 +33,7 @@ export const MilkVolumeFormFields: React.FC<MilkVolumeFormFieldsProps> = ({
         value={formData.group_id || ''}
         onValueChange={(value) => onSelectChange('group_id', value)}
         label="Group (Optional)"
+        id="milk-volume-group-select"
       />
 
       <AnimalSelect

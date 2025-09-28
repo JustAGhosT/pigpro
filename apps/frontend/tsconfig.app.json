@@ -21,7 +21,7 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@my-farm/domain": ["./packages/domain/src/index.ts"]
+      "@my-farm/domain": ["../../packages/domain/src/index.ts"]
     }
   },
   "include": ["src"]

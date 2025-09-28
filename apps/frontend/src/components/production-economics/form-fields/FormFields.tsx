@@ -64,6 +64,7 @@ interface GroupSelectProps {
   value: string;
   onValueChange: (value: string) => void;
   label?: string;
+  id?: string;
   placeholder?: string;
   required?: boolean;
 }
@@ -73,16 +74,17 @@ export const GroupSelect: React.FC<GroupSelectProps> = ({
   value,
   onValueChange,
   label = "Group",
+  id = "group-select",
   placeholder = "Select a group...",
   required = false,
 }) => {
   return (
     <div>
-      <Label htmlFor="group-select" id="group-select-label">{label}{required && ' *'}</Label>
+      <Label htmlFor={id} id={`${id}-label`}>{label}{required && ' *'}</Label>
       <Select onValueChange={onValueChange} value={value}>
         <SelectTrigger 
-          id="group-select"
-          aria-labelledby="group-select-label"
+          id={id}
+          aria-labelledby={`${id}-label`}
           aria-required={required}
         >
           <SelectValue placeholder={placeholder} />

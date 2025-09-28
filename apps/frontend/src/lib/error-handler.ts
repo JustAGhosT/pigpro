@@ -4,12 +4,6 @@
 
 import { useCallback, useState } from 'react';
 
-export interface IAppError {
-  message: string;
-  code?: string;
-  status?: number;
-  details?: any;
-}
 
 export class AppError extends Error {
   public code?: string;
@@ -128,7 +122,8 @@ export const logError = (error: Error, context?: string) => {
   console.error('Application Error:', errorInfo);
   
   // In production, you might want to send this to an error tracking service
-  if (process.env.NODE_ENV === 'production') {
+  const isProd = typeof import !== 'undefined' && import.meta && Boolean(import.meta.env?.PROD) || typeof process !== 'undefined' && process.env.NODE_ENV === 'production';
+  if (isProd) {
     // Example: send to error tracking service
     // errorTrackingService.captureException(error, { extra: errorInfo });
   }
