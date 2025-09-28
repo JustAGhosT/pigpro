@@ -134,13 +134,12 @@ jobs:
         run: npm audit --audit-level=moderate
 
       - name: Check for vulnerabilities
-    - name: Check for vulnerabilities
-      run: |
-        if [ -f audit-ci.json ]; then
-          npx audit-ci --config audit-ci.json
-        else
-          echo "Audit CI not configured"
-        fi
+        run: |
+          if [ -f audit-ci.json ]; then
+            npx audit-ci --config audit-ci.json
+          else
+            echo "Audit CI not configured"
+          fi
 
   dependency-review:
     name: Dependency Review
