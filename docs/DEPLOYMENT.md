@@ -107,18 +107,15 @@ az storage account create \
   --resource-group "rg-livestock-club-sa" \
   --location "southafricanorth" \
   --sku "Standard_LRS" \
-  --allow-blob-public-access true
-```
+  --allow-blob-public-access false
 
 ### 2. Create Container
 
-```bash
 # Create blob container
 az storage container create \
   --name "livestock-images" \
   --account-name "livestockstorage123" \
-  --public-access "blob"
-```
+  --public-access off
 
 ### 3. Upload Images
 
