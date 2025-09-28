@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "API for Livestock Club SA application",
   "scripts": {
-    "start": "set \"FUNCTIONS_WORKER_RUNTIME=node\" && set \"AzureWebJobsStorage=UseDevelopmentStorage=true\" && npx -y azure-functions-core-tools@4 start --port 7072",
-    "start:7073": "set \"FUNCTIONS_WORKER_RUNTIME=node\" && set \"AzureWebJobsStorage=UseDevelopmentStorage=true\" && npx -y azure-functions-core-tools@4 start --port 7073",
+    "start": "cross-env FUNCTIONS_WORKER_RUNTIME=node AzureWebJobsStorage=UseDevelopmentStorage=true npx -y azure-functions-core-tools@4 start --port 7072",
+    "start:7073": "cross-env FUNCTIONS_WORKER_RUNTIME=node AzureWebJobsStorage=UseDevelopmentStorage=true npx -y azure-functions-core-tools@4 start --port 7073",
     "build": "node -e \"try{require('fs').rmSync('dist',{recursive:true,force:true})}catch(e){}\" && tsc",
     "watch": "tsc -w",
     "db:init:ps": "node scripts/init-db.cjs",
