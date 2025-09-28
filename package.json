@@ -1,18 +1,40 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "livestock-club-sa",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "workspaces": [
-    "packages/*",
-    "backend/api"
+    "apps/*",
+    "packages/*"
   ],
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "frontend": "cd apps/frontend && npm run dev",
+    "frontend:build": "cd apps/frontend && npm run build",
+    "frontend:preview": "cd apps/frontend && npm run preview",
+    "api": "cd apps/api && npm run start:7073",
+    "api:build": "cd apps/api && npm run build",
+    "api:test": "cd apps/api && npm run test:run",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest"
+    "test:frontend": "vitest",
+    "db:init:ps": "cd apps/api && npm run db:init:ps",
+    "db:init:bash": "cd apps/api && npm run db:init:bash",
+    "azure:login:ps": "powershell -ExecutionPolicy Bypass -File apps/api/scripts/azure-login.ps1",
+    "azure:login:bash": "bash apps/api/scripts/azure-login.sh",
+    "azure:pg:init:ps": "powershell -ExecutionPolicy Bypass -File apps/api/scripts/azure-init-db.ps1",
+    "azure:setup:ps": "powershell -ExecutionPolicy Bypass -File apps/api/scripts/azure-setup-and-start.ps1",
+    "azure:blob:upload:ps": "powershell -ExecutionPolicy Bypass -File apps/api/scripts/azure-blob-upload.ps1",
+    "azure:pg:init:bash": "bash apps/api/scripts/azure-init-db.sh",
+    "download:images": "powershell -ExecutionPolicy Bypass -File apps/api/scripts/download-images.ps1",
+    "download:multiple-images": "powershell -ExecutionPolicy Bypass -File apps/api/scripts/download-multiple-images.ps1",
+    "download:insects-arachnids": "powershell -ExecutionPolicy Bypass -File apps/api/scripts/download-insects-arachnids.ps1",
+    "test": "cd apps/api && npm run test:run",
+    "test:ui": "cd apps/api && npm run test:ui",
+    "test:coverage": "cd apps/api && npm run test:coverage",
+    "build:all": "npm run frontend:build && npm run api:build",
+    "test:all": "npm run api:test"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
