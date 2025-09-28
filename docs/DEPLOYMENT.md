@@ -115,14 +115,17 @@ az storage account create \
   --location "southafricanorth" \
   --sku "Standard_LRS" \
   --allow-blob-public-access false
+```
 
 ### 2. Create Container
 
+```bash
 # Create blob container
 az storage container create \
   --name "livestock-images" \
   --account-name "livestockstorage123" \
   --public-access off
+```
 
 ### 3. Upload Images
 
@@ -151,7 +154,7 @@ az functionapp create \
   --resource-group "rg-livestock-club-sa" \
   --consumption-plan-location "southafricanorth" \
   --runtime "node" \
-  --runtime-version "18" \
+  --runtime-version "20" \
   --functions-version "4" \
   --name "livestock-api" \
   --storage-account "livestockfunctions123"
@@ -190,11 +193,10 @@ func azure functionapp publish livestock-api
 ### 1. Create Static Web App
 
 ```bash
-# Create static web app
+# Create static web app (without source - connect repo via Azure portal)
 az staticwebapp create \
   --name "livestock-club-sa" \
   --resource-group "rg-livestock-club-sa" \
-  --source "https://github.com/your-username/livestock-club-sa" \
   --location "Central US" \
   --branch "main" \
   --app-location "apps/frontend" \
@@ -220,9 +222,7 @@ on:
 
 jobs:
   build_and_deploy_job:
-    if:
-      github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action !=
-      'closed')
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
@@ -446,7 +446,7 @@ az functionapp log tail \
 az functionapp config set \
   --name "livestock-api" \
   --resource-group "rg-livestock-club-sa" \
-  --node-version "18"
+  --node-version "20"
 ```
 
 ## Cost Optimization

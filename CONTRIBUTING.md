@@ -109,7 +109,7 @@ export async function getListings(req: HttpRequest): Promise<HttpResponseInit> {
 
 ```bash
 # Run all tests (aggregated)
-npm run test:all
+npm run test
 
 # Run API tests specifically
 npm --workspace=apps/api run test:run
