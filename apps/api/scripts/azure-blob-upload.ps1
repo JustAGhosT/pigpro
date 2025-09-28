@@ -20,6 +20,18 @@ if (-not $ResourceGroup) { $ResourceGroup = "livestock-rg" }
 if (-not $Location) { $Location = "eastus" }
 if (-not $StorageAccountName) { $StorageAccountName = ("livestocksa" + (New-RandomLower -Length 8)) }
 
+# Canonicalize names to meet Azure requirements
+$StorageAccountName = $StorageAccountName.ToLower()
+$ContainerName = $ContainerName.ToLower()
+
+# Validate Azure naming rules
+if ($StorageAccountName -notmatch '^[a-z0-9]{3,24}$') { 
+  throw "Invalid StorageAccountName '$StorageAccountName'. Must be 3-24 lowercase letters/digits." 
+}
+if ($ContainerName -notmatch '^[a-z0-9-]{3,63}$') { 
+  throw "Invalid ContainerName '$ContainerName'. Must be 3-63 lowercase letters/digits/hyphens." 
+}
+
 # Ensure login + subscription
 & "$PSScriptRoot/azure-login.ps1" -SubscriptionId $SubscriptionId
 

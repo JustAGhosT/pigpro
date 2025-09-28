@@ -308,7 +308,18 @@ export const Shopping: React.FC = () => {
       const matchesPrice = product.price >= priceMin && product.price <= priceMax;
       const matchesRating = product.rating >= minRating;
       const matchesVerified = !verifiedOnly || product.isVerified;
-      const matchesAge = !product.age || (product.age >= ageRange.min && product.age <= ageRange.max);
+      const matchesAge = !product.age || (() => {
+        // Parse age string to extract numeric value in months
+        const ageStr = product.age.toLowerCase();
+        const ageMatch = ageStr.match(/(\d+)\s*(month|year|yr|mo)/);
+        if (!ageMatch) return true; // If can't parse, don't filter out
+        
+        const ageValue = parseInt(ageMatch[1]);
+        const unit = ageMatch[2];
+        const ageInMonths = unit.includes('year') || unit.includes('yr') ? ageValue * 12 : ageValue;
+        
+        return ageInMonths >= ageRange.min && ageInMonths <= ageRange.max;
+      })();
       const matchesGender = !gender || !product.gender || product.gender.toLowerCase() === gender.toLowerCase();
       const matchesBreed = !breed || !product.breed || product.breed.toLowerCase().includes(breed.toLowerCase());
       const matchesLocation = locationQuery.trim() === '' || product.location.toLowerCase().includes(locationQuery.toLowerCase());
@@ -367,9 +378,6 @@ export const Shopping: React.FC = () => {
     }
   }, [filteredProducts, sortBy, userLocation, toCoords, haversineKm]);
 
-  const clearAllFilters = () => {
-    setSelectedCategory('All');
-    setSearchTerm('');
   const clearAllFilters = () => {
     setSelectedCategory('All');
     setSelectedCategories(new Set());
@@ -711,7 +719,7 @@ export const Shopping: React.FC = () => {
         verifiedOnly={verifiedOnly}
         onVerifiedOnlyChange={setVerifiedOnly}
         ageRange={ageRange}
-        onAgeRangeChange={setAgeRange}
+        onAgeRangeChange={(min, max) => setAgeRange({ min, max })}
         gender={gender}
         onGenderChange={setGender}
         breed={breed}

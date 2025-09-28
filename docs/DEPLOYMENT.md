@@ -70,8 +70,7 @@ az postgres flexible-server create \
   --admin-user "pgadmin" \
   --admin-password "Your-Strong-Pwd1!" \
   --sku-name "Standard_B1ms" \
-  --tier "Burstable" \
-  --public-access "0.0.0.0-255.255.255.255"
+  --tier "Burstable"
 ```
 
 ### 2. Create Database
@@ -87,7 +86,15 @@ az postgres flexible-server db create \
 ### 3. Configure Firewall
 
 ```bash
-# Add firewall rule for Azure services
+# Add firewall rule for your IP (replace with your actual IP)
+az postgres flexible-server firewall-rule create \
+  --resource-group "rg-livestock-club-sa" \
+  --name "livestock-pg-server" \
+  --rule-name "AllowMyIP" \
+  --start-ip-address "YOUR_IP_ADDRESS" \
+  --end-ip-address "YOUR_IP_ADDRESS"
+
+# Or allow Azure services only (for production)
 az postgres flexible-server firewall-rule create \
   --resource-group "rg-livestock-club-sa" \
   --name "livestock-pg-server" \

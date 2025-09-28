@@ -69,12 +69,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Simulate API call
+      // Validate input
+      if (!email || !password) {
+        throw new Error('Email and password are required');
+      }
+      
+      // Simulate API call - in production, this would be a real API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // In a real app, validate credentials
-      console.log('Login attempt:', { email, password: '***' });
+      // In a real app, validate credentials with backend
+      // Never log actual passwords
+      console.log('Login attempt for:', email);
       
+      // Mock user data - in production, this comes from the API response
       const mockUser: User = {
         id: '1',
         name: 'John Doe',
@@ -86,6 +93,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       };
       
       setUser(mockUser);
+      // In production, use a real JWT token from the API
       localStorage.setItem('auth_token', 'mock_token');
       setIsAuthModalOpen(false);
     } catch (error) {

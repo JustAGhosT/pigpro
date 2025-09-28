@@ -57,8 +57,16 @@ async function run() {
   const admin = new Client({ ...common, database: 'postgres' });
   await admin.connect();
   try {
+    // Use parameterized query to check if database exists
     const res = await admin.query('SELECT 1 FROM pg_database WHERE datname = $1', [database]);
     if (res.rowCount === 0) {
+      // Validate database name before creating
+      if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(database)) {
+        throw new Error(`Invalid database name: ${database}. Must start with letter/underscore and contain only alphanumeric/underscore.`);
+      }
+      
+      // Use parameterized query for database creation
+      // Note: CREATE DATABASE doesn't support parameters, so we validate the name first
       const quotedDatabase = quoteIdentifier(database);
       await admin.query(`CREATE DATABASE ${quotedDatabase}`);
       console.log(`Created database ${database}`);

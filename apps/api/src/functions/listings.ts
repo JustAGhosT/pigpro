@@ -152,7 +152,7 @@ export async function createListing(req: HttpRequest): Promise<HttpResponseInit>
   try {
     await ensureSchema();
     const body = await req.json() as Listing;
-    if (!body || !body.title || !body.price || !body.category || !body.location) {
+    if (!body || !body.title || body.price === undefined || body.price === null || !body.category || !body.location) {
       return { status: 400, jsonBody: { error: 'title, price, category, location are required' } };
     }
     const id = String(Date.now());
@@ -174,10 +174,35 @@ export async function updateListing(req: HttpRequest): Promise<HttpResponseInit>
   if (!id) return { status: 400, jsonBody: { error: 'id param required' } };
   try {
     const body = await req.json() as Partial<Listing>;
-    const exists = await query('SELECT 1 FROM listings WHERE id=$1', [id]);
-    if (!exists.rows?.length) return { status: 404, jsonBody: { error: 'not found' } };
+    
+    // Get existing listing to preserve fields not in the update
+    const existing = await query('SELECT id, title, price, currency, image, location, rating, reviews, category, breed, age, gender, is_verified as "isVerified", description, created_at as "createdAt", promoted, likes FROM listings WHERE id=$1', [id]);
+    if (!existing.rows?.length) return { status: 404, jsonBody: { error: 'not found' } };
+    
+    const existingListing = existing.rows[0];
+    
+    // Merge update with existing data, only updating provided fields
+    const updatedListing = {
+      title: body.title ?? existingListing.title,
+      price: body.price ?? existingListing.price,
+      currency: body.currency ?? existingListing.currency,
+      image: body.image ?? existingListing.image,
+      location: body.location ?? existingListing.location,
+      rating: body.rating ?? existingListing.rating,
+      reviews: body.reviews ?? existingListing.reviews,
+      category: body.category ?? existingListing.category,
+      breed: body.breed ?? existingListing.breed,
+      age: body.age ?? existingListing.age,
+      gender: body.gender ?? existingListing.gender,
+      isVerified: body.isVerified ?? existingListing.isVerified,
+      description: body.description ?? existingListing.description,
+      promoted: body.promoted ?? existingListing.promoted,
+      likes: body.likes ?? existingListing.likes
+    };
+    
     await query('UPDATE listings SET title=$1, price=$2, currency=$3, image=$4, location=$5, rating=$6, reviews=$7, category=$8, breed=$9, age=$10, gender=$11, is_verified=$12, description=$13, promoted=$14, likes=$15 WHERE id=$16',
-      [body.title, body.price, body.currency, body.image, body.location, body.rating, body.reviews, body.category, body.breed, body.age, body.gender, body.isVerified, body.description, body.promoted ?? false, body.likes ?? 0, id]);
+      [updatedListing.title, updatedListing.price, updatedListing.currency, updatedListing.image, updatedListing.location, updatedListing.rating, updatedListing.reviews, updatedListing.category, updatedListing.breed, updatedListing.age, updatedListing.gender, updatedListing.isVerified, updatedListing.description, updatedListing.promoted, updatedListing.likes, id]);
+    
     const updatedRow = await query('SELECT id, title, price, currency, image, location, rating, reviews, category, breed, age, gender, is_verified as "isVerified", description, created_at as "createdAt", promoted, likes FROM listings WHERE id=$1', [id]);
     return { jsonBody: updatedRow.rows?.[0] };
   } catch (e) {

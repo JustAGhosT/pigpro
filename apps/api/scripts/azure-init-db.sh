@@ -41,16 +41,36 @@ az postgres flexible-server db create \
   --server-name "$SERVER_NAME" \
   --database-name "$DATABASE" >/dev/null
 
-echo "Allowing public access from all IPs (adjust as needed)"
+# Initialize IP variables with safe defaults
+ALLOWED_IP_START="${ALLOWED_IP_START:-}"
+ALLOWED_IP_END="${ALLOWED_IP_END:-}"
+
+# Get client IP for secure access
+CLIENT_IP="${CLIENT_IP:-$(curl -s https://api.ipify.org || echo '0.0.0.0')}"
+
+# Validate IP configuration
+if [[ -n "$ALLOWED_IP_START" && -n "$ALLOWED_IP_END" ]]; then
+  echo "Using provided IP range: $ALLOWED_IP_START to $ALLOWED_IP_END"
+  START_IP="$ALLOWED_IP_START"
+  END_IP="$ALLOWED_IP_END"
+elif [[ "$CLIENT_IP" != "0.0.0.0" ]]; then
+  echo "Using detected client IP: $CLIENT_IP"
+  START_IP="$CLIENT_IP"
+  END_IP="$CLIENT_IP"
+else
+  echo "Warning: Could not determine client IP. Using Azure services only."
+  echo "Allowing access from Azure services only"
+  START_IP="0.0.0.0"
+  END_IP="0.0.0.0"
+fi
+
+# Create firewall rule with validated IPs
 az postgres flexible-server firewall-rule create \
   --resource-group "$RESOURCE_GROUP" \
   --name "$SERVER_NAME-allow-ip" \
   --server-name "$SERVER_NAME" \
-  --start-ip-address "$ALLOWED_IP_START" \
-  --end-ip-address "$ALLOWED_IP_END" >/dev/null
-# e.g. to allow only Azure services:
-#  --start-ip-address 0.0.0.0 \
-#  --end-ip-address 0.0.0.0 >/dev/null
+  --start-ip-address "$START_IP" \
+  --end-ip-address "$END_IP" >/dev/null
 
 echo "Done. Set env vars:"
 echo "PGHOST=$SERVER_NAME.postgres.database.azure.com"

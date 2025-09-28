@@ -61,7 +61,19 @@ if (-not $ResourceGroup) { $ResourceGroup = "livestock-rg" }
 if (-not $ServerName) { $ServerName = ("livestock-pg-" + (New-RandomLower -Length 8)) }
 if (-not $AdminPassword) { $AdminPassword = (New-StrongPassword -Length 20) }
 
+# Canonicalize names to meet Azure requirements
+$ResourceGroup = $ResourceGroup.ToLower()
+$ServerName = $ServerName.ToLower()
+
 # Validate/sanitize names to avoid Azure CLI errors
+# Resource group must be 1-90 characters, alphanumeric, underscore, parentheses, hyphen, period
+if ($ResourceGroup -notmatch '^[a-zA-Z0-9_().-]{1,90}$') {
+  throw "Invalid ResourceGroup '$ResourceGroup'. Must be 1-90 characters: letters, numbers, underscore, parentheses, hyphen, period."
+}
+# Server name must be 3-63 characters, lowercase letters, numbers, and hyphens
+if ($ServerName -notmatch '^[a-z0-9-]{3,63}$') {
+  throw "Invalid ServerName '$ServerName'. Must be 3-63 characters: lowercase letters, numbers, hyphens."
+}
 # Admin user must start with a letter and contain only letters and numbers
 if ($AdminUser -notmatch '^[A-Za-z][A-Za-z0-9]*$') {
   Write-Host "Invalid admin user '$AdminUser'. Falling back to 'pgadmin'."

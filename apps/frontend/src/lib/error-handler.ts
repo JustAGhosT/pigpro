@@ -2,7 +2,7 @@
  * Error handling utilities for the application
  */
 
-export interface AppError {
+export interface IAppError {
   message: string;
   code?: string;
   status?: number;
@@ -113,8 +113,8 @@ export const logError = (error: Error, context?: string) => {
     stack: error.stack,
     context,
     timestamp: new Date().toISOString(),
-    userAgent: navigator.userAgent,
-    url: window.location.href
+    userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'Unknown',
+    url: typeof window !== 'undefined' ? window.location.href : 'Unknown'
   };
   
   console.error('Application Error:', errorInfo);
