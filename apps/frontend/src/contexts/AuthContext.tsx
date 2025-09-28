@@ -43,21 +43,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         const token = localStorage.getItem('auth_token');
         if (token) {
-          // In a real app, validate token with backend
-          const mockUser: User = {
-            id: '1',
-            name: 'John Doe',
-            email: 'john@example.com',
-            phone: '+27 82 123 4567',
-            role: 'farmer',
-            tier: 'free',
-            isVerified: true,
-          };
-          setUser(mockUser);
+          // Try to get stored user data first
+          const storedUser = localStorage.getItem('auth_user');
+          if (storedUser) {
+            try {
+              const userData = JSON.parse(storedUser);
+              setUser(userData);
+            } catch (parseError) {
+              console.error('Failed to parse stored user data:', parseError);
+              localStorage.removeItem('auth_user');
+              localStorage.removeItem('auth_token');
+            }
+          } else {
+            // If no stored user but token exists, attempt to fetch user profile
+            // For now, clear invalid session
+            localStorage.removeItem('auth_token');
+          }
         }
       } catch (error) {
         console.error('Auth check failed:', error);
         localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_user');
       } finally {
         setIsLoading(false);
       }
@@ -95,6 +101,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(mockUser);
       // In production, use a real JWT token from the API
       localStorage.setItem('auth_token', 'mock_token');
+      localStorage.setItem('auth_user', JSON.stringify(mockUser));
       setIsAuthModalOpen(false);
     } catch (error) {
       console.error('Login error:', error);
@@ -122,6 +129,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       setUser(newUser);
       localStorage.setItem('auth_token', 'mock_token');
+      localStorage.setItem('auth_user', JSON.stringify(newUser));
       setIsAuthModalOpen(false);
     } catch (error) {
       console.error('Registration error:', error);
@@ -148,6 +156,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       setUser(mockUser);
       localStorage.setItem('auth_token', 'mock_token');
+      localStorage.setItem('auth_user', JSON.stringify(mockUser));
       setIsAuthModalOpen(false);
     } catch (error) {
       console.error(`${provider} login error:`, error);
@@ -160,6 +169,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_user');
   };
 
   const showAuthModal = (mode: 'signin' | 'signup' = 'signin') => {

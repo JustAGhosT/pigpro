@@ -67,8 +67,8 @@ fi
 # Create firewall rule with validated IPs
 az postgres flexible-server firewall-rule create \
   --resource-group "$RESOURCE_GROUP" \
-  --name "$SERVER_NAME-allow-ip" \
-  --server-name "$SERVER_NAME" \
+  --name "$SERVER_NAME" \
+  --rule-name "$SERVER_NAME-allow-ip" \
   --start-ip-address "$START_IP" \
   --end-ip-address "$END_IP" >/dev/null
 

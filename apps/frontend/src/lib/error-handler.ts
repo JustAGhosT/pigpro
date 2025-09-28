@@ -2,6 +2,8 @@
  * Error handling utilities for the application
  */
 
+import { useCallback, useState } from 'react';
+
 export interface IAppError {
   message: string;
   code?: string;
@@ -78,17 +80,18 @@ export const withRetry = <T extends any[], R>(
   delay = 1000
 ) => {
   return async (...args: T): Promise<R> => {
+    const attempts = Math.max(1, Math.floor(maxRetries));
     let lastError: Error;
     
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    for (let attempt = 1; attempt <= attempts; attempt++) {
       try {
         return await fn(...args);
       } catch (error) {
         lastError = error as Error;
         
-        if (attempt === maxRetries) {
+        if (attempt === attempts) {
           throw new AppError(
-            `Operation failed after ${maxRetries} attempts: ${lastError.message}`,
+            `Operation failed after ${attempts} attempts: ${lastError.message}`,
             'RETRY_EXHAUSTED',
             500,
             lastError
@@ -100,7 +103,12 @@ export const withRetry = <T extends any[], R>(
       }
     }
     
-    throw lastError!;
+    // This should never be reached, but provide a fallback
+    throw new AppError(
+      'Retry logic failed unexpectedly',
+      'RETRY_LOGIC_ERROR',
+      500
+    );
   };
 };
 
@@ -129,7 +137,6 @@ export const logError = (error: Error, context?: string) => {
 /**
  * React hook for error handling
  */
-import { useCallback, useState } from 'react';
 
 export const useErrorHandler = () => {
   const [error, setError] = useState<AppError | null>(null);

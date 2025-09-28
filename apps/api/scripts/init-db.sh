@@ -13,9 +13,11 @@ echo "Initializing Postgres database $DATABASE on $HOST:$PORT as $USER"
 
 # create database if not exists (using psql variables for safe identifier handling)
 psql -h "$HOST" -p "$PORT" -U "$USER" -d postgres -v DATABASE="$DATABASE" -v USER="$USER" \
+  --set=ON_ERROR_STOP=on \
   -tc "SELECT 1 FROM pg_database WHERE datname=:'DATABASE'" | grep -q 1 || \
 psql -h "$HOST" -p "$PORT" -U "$USER" -d postgres -v DATABASE="$DATABASE" -v USER="$USER" \
-  -c "CREATE DATABASE :\"DATABASE\" WITH OWNER :\"USER\" TEMPLATE template1" || true
+  --set=ON_ERROR_STOP=on \
+  -c "CREATE DATABASE :\"DATABASE\" WITH OWNER :\"USER\" TEMPLATE template1"
 
 SCHEMA_SQL="
 CREATE TABLE IF NOT EXISTS listings (

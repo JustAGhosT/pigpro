@@ -4,6 +4,100 @@ import { PDFDocument, StandardFonts } from "pdf-lib";
 import { query } from "../lib/db/client";
 import { fileContentStore } from "./imports"; // To get the CSV content
 
+// Validation function for production records
+function validateProductionRecord(record: any, rowNumber: number): {
+  isValid: boolean;
+  sanitizedRecord?: any;
+  errors: string[];
+} {
+  const errors: string[] = [];
+  
+  // Validate species_id (required, must be valid UUID format)
+  if (!record.species_id || typeof record.species_id !== 'string') {
+    errors.push('species_id is required and must be a string');
+  } else if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(record.species_id)) {
+    errors.push('species_id must be a valid UUID format');
+  }
+  
+  // Validate event_type (required, must be one of allowed values)
+  const allowedEventTypes = ['birth', 'death', 'milk_volume', 'egg_count', 'weight', 'vaccination', 'treatment', 'breeding'];
+  if (!record.event_type || typeof record.event_type !== 'string') {
+    errors.push('event_type is required and must be a string');
+  } else if (!allowedEventTypes.includes(record.event_type.toLowerCase())) {
+    errors.push(`event_type must be one of: ${allowedEventTypes.join(', ')}`);
+  }
+  
+  // Validate date (required, must be valid ISO date)
+  if (!record.date || typeof record.date !== 'string') {
+    errors.push('date is required and must be a string');
+  } else {
+    const dateObj = new Date(record.date);
+    if (isNaN(dateObj.getTime())) {
+      errors.push('date must be a valid ISO date string');
+    } else {
+      // Check if date is not too far in the future (within 1 year)
+      const oneYearFromNow = new Date();
+      oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+      if (dateObj > oneYearFromNow) {
+        errors.push('date cannot be more than 1 year in the future');
+      }
+      
+      // Check if date is not too far in the past (within 10 years)
+      const tenYearsAgo = new Date();
+      tenYearsAgo.setFullYear(tenYearsAgo.getFullYear() - 10);
+      if (dateObj < tenYearsAgo) {
+        errors.push('date cannot be more than 10 years in the past');
+      }
+    }
+  }
+  
+  // Validate quantity (optional, but if provided must be positive number)
+  let quantity = null;
+  if (record.quantity !== undefined && record.quantity !== null && record.quantity !== '') {
+    const numQuantity = Number(record.quantity);
+    if (isNaN(numQuantity)) {
+      errors.push('quantity must be a valid number');
+    } else if (numQuantity < 0) {
+      errors.push('quantity must be a positive number');
+    } else if (numQuantity > 10000) {
+      errors.push('quantity cannot exceed 10,000');
+    } else {
+      quantity = numQuantity;
+    }
+  }
+  
+  // Validate notes (optional, but if provided must be reasonable length)
+  let notes = null;
+  if (record.notes !== undefined && record.notes !== null && record.notes !== '') {
+    if (typeof record.notes !== 'string') {
+      errors.push('notes must be a string');
+    } else if (record.notes.length > 1000) {
+      errors.push('notes cannot exceed 1000 characters');
+    } else {
+      notes = record.notes.trim();
+    }
+  }
+  
+  if (errors.length > 0) {
+    return {
+      isValid: false,
+      errors: errors.map(error => `Row ${rowNumber}: ${error}`)
+    };
+  }
+  
+  return {
+    isValid: true,
+    sanitizedRecord: {
+      species_id: record.species_id.trim(),
+      event_type: record.event_type.toLowerCase().trim(),
+      date: new Date(record.date).toISOString(),
+      quantity,
+      notes
+    },
+    errors: []
+  };
+}
+
 // This function simulates a background worker processing one job at a time.
 export async function processJobQueue(myTimer: Timer, context: InvocationContext): Promise<void> {
     context.log('Timer function processed request.');
@@ -29,23 +123,65 @@ export async function processJobQueue(myTimer: Timer, context: InvocationContext
             const csvString = fileContentStore[job.id];
             if (!csvString) throw new Error('File content not found for job.');
 
-            const { data } = Papa.parse(csvString, { header: true, skipEmptyLines: true });
+            const { data, errors } = Papa.parse(csvString, { header: true, skipEmptyLines: true });
+            
+            // Validate CSV parsing results
+            if (errors && errors.length > 0) {
+                throw new Error(`CSV parsing errors: ${errors.map(e => e.message).join(', ')}`);
+            }
+            
+            if (!Array.isArray(data)) {
+                throw new Error('CSV data is not in expected array format');
+            }
+            
+            if (data.length === 0) {
+                context.log('No data rows found in CSV file');
+                return;
+            }
 
-            // In a real transaction, you'd use a transaction block
-            for (const record of data as any[]) {
-                // Validate and sanitize the record data before inserting
-                const sanitizedRecord = {
-                    species_id: record.species_id || null,
-                    event_type: record.event_type || null,
-                    date: record.date || null,
-                    quantity: record.quantity || null,
-                    notes: record.notes || null
-                };
+            // Validate and process each record
+            const validRecords = [];
+            const invalidRecords = [];
+            
+            for (let i = 0; i < data.length; i++) {
+                const record = data[i];
+                const validationResult = validateProductionRecord(record, i + 1);
                 
-                await query(
-                    `INSERT INTO production_records (species_id, event_type, date, quantity, notes) VALUES ($1, $2, $3, $4, $5)`,
-                    [sanitizedRecord.species_id, sanitizedRecord.event_type, sanitizedRecord.date, sanitizedRecord.quantity, sanitizedRecord.notes]
-                );
+                if (validationResult.isValid) {
+                    validRecords.push(validationResult.sanitizedRecord);
+                } else {
+                    invalidRecords.push({ row: i + 1, errors: validationResult.errors, record });
+                }
+            }
+            
+            if (invalidRecords.length > 0) {
+                context.log(`Found ${invalidRecords.length} invalid records out of ${data.length} total`);
+                invalidRecords.forEach(invalid => {
+                    context.log(`Row ${invalid.row}: ${invalid.errors.join(', ')}`);
+                });
+                
+                // Decide whether to proceed with valid records or fail entirely
+                if (validRecords.length === 0) {
+                    throw new Error('No valid records found in CSV file');
+                }
+                
+                context.log(`Proceeding with ${validRecords.length} valid records`);
+            }
+
+            // Insert valid records in a transaction
+            await query('BEGIN');
+            try {
+                for (const record of validRecords) {
+                    await query(
+                        `INSERT INTO production_records (species_id, event_type, date, quantity, notes) VALUES ($1, $2, $3, $4, $5)`,
+                        [record.species_id, record.event_type, record.date, record.quantity, record.notes]
+                    );
+                }
+                await query('COMMIT');
+                context.log(`Successfully imported ${validRecords.length} production records`);
+            } catch (dbError) {
+                await query('ROLLBACK');
+                throw new Error(`Database error during import: ${dbError.message}`);
             }
             delete fileContentStore[job.id]; // Clean up
         }

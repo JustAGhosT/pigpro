@@ -15,9 +15,10 @@ const fetchWithTimeout = async (url: string, init?: RequestInit, ms = 2000) => {
   }
 };
 
+// Module-level variables for shared test state
+const baseUrl = 'http://localhost:7073/api/v1';
+
 describe('HTTP API Tests', () => {
-  const baseUrl = 'http://localhost:7073/api/v1';
-  
   beforeAll(async () => {
     // Wait for the server to be ready
     await new Promise(resolve => setTimeout(resolve, 2000));

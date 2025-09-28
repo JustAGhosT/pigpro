@@ -37,9 +37,17 @@ async function run() {
       // Production: use proper SSL with certificate validation
       sslConfig = {
         rejectUnauthorized: true,
-        // Use system CA bundle or NODE_EXTRA_CA_CERTS if available
-        // Use standardized PGSSLROOTCERT for the CA path (libpq convention)
-        ...(process.env.PGSSLROOTCERT && { ca: process.env.PGSSLROOTCERT })
+        // Read SSL certificate file if provided
+        ...(process.env.PGSSLROOTCERT && (() => {
+          try {
+            const fs = require('fs');
+            const caContent = fs.readFileSync(process.env.PGSSLROOTCERT, 'utf8');
+            return { ca: caContent };
+          } catch (error) {
+            console.error('Failed to read SSL certificate file:', error.message);
+            throw new Error(`SSL certificate file ${process.env.PGSSLROOTCERT} could not be read: ${error.message}`);
+          }
+        })())
       };
     }
   }
