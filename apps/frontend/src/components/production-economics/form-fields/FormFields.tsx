@@ -105,28 +105,6 @@ export const GroupSelect: React.FC<GroupSelectProps> = ({
     </div>
   );
 };
-=======
-  label = 'Animal',
-  id = 'animal-select',
-  placeholder = 'Select an animal...',
-}) => (
-  <div>
-    <Label htmlFor={id}>{label}</Label>
-    <Select name="animal_id" onValueChange={onValueChange} value={value}>
-      <SelectTrigger id={id}>
-        <SelectValue placeholder={placeholder} />
-      </SelectTrigger>
-      <SelectContent>
-        {animals.map(animal => (
-          <SelectItem key={animal.id} value={animal.id}>
-            {animal.external_id || `(ID: ${animal.id.substring(0, 6)})`}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  </div>
-);
->>>>>>> origin/main:src/components/production-economics/form-fields/FormFields.tsx
 
 interface DateFieldProps {
   value: string;
