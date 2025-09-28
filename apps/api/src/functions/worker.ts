@@ -12,26 +12,35 @@ function validateProductionRecord(record: any, rowNumber: number): {
 } {
   const errors: string[] = [];
   
+  // Normalize inputs - trim string fields and treat empty strings as missing
+  const normalizedRecord = {
+    species_id: record.species_id ? String(record.species_id).trim() : '',
+    event_type: record.event_type ? String(record.event_type).trim() : '',
+    date: record.date ? String(record.date).trim() : '',
+    quantity: record.quantity ? String(record.quantity).trim() : '',
+    notes: record.notes ? String(record.notes).trim() : ''
+  };
+  
   // Validate species_id (required, must be valid UUID format)
-  if (!record.species_id || typeof record.species_id !== 'string') {
+  if (!normalizedRecord.species_id) {
     errors.push('species_id is required and must be a string');
-  } else if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(record.species_id)) {
+  } else if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(normalizedRecord.species_id)) {
     errors.push('species_id must be a valid UUID format');
   }
   
   // Validate event_type (required, must be one of allowed values)
   const allowedEventTypes = ['birth', 'death', 'milk_volume', 'egg_count', 'weight', 'vaccination', 'treatment', 'breeding'];
-  if (!record.event_type || typeof record.event_type !== 'string') {
+  if (!normalizedRecord.event_type) {
     errors.push('event_type is required and must be a string');
-  } else if (!allowedEventTypes.includes(record.event_type.toLowerCase())) {
+  } else if (!allowedEventTypes.includes(normalizedRecord.event_type.toLowerCase())) {
     errors.push(`event_type must be one of: ${allowedEventTypes.join(', ')}`);
   }
   
   // Validate date (required, must be valid ISO date)
-  if (!record.date || typeof record.date !== 'string') {
+  if (!normalizedRecord.date) {
     errors.push('date is required and must be a string');
   } else {
-    const dateObj = new Date(record.date);
+    const dateObj = new Date(normalizedRecord.date);
     if (isNaN(dateObj.getTime())) {
       errors.push('date must be a valid ISO date string');
     } else {
@@ -53,8 +62,8 @@ function validateProductionRecord(record: any, rowNumber: number): {
   
   // Validate quantity (optional, but if provided must be positive number)
   let quantity = null;
-  if (record.quantity !== undefined && record.quantity !== null && record.quantity !== '') {
-    const numQuantity = Number(record.quantity);
+  if (normalizedRecord.quantity) {
+    const numQuantity = Number(normalizedRecord.quantity);
     if (isNaN(numQuantity)) {
       errors.push('quantity must be a valid number');
     } else if (numQuantity < 0) {
@@ -68,13 +77,11 @@ function validateProductionRecord(record: any, rowNumber: number): {
   
   // Validate notes (optional, but if provided must be reasonable length)
   let notes = null;
-  if (record.notes !== undefined && record.notes !== null && record.notes !== '') {
-    if (typeof record.notes !== 'string') {
-      errors.push('notes must be a string');
-    } else if (record.notes.length > 1000) {
+  if (normalizedRecord.notes) {
+    if (normalizedRecord.notes.length > 1000) {
       errors.push('notes cannot exceed 1000 characters');
     } else {
-      notes = record.notes.trim();
+      notes = normalizedRecord.notes;
     }
   }
   
@@ -88,9 +95,9 @@ function validateProductionRecord(record: any, rowNumber: number): {
   return {
     isValid: true,
     sanitizedRecord: {
-      species_id: record.species_id.trim(),
-      event_type: record.event_type.toLowerCase().trim(),
-      date: new Date(record.date).toISOString(),
+      species_id: normalizedRecord.species_id,
+      event_type: normalizedRecord.event_type.toLowerCase(),
+      date: new Date(normalizedRecord.date).toISOString(),
       quantity,
       notes
     },
@@ -136,6 +143,11 @@ export async function processJobQueue(myTimer: Timer, context: InvocationContext
             
             if (data.length === 0) {
                 context.log('No data rows found in CSV file');
+                // Update job status to completed (no-op) instead of leaving it running
+                await query(
+                    'UPDATE job_queue SET status = $1, completed_at = NOW(), error_message = $2 WHERE id = $3',
+                    ['completed', 'No data rows in CSV', job.id]
+                );
                 return;
             }
 
@@ -172,7 +184,7 @@ export async function processJobQueue(myTimer: Timer, context: InvocationContext
             await query('BEGIN');
             try {
                 for (const record of validRecords) {
-                    await query(
+                await query(
                         `INSERT INTO production_records (species_id, event_type, date, quantity, notes) VALUES ($1, $2, $3, $4, $5)`,
                         [record.species_id, record.event_type, record.date, record.quantity, record.notes]
                     );

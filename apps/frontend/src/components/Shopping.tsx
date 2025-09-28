@@ -130,7 +130,13 @@ export const Shopping: React.FC = () => {
 
   // Derived price bounds from current catalog
   const priceBounds = useMemo(() => {
-    const prices = products.map(p => p.price);
+    if (!products || products.length === 0) {
+      return { min: 0, max: 0 };
+    }
+    const prices = products.map(p => p.price).filter(price => typeof price === 'number' && !isNaN(price));
+    if (prices.length === 0) {
+      return { min: 0, max: 0 };
+    }
     const min = Math.min(...prices);
     const max = Math.max(...prices);
     return { min, max };
@@ -319,13 +325,26 @@ export const Shopping: React.FC = () => {
       const matchesVerified = !verifiedOnly || product.isVerified;
       const matchesAge = !product.age || (() => {
         // Parse age string to extract numeric value in months
-        const ageStr = product.age.toLowerCase();
-        const ageMatch = ageStr.match(/(\d+)\s*(month|year|yr|mo)/);
+        const ageStr = product.age.toLowerCase().trim();
+        const ageMatch = ageStr.match(/(\d+(?:\.\d+)?)\s*(year|yr|y|month|mo|m|week|wk|w|day|d)/);
         if (!ageMatch) return true; // If can't parse, don't filter out
         
-        const ageValue = parseInt(ageMatch[1]);
+        const ageValue = parseFloat(ageMatch[1]);
         const unit = ageMatch[2];
-        const ageInMonths = unit.includes('year') || unit.includes('yr') ? ageValue * 12 : ageValue;
+        
+        // Convert to months
+        let ageInMonths: number;
+        if (unit.includes('year') || unit.includes('yr') || unit === 'y') {
+          ageInMonths = ageValue * 12;
+        } else if (unit.includes('month') || unit.includes('mo') || unit === 'm') {
+          ageInMonths = ageValue;
+        } else if (unit.includes('week') || unit.includes('wk') || unit === 'w') {
+          ageInMonths = ageValue / 4.345; // 52/12 weeks per month
+        } else if (unit.includes('day') || unit === 'd') {
+          ageInMonths = ageValue / 30.436875; // 365.25/12 days per month
+        } else {
+          return true; // Unknown unit, don't filter out
+        }
         
         return ageInMonths >= ageRange.min && ageInMonths <= ageRange.max;
       })();
