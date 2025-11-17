@@ -332,8 +332,17 @@ When your frontend is deployed to Azure Static Web Apps, you need to configure C
 az functionapp cors add \
   --name pigpro-api \
   --resource-group pigpro-rg \
-  --allowed-origins https://example.azurestaticapps.net
+  --allowed-origins https://<your-swa-hostname>
 ```
+
+**Important**: Replace `<your-swa-hostname>` with your actual Static Web App hostname (e.g., `your-actual-app.azurestaticapps.net`) or your custom domain (e.g., `pigpro.yourdomain.com`). 
+
+To find your Static Web App hostname:
+- Navigate to your Static Web App resource in the Azure Portal
+- Copy the URL from the Overview page
+- Use this exact URL in the CORS configuration
+
+Never use placeholder or example hostnames like `example.azurestaticapps.net` in your production configuration - always use your real SWA URL or custom domain.
 
 ### CORS in local.settings.json (Development Only)
 
