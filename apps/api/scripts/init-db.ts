@@ -37,7 +37,7 @@ async function run() {
     if (sslRootCert) {
       try {
         sslOptions.ca = fs.readFileSync(sslRootCert, 'utf8');
-        console.log(`Loaded SSL root certificate from ${sslRootCert}`);
+        console.log('Loaded SSL root certificate.');
       } catch (err) {
         console.warn(`Failed to load SSL root certificate from ${sslRootCert}:`, err);
       }
