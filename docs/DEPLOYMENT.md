@@ -98,7 +98,8 @@ az postgres flexible-server firewall-rule create \
 # or specify explicit CIDR ranges for your application servers
 ```
 
-**Security Note**: Avoid broad "allow Azure services" rules. For production deployments, consider using Azure Private Link or VNet integration for secure database access.
+**Security Note**: Avoid broad "allow Azure services" rules. For production deployments, consider
+using Azure Private Link or VNet integration for secure database access.
 
 ## Storage Deployment
 
@@ -133,191 +134,6 @@ az storage blob upload-batch \
   --destination "livestock-images" \
   --source "public/images"
 ```
-
-## Backend API Deployment
-# PigPro Deployment Guide
-
-This guide covers deploying the PigPro application to Azure, including both the frontend (Azure Static Web Apps) and backend (Azure Functions).
-
-## Table of Contents
-
-- [Prerequisites](#prerequisites)
-- [Architecture Overview](#architecture-overview)
-- [Local Development Setup](#local-development-setup)
-- [Azure Resources Setup](#azure-resources-setup)
-- [Frontend Deployment (Azure Static Web Apps)](#frontend-deployment-azure-static-web-apps)
-- [Backend Deployment (Azure Functions)](#backend-deployment-azure-functions)
-- [Database Configuration](#database-configuration)
-- [Environment Variables](#environment-variables)
-- [CI/CD Configuration](#cicd-configuration)
-- [CORS Configuration](#cors-configuration)
-- [Custom Domain Setup](#custom-domain-setup)
-- [Monitoring and Logging](#monitoring-and-logging)
-- [Troubleshooting](#troubleshooting)
-
-## Prerequisites
-
-Before deploying PigPro, ensure you have:
-
-- An Azure account with an active subscription
-- Azure CLI installed and configured
-- Node.js 18+ installed
-- Git installed
-- Azure Functions Core Tools v4+
-- A PostgreSQL database (Azure Database for PostgreSQL recommended)
-
-## Architecture Overview
-
-PigPro consists of:
-
-1. **Frontend**: React application built with Vite, deployed to Azure Static Web Apps
-2. **Backend**: Azure Functions API (Node.js/TypeScript)
-3. **Database**: PostgreSQL database
-4. **Storage**: Azure Blob Storage (optional, for file uploads)
-
-## Local Development Setup
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/YourOrg/pigpro.git
-cd pigpro
-```
-
-### 2. Install Dependencies
-
-```bash
-# Install root dependencies
-npm install
-
-# Install backend dependencies
-cd backend/api
-npm install
-cd ../..
-```
-
-### 3. Configure Local Environment
-
-Create a `local.settings.json` file in `backend/api/`:
-
-```json
-{
-  "IsEncrypted": false,
-  "Values": {
-    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "FUNCTIONS_WORKER_RUNTIME": "node",
-    "DATABASE_URL": "postgresql://user:password@localhost:5432/pigpro",
-    "JWT_SECRET": "your-local-jwt-secret"
-  }
-}
-```
-
-### 4. Start Development Servers
-
-```bash
-# Start frontend (in root directory)
-npm run dev
-
-# Start backend (in another terminal)
-cd backend/api
-npm start
-```
-
-## Azure Resources Setup
-
-### 1. Create Resource Group
-
-```bash
-az group create --name pigpro-rg --location eastus
-```
-
-### 2. Create PostgreSQL Database
-
-```bash
-az postgres flexible-server create \
-  --resource-group pigpro-rg \
-  --name pigpro-db-server \
-  --location eastus \
-  --admin-user pigproadmin \
-  --admin-password <YourSecurePassword> \
-  --sku-name Standard_B1ms \
-  --tier Burstable \
-  --version 14
-```
-
-### 3. Create Database
-
-```bash
-az postgres flexible-server db create \
-  --resource-group pigpro-rg \
-  --server-name pigpro-db-server \
-  --database-name pigpro
-```
-
-### 4. Configure Firewall Rules
-
-```bash
-# Allow Azure services
-az postgres flexible-server firewall-rule create \
-  --resource-group pigpro-rg \
-  --name pigpro-db-server \
-  --rule-name AllowAzureServices \
-  --start-ip-address 0.0.0.0 \
-  --end-ip-address 0.0.0.0
-
-# Allow your IP (for management)
-az postgres flexible-server firewall-rule create \
-  --resource-group pigpro-rg \
-  --name pigpro-db-server \
-  --rule-name AllowMyIP \
-  --start-ip-address <YourIPAddress> \
-  --end-ip-address <YourIPAddress>
-```
-
-## Frontend Deployment (Azure Static Web Apps)
-
-### Option 1: Deploy via Azure Portal
-
-1. Go to the [Azure Portal](https://portal.azure.com)
-2. Click "Create a resource" and search for "Static Web App"
-3. Fill in the details:
-   - **Resource Group**: pigpro-rg
-   - **Name**: pigpro-frontend
-   - **Region**: East US 2
-   - **Plan type**: Free or Standard
-4. Connect to your GitHub repository
-5. Configure build settings:
-   - **Build Presets**: React
-   - **App location**: /
-   - **API location**: backend/api
-   - **Output location**: dist
-
-### Option 2: Deploy via Azure CLI
-
-```bash
-az staticwebapp create \
-  --name pigpro-frontend \
-  --resource-group pigpro-rg \
-  --source https://github.com/YourOrg/pigpro \
-  --location eastus2 \
-  --branch main \
-  --app-location "/" \
-  --api-location "backend/api" \
-  --output-location "dist" \
-  --login-with-github
-```
-
-### Get Static Web App URL
-
-```bash
-az staticwebapp show \
-  --name pigpro-frontend \
-  --resource-group pigpro-rg \
-  --query "defaultHostname" \
-  --output tsv
-```
-
-This will output your SWA URL (e.g., `pigpro-frontend-abc123.azurestaticapps.net`).
 
 ## Backend Deployment (Azure Functions)
 
@@ -415,38 +231,6 @@ az staticwebapp create \
   --output-location "dist"
 ```
 
-### 2. Configure Build Settings
-
-Create `.github/workflows/azure-static-web-apps.yml`:
-az functionapp create \
-  --resource-group pigpro-rg \
-  --consumption-plan-location eastus \
-  --runtime node \
-  --runtime-version 18 \
-  --functions-version 4 \
-  --name pigpro-api \
-  --storage-account pigprostorage
-```
-
-### 2. Configure Function App Settings
-
-```bash
-az functionapp config appsettings set \
-  --name pigpro-api \
-  --resource-group pigpro-rg \
-  --settings \
-    "DATABASE_URL=postgresql://user:password@pigpro-db-server.postgres.database.azure.com:5432/pigpro" \
-    "JWT_SECRET=<YourProductionJWTSecret>"
-```
-
-### 3. Deploy Function App
-
-```bash
-cd backend/api
-npm run build
-func azure functionapp publish pigpro-api
-```
-
 ## Database Configuration
 
 ### 1. Run Migrations
@@ -499,7 +283,8 @@ az functionapp config appsettings set \
 
 ### GitHub Actions Workflow
 
-Azure Static Web Apps automatically creates a GitHub Actions workflow. Ensure your `.github/workflows/azure-static-web-apps-*.yml` includes:
+Azure Static Web Apps automatically creates a GitHub Actions workflow. Ensure your
+`.github/workflows/azure-static-web-apps-*.yml` includes:
 
 ```yaml
 name: Azure Static Web Apps CI/CD
@@ -515,7 +300,9 @@ on:
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    if:
+      github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action !=
+      'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
