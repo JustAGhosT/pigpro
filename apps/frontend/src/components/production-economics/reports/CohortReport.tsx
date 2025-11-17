@@ -13,7 +13,17 @@ interface CohortReportData {
     totalRevenue: number;
     netProfit: number;
   };
-  timeline: any[]; // Combined events
+  timeline: Array<{
+    type: string;
+    event_type?: string;
+    quantity?: number;
+    weight_value?: number;
+    egg_count?: number;
+    weight_unit?: string;
+    amount?: number;
+    memo?: string;
+    [key: string]: unknown;
+  }>; // Combined events
 }
 
 const formatCurrency = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
@@ -60,7 +70,7 @@ export const CohortReport: React.FC = () => {
     }
   };
 
-  const renderEvent = (event: any) => {
+  const renderEvent = (event: CohortReportData['timeline'][number]) => {
     if (event.type === 'production') {
         return `[PROD] ${formatLabel(event.event_type)}: ` +
                `${event.quantity || event.weight_value || event.egg_count || ''} ` +

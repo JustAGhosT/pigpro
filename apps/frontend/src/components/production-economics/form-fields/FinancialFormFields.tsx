@@ -11,9 +11,13 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 
+interface FormData {
+  [key: string]: string | number | undefined;
+}
+
 interface FinancialFormFieldsProps {
   categories: Category[];
-  formData: any;
+  formData: FormData;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onSelectChange: (name: string, value: string) => void;
   transactionType: 'income' | 'expense';

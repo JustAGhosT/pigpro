@@ -5,7 +5,11 @@ import { Dashboard } from './Dashboard';
 // Mock the fetch function
 globalThis.fetch = vi.fn();
 
-const createFetchResponse = (data: any) => {
+interface MockData {
+  [key: string]: unknown;
+}
+
+const createFetchResponse = (data: MockData) => {
   return { json: () => Promise.resolve(data), ok: true };
 };
 
@@ -24,7 +28,7 @@ describe('Dashboard', () => {
     };
     const mockTimeSeriesData = [{ name: '2023-10', revenue: 10000, expense: 4500 }];
 
-    (fetch as any)
+    (fetch as unknown as ReturnType<typeof vi.fn>)
       .mockResolvedValueOnce(createFetchResponse([])) // species
       .mockResolvedValueOnce(createFetchResponse([])) // groups
       .mockResolvedValueOnce(createFetchResponse(mockKpiData)) // kpis

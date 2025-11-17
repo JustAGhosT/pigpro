@@ -11,9 +11,13 @@ import { Animal } from '@my-farm/domain';
 import React from 'react';
 import { AnimalSelect, DateField } from './FormFields';
 
+interface FormData {
+  [key: string]: string | number | undefined;
+}
+
 interface WeightFormFieldsProps {
   animals: Animal[];
-  formData: any;
+  formData: FormData;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSelectChange: (name: string, value: string) => void;
 }

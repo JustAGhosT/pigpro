@@ -33,10 +33,11 @@ const ProductionEconomicsPage: React.FC = () => {
             setReportJobId(null);
             alert('Report generation failed.');
         }
-      } catch (e: any) {
+      } catch (e) {
         clearInterval(interval);
         setReportJobId(null);
-        alert(`Error checking report status: ${e.message}`);
+        const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+        alert(`Error checking report status: ${errorMessage}`);
       }
     }, 3000);
   };

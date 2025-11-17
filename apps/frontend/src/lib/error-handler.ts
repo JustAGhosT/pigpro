@@ -8,9 +8,9 @@ import { useCallback, useState } from 'react';
 export class AppError extends Error {
   public code?: string;
   public status?: number;
-  public details?: any;
+  public details?: unknown;
 
-  constructor(message: string, code?: string, status?: number, details?: any) {
+  constructor(message: string, code?: string, status?: number, details?: unknown) {
     super(message);
     this.name = 'AppError';
     this.code = code;
@@ -22,6 +22,7 @@ export class AppError extends Error {
 /**
  * Wraps async functions with error handling
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const withErrorHandling = <T extends any[], R>(
   fn: (...args: T) => Promise<R>,
   errorMessage = 'An error occurred'
@@ -68,6 +69,7 @@ export const safeApiCall = async <T>(
 /**
  * Retry mechanism for failed operations
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const withRetry = <T extends any[], R>(
   fn: (...args: T) => Promise<R>,
   maxRetries = 3,
