@@ -10,10 +10,12 @@ function getEnv(name, def) {
 
 function quoteIdentifier(identifier) {
   // Validate identifier name (alphanumeric, underscore, hyphen only)
+  // This strict validation prevents SQL injection by ensuring only safe characters
   if (!/^[a-zA-Z_][a-zA-Z0-9_-]*$/.test(identifier)) {
     throw new Error(`Invalid database identifier: ${identifier}. Must start with letter/underscore and contain only alphanumeric, underscore, hyphen.`);
   }
   // Escape double quotes by doubling them and wrap in double quotes
+  // This follows PostgreSQL's identifier quoting rules (SQL standard)
   return `"${identifier.replace(/"/g, '""')}"`;
 }
 
@@ -69,13 +71,17 @@ async function run() {
     // Use parameterized query to check if database exists
     const res = await admin.query('SELECT 1 FROM pg_database WHERE datname = $1', [database]);
     if (res.rowCount === 0) {
-      // Validate database name before creating
+      // Validate database name before creating (additional layer of security)
       if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(database)) {
         throw new Error(`Invalid database name: ${database}. Must start with letter/underscore and contain only alphanumeric/underscore.`);
       }
       
-      // Use parameterized query for database creation
-      // Note: CREATE DATABASE doesn't support parameters, so we validate the name first
+      // SECURITY NOTE: CREATE DATABASE cannot use parameterized queries in PostgreSQL.
+      // We mitigate SQL injection risk through multiple defense layers:
+      // 1. Strict input validation via regex (alphanumeric + underscore only)
+      // 2. Identifier quoting using PostgreSQL standards (quoteIdentifier function)
+      // 3. Double-quote escaping to prevent quote injection
+      // This approach is secure as the database name is validated before use
       const quotedDatabase = quoteIdentifier(database);
       await admin.query(`CREATE DATABASE ${quotedDatabase}`);
       console.log(`Created database ${database}`);
