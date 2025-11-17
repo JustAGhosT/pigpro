@@ -6,7 +6,8 @@ import { Card, CardContent } from './ui/card';
 import { Input } from './ui/input';
 
 /** ===== Flatten + Normalize LIVESTOCK_DATA ===== */
-function normalizeBreed(raw: any, livestockType: string, category: string, index: number): UIBreed {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function normalizeBreed(raw: unknown, livestockType: string, category: string, index: number): UIBreed {
   const id =
     (typeof raw?.id === 'string' && raw.id) ||
     `${livestockType}-${category}-${(raw?.name ?? 'item').toString().toLowerCase().replaceAll(/\s+/g, '-')}-${index}`;
@@ -54,9 +55,9 @@ export const BreedEncyclopedia: React.FC = () => {
 
   const { categories } = useMemo(() => {
     const categories = ['all', ...Array.from(new Set(breeds.map(b => b.category)))];
-    ['all', ...Array.from(new Set(breeds.map(b => b.origin)))];
-    ['all', ...Array.from(new Set(breeds.map(b => b.temperament)))];
-    ['all', ...Array.from(new Set(breeds.flatMap(b => b.traits)))];
+    void ['all', ...Array.from(new Set(breeds.map(b => b.origin)))];
+    void ['all', ...Array.from(new Set(breeds.map(b => b.temperament)))];
+    void ['all', ...Array.from(new Set(breeds.flatMap(b => b.traits)))];
     return { categories };
   }, []);
   const livestockTypes = useMemo(() => ['all', ...Array.from(new Set(breeds.map(b => b.livestockType)))], []);
