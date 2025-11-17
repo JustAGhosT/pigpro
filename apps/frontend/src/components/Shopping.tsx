@@ -202,8 +202,14 @@ export const Shopping: React.FC = () => {
     if (searchTerm) params.set('q', searchTerm);
     const cat = selectedCategories.size > 0 ? Array.from(selectedCategories)[0] : selectedCategory;
     if (cat && cat !== 'All') params.set('category', cat);
-    if (priceMin) params.set('minPrice', String(priceMin));
-    if (priceMax) params.set('maxPrice', String(priceMax));
+    const defaultMin = priceBounds.min;
+    const defaultMax = priceBounds.max;
+    if (priceMin > defaultMin) {
+      params.set('minPrice', String(priceMin));
+    }
+    if (defaultMax > 0 && priceMax < defaultMax) {
+      params.set('maxPrice', String(priceMax));
+    }
     if (minRating) params.set('minRating', String(minRating));
     if (verifiedOnly) params.set('verifiedOnly', 'true');
     if (locationQuery) params.set('city', locationQuery);
@@ -213,6 +219,20 @@ export const Shopping: React.FC = () => {
       params.set('maxKm', String(maxDistanceKm));
     }
     fetch(`/api/v1/listings?${params.toString()}`, { signal: controller.signal })
+  }, [
+    searchTerm,
+    selectedCategory,
+    selectedCategories,
+    priceMin,
+    priceMax,
+    minRating,
+    verifiedOnly,
+    locationQuery,
+    userLocation,
+    maxDistanceKm,
+    priceBounds.min,
+    priceBounds.max,
+  ]);
       .then(r => r.ok ? r.json() : Promise.reject(r.statusText))
       .then((json: Product[]) => setProducts(json))
       .catch(() => { /* keep mock on failure */ });
