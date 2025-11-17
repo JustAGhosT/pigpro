@@ -151,9 +151,14 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Run security audit
-        run: npm audit --audit-level=high || true
-        continue-on-error: true
+      - name: Check for vulnerabilities with audit-ci
+        run: |
+          if [ -f audit-ci.json ]; then
+            npx audit-ci --config audit-ci.json
+          else
+            echo "Audit CI not configured, running basic npm audit"
+            npm audit --audit-level=critical || true
+          fi
 
       - name: Run CodeQL Analysis
         uses: github/codeql-action/init@v4
