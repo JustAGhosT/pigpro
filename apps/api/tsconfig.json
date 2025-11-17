@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "outDir": "dist",
+    "rootDir": ".",
+    "sourceMap": true,
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "@my-farm/domain": ["../../packages/domain/src/index.ts"]
+    }
+  },
+  "include": [
+    "src/functions/listings.ts",
+    "src/functions/livestock.ts",
+    "src/data/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "src/lib/**",
+    "src/functions/analytics.ts",
+    "src/functions/animals.ts",
+    "src/functions/categories.ts",
+    "src/functions/financials.ts",
+    "src/functions/groups.ts",
+    "src/functions/productionRecords.ts",
+    "src/functions/reports.ts"
+  ]
+}

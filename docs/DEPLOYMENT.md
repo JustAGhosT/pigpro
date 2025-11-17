@@ -1,3 +1,140 @@
+# Deployment Guide - Livestock Club SA
+
+## Overview
+
+This guide covers deploying the Livestock Club SA application to Azure, including the frontend,
+backend API, database, and storage services.
+
+## Architecture
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │   API Gateway   │    │   Database      │
+│ (Static Web App)│◄──►│ (Azure Functions)│◄──►│ (PostgreSQL)    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │  Blob Storage   │
+                       │   (Images)      │
+                       └─────────────────┘
+```
+
+## Prerequisites
+
+### Required Tools
+
+- **Azure CLI** - [Install Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+- **Node.js 20 LTS** and npm
+- **Azure Functions Core Tools** -
+  [Install Guide](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local)
+- **Git** - For version control
+
+### Azure Account Setup
+
+1. Create an Azure account
+2. Set up a subscription
+3. Configure Azure CLI authentication
+
+## Environment Setup
+
+### 1. Azure Login
+
+```bash
+# Login to Azure
+az login
+
+# Set subscription
+az account set --subscription "your-subscription-id"
+```
+
+### 2. Create Resource Group
+
+```bash
+# Create resource group
+az group create \
+  --name "rg-livestock-club-sa" \
+  --location "southafricanorth"
+```
+
+## Database Deployment
+
+### 1. PostgreSQL Flexible Server
+
+```bash
+# Create PostgreSQL server
+az postgres flexible-server create \
+  --resource-group "rg-livestock-club-sa" \
+  --name "livestock-pg-server" \
+  --location "southafricanorth" \
+  --admin-user "pgadmin" \
+  --admin-password "Your-Strong-Pwd1!" \
+  --sku-name "Standard_B1ms" \
+  --tier "Burstable"
+```
+
+### 2. Create Database
+
+```bash
+# Create database
+az postgres flexible-server db create \
+  --resource-group "rg-livestock-club-sa" \
+  --server-name "livestock-pg-server" \
+  --database-name "livestockdb"
+```
+
+### 3. Configure Firewall
+
+```bash
+# Add firewall rule for your specific IP (replace with your actual IP)
+az postgres flexible-server firewall-rule create \
+  --resource-group "rg-livestock-club-sa" \
+  --name "livestock-pg-server" \
+  --rule-name "AllowMyIP" \
+  --start-ip-address "YOUR_IP_ADDRESS" \
+  --end-ip-address "YOUR_IP_ADDRESS"
+
+# For production: Use Private Link/VNet integration for secure access
+# or specify explicit CIDR ranges for your application servers
+```
+
+**Security Note**: Avoid broad "allow Azure services" rules. For production deployments, consider using Azure Private Link or VNet integration for secure database access.
+
+## Storage Deployment
+
+### 1. Create Storage Account
+
+```bash
+# Create storage account
+az storage account create \
+  --name "livestockstorage123" \
+  --resource-group "rg-livestock-club-sa" \
+  --location "southafricanorth" \
+  --sku "Standard_LRS" \
+  --allow-blob-public-access false
+```
+
+### 2. Create Container
+
+```bash
+# Create blob container
+az storage container create \
+  --name "livestock-images" \
+  --account-name "livestockstorage123" \
+  --public-access off
+```
+
+### 3. Upload Images
+
+```bash
+# Upload images
+az storage blob upload-batch \
+  --account-name "livestockstorage123" \
+  --destination "livestock-images" \
+  --source "public/images"
+```
+
+## Backend API Deployment
 # PigPro Deployment Guide
 
 This guide covers deploying the PigPro application to Azure, including both the frontend (Azure Static Web Apps) and backend (Azure Functions).
@@ -187,6 +324,100 @@ This will output your SWA URL (e.g., `pigpro-frontend-abc123.azurestaticapps.net
 ### 1. Create Function App
 
 ```bash
+# Create storage account for function app
+az storage account create \
+  --name "livestockfunctions123" \
+  --resource-group "rg-livestock-club-sa" \
+  --location "southafricanorth" \
+  --sku "Standard_LRS"
+
+# Create function app
+az functionapp create \
+  --resource-group "rg-livestock-club-sa" \
+  --consumption-plan-location "southafricanorth" \
+  --runtime "node" \
+  --runtime-version "20" \
+  --functions-version "4" \
+  --name "livestock-api" \
+  --storage-account "livestockfunctions123"
+```
+
+### 2. Configure Application Settings
+
+#### Option A: Using Azure Key Vault (Recommended)
+
+```bash
+# Create Key Vault
+az keyvault create \
+  --name "livestock-keyvault" \
+  --resource-group "rg-livestock-club-sa" \
+  --location "southafricanorth"
+
+# Store database password in Key Vault
+az keyvault secret set \
+  --vault-name "livestock-keyvault" \
+  --name "db-password" \
+  --value "Your-Strong-Pwd1!"
+
+# Set application settings with Key Vault references
+az functionapp config appsettings set \
+  --name "livestock-api" \
+  --resource-group "rg-livestock-club-sa" \
+  --settings \
+    "PGHOST=livestock-pg-server.postgres.database.azure.com" \
+    "PGUSER=pgadmin@livestock-pg-server" \
+    "PGPASSWORD=@Microsoft.KeyVault(SecretUri=https://livestock-keyvault.vault.azure.net/secrets/db-password/)" \
+    "PGDATABASE=livestockdb" \
+    "PGPORT=5432" \
+    "PGSSLMODE=require" \
+    "BLOB_BASE_URL=https://livestockstorage123.blob.core.windows.net/livestock-images"
+```
+
+#### Option B: Using Managed Identity (Alternative)
+
+```bash
+# Enable system-assigned managed identity
+az functionapp identity assign \
+  --name "livestock-api" \
+  --resource-group "rg-livestock-club-sa"
+
+# Grant the Function App access to Key Vault
+az keyvault set-policy \
+  --name "livestock-keyvault" \
+  --resource-group "rg-livestock-club-sa" \
+  --object-id $(az functionapp identity show --name "livestock-api" --resource-group "rg-livestock-club-sa" --query principalId -o tsv) \
+  --secret-permissions get list
+```
+
+### 3. Deploy Function App
+
+```bash
+# Build the API
+cd apps/api
+npm run build
+
+# Deploy to Azure
+func azure functionapp publish livestock-api
+```
+
+## Frontend Deployment
+
+### 1. Create Static Web App
+
+```bash
+# Create static web app (frontend only - API deployed separately)
+az staticwebapp create \
+  --name "livestock-club-sa" \
+  --resource-group "rg-livestock-club-sa" \
+  --location "Central US" \
+  --branch "main" \
+  --app-location "apps/frontend" \
+  --output-location "dist"
+```
+
+### 2. Configure Build Settings
+
+Create `.github/workflows/azure-static-web-apps.yml`:
 az functionapp create \
   --resource-group pigpro-rg \
   --consumption-plan-location eastus \
@@ -297,250 +528,251 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: "/"
-          api_location: "backend/api"
-          output_location: "dist"
+          action: 'upload'
+          app_location: 'apps/frontend'
+          output_location: 'dist'
+
+  close_pull_request_job:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close Pull Request Job
+    steps:
+      - name: Close Pull Request
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: 'close'
 ```
 
-## CORS Configuration
+### 3. Configure Environment Variables
 
-### Configuring CORS for Azure Functions
-
-When your frontend is deployed to Azure Static Web Apps, you need to configure CORS in your Azure Functions to allow requests from your Static Web App.
-
-**Important**: Do not use placeholder or example hostnames in your CORS configuration. You must use your actual Static Web App URL or custom domain.
-
-#### Steps to Configure CORS:
-
-1. Get your actual Static Web App URL from the Azure Portal:
-   - Navigate to your Static Web App resource
-   - Copy the URL shown (e.g., `https://your-actual-app.azurestaticapps.net`)
-   
-2. If you've configured a custom domain, use that instead (e.g., `https://pigpro.yourdomain.com`)
-
-3. Configure CORS in Azure Portal:
-   - Navigate to your Function App
-   - Go to "CORS" in the left menu
-   - Add your actual Static Web App URL or custom domain to the allowed origins list
-   - Example: `https://your-actual-app.azurestaticapps.net`
-   - Click "Save"
-
-4. Or configure via Azure CLI:
+In the Azure portal, set these environment variables for the static web app:
 
 ```bash
-az functionapp cors add \
-  --name pigpro-api \
-  --resource-group pigpro-rg \
-  --allowed-origins https://<your-swa-hostname>
+VITE_API_URL=https://livestock-api.azurewebsites.net/api/v1
 ```
 
-**Important**: Replace `<your-swa-hostname>` with your actual Static Web App hostname (e.g., `your-actual-app.azurestaticapps.net`) or your custom domain (e.g., `pigpro.yourdomain.com`). 
+## Database Initialization
 
-To find your Static Web App hostname:
-- Navigate to your Static Web App resource in the Azure Portal
-- Copy the URL from the Overview page
-- Use this exact URL in the CORS configuration
-
-Never use placeholder or example hostnames like `example.azurestaticapps.net` in your production configuration - always use your real SWA URL or custom domain.
-
-### CORS in local.settings.json (Development Only)
-
-For local development, add to `backend/api/host.json`:
-
-```json
-{
-  "version": "2.0",
-  "extensionBundle": {
-    "id": "Microsoft.Azure.Functions.ExtensionBundle",
-    "version": "[4.*, 5.0.0)"
-  },
-  "cors": {
-    "allowedOrigins": [
-      "http://localhost:5173",
-      "http://127.0.0.1:5173"
-    ]
-  }
-}
-```
-
-## Custom Domain Setup
-
-### 1. Configure Custom Domain for Static Web App
-
-1. In Azure Portal, go to your Static Web App
-2. Click "Custom domains" in the left menu
-3. Click "Add"
-4. Choose "Free certificate managed by Azure" or "Enter certificate"
-5. Enter your custom domain
-6. Follow the DNS configuration instructions
-
-### 2. Update CORS Configuration
-
-After setting up a custom domain, update your CORS configuration to include the custom domain:
+### 1. Run Database Setup
 
 ```bash
-az functionapp cors add \
-  --name pigpro-api \
-  --resource-group pigpro-rg \
-  --allowed-origins https://pigpro.yourdomain.com
+# Set environment variables
+export PGHOST="livestock-pg-server.postgres.database.azure.com"
+export PGUSER="pgadmin@livestock-pg-server"
+export PGPASSWORD="Your-Strong-Pwd1!"
+export PGDATABASE="livestockdb"
+export PGPORT="5432"
+export PGSSLMODE="require"
+
+# Run database initialization
+cd apps/api
+npm run db:init
 ```
 
 ## Monitoring and Logging
 
-### Application Insights
-
-1. Create Application Insights:
+### 1. Application Insights
 
 ```bash
+# Create Application Insights
 az monitor app-insights component create \
-  --app pigpro-insights \
-  --location eastus \
-  --resource-group pigpro-rg
+  --app "livestock-insights" \
+  --location "southafricanorth" \
+  --resource-group "rg-livestock-club-sa"
 ```
 
-2. Get Instrumentation Key:
+### 2. Configure Logging
+
+Add to function app settings:
 
 ```bash
-az monitor app-insights component show \
-  --app pigpro-insights \
-  --resource-group pigpro-rg \
-  --query instrumentationKey \
-  --output tsv
+APPINSIGHTS_INSTRUMENTATIONKEY=<your-instrumentation-key>
+APPLICATIONINSIGHTS_CONNECTION_STRING=<your-connection-string>
 ```
 
-3. Add to Function App:
+## Security Configuration
+
+### 1. CORS Settings
+
+Configure CORS for the function app:
 
 ```bash
-az functionapp config appsettings set \
-  --name pigpro-api \
-  --resource-group pigpro-rg \
-  --settings "APPINSIGHTS_INSTRUMENTATIONKEY=<YourInstrumentationKey>"
+az functionapp cors add \
+  --name "livestock-api" \
+  --resource-group "rg-livestock-club-sa" \
+  --allowed-origins "https://livestock-club-sa.azurestaticapps.net"
 ```
 
-### Viewing Logs
+### 2. Authentication
+
+Configure authentication for the static web app in the Azure portal:
+
+- Enable authentication
+- Configure identity providers (Google, Facebook, Microsoft)
+- Set up redirect URLs
+
+## Domain Configuration
+
+### 1. Custom Domain
 
 ```bash
-# Function App logs
-az functionapp log tail --name pigpro-api --resource-group pigpro-rg
+# Add custom domain to static web app
+az staticwebapp hostname set \
+  --name "livestock-club-sa" \
+  --resource-group "rg-livestock-club-sa" \
+  --hostname "livestockclubsa.co.za"
+```
 
-# Static Web App logs
-az staticwebapp log tail --name pigpro-frontend --resource-group pigpro-rg
+### 2. SSL Certificate
+
+SSL certificates are automatically managed by Azure Static Web Apps.
+
+## Backup and Recovery
+
+### 1. Database Backup
+
+```bash
+# Create backup policy
+az postgres flexible-server backup create \
+  --resource-group "rg-livestock-club-sa" \
+  --name "livestock-pg-server" \
+  --backup-name "daily-backup"
+```
+
+### 2. Storage Backup
+
+Configure backup for blob storage:
+
+```bash
+# Enable soft delete
+az storage blob service-properties update \
+  --account-name "livestockstorage123" \
+  --enable-delete-retention true \
+  --delete-retention-days 7
+```
+
+## Performance Optimization
+
+### 1. CDN Configuration
+
+```bash
+# Create CDN profile
+az cdn profile create \
+  --name "livestock-cdn" \
+  --resource-group "rg-livestock-club-sa" \
+  --sku "Standard_Microsoft"
+```
+
+### 2. Database Optimization
+
+- Configure connection pooling
+- Set up read replicas for read-heavy workloads
+- Monitor query performance
+
+## Scaling
+
+### 1. Function App Scaling
+
+- Configure auto-scaling rules
+- Set up premium plans for better performance
+- Monitor usage patterns
+
+### 2. Database Scaling
+
+```bash
+# Scale up database
+az postgres flexible-server update \
+  --resource-group "rg-livestock-club-sa" \
+  --name "livestock-pg-server" \
+  --sku-name "Standard_D2s_v3"
 ```
 
 ## Troubleshooting
 
 ### Common Issues
 
-#### CORS Errors
+#### Database Connection Issues
 
-**Symptom**: Browser console shows CORS errors when calling API
-
-**Solution**: 
-- Verify your CORS configuration includes your actual Static Web App URL or custom domain
-- Never use placeholder URLs like `example.azurestaticapps.net`
-- Check that the URL matches exactly (including https://)
-- Remember to update CORS if you change from SWA URL to custom domain
-
-#### Database Connection Errors
-
-**Symptom**: API returns 500 errors related to database connectivity
-
-**Solution**:
-- Check firewall rules allow Azure Functions to connect
-- Verify DATABASE_URL is correct in Function App settings
-- Ensure PostgreSQL server is running
-
-#### Build Failures
-
-**Symptom**: GitHub Actions workflow fails
-
-**Solution**:
-- Check Node.js version matches
-- Verify all dependencies are in package.json
-- Check build logs for specific errors
-
-#### Authentication Issues
-
-**Symptom**: Users can't log in
-
-**Solution**:
-- Verify JWT_SECRET is set in Function App
-- Check token expiration settings
-- Ensure database has user records
-
-### Health Checks
-
-Add health check endpoints to verify deployment:
-
-**Frontend**: Access your Static Web App URL - should load the application
-
-**Backend**: Access `https://pigpro-api.azurewebsites.net/api/health` (if implemented)
-
-**Database**: Connect via psql:
 ```bash
-psql -h pigpro-db-server.postgres.database.azure.com -U pigproadmin -d pigpro -c "SELECT 1;"
+# Test database connection
+psql -h livestock-pg-server.postgres.database.azure.com \
+     -U pgadmin@livestock-pg-server \
+     -d livestockdb \
+     -p 5432
 ```
 
-## Security Best Practices
+#### Function App Deployment Issues
 
-1. **Never commit secrets**: Use Azure Key Vault or App Settings
-2. **Use managed identities**: Enable for Function App to access other Azure services
-3. **Enable HTTPS only**: Enforce HTTPS for all resources
-4. **Regular updates**: Keep dependencies updated
-5. **Access restrictions**: Configure network security groups and firewall rules
-6. **Audit logs**: Enable and review Azure Activity logs
+```bash
+# Check function app logs
+az functionapp log tail \
+  --name "livestock-api" \
+  --resource-group "rg-livestock-club-sa"
+```
 
-## Scaling Considerations
+#### Static Web App Issues
 
-### Static Web App
-- Free tier: 100 GB bandwidth/month
-- Standard tier: Unlimited bandwidth, custom authentication
+- Check build logs in GitHub Actions
+- Verify environment variables
+- Check CORS configuration
 
-### Function App
-- Consumption plan: Auto-scales based on load
-- Premium plan: Pre-warmed instances, VNET integration
+### Monitoring
 
-### Database
-- Scale up: Change SKU for more resources
-- Scale out: Add read replicas for read-heavy workloads
+- Use Azure Monitor for application insights
+- Set up alerts for critical metrics
+- Monitor database performance
+
+## Maintenance
+
+### Regular Tasks
+
+- Update dependencies monthly
+- Monitor security patches
+- Review and optimize database queries
+- Clean up old blob storage data
+
+### Updates
+
+```bash
+# Update function app runtime (Linux Consumption)
+az functionapp config set \
+  --name "livestock-api" \
+  --resource-group "rg-livestock-club-sa" \
+  --linux-fx-version "node|20"
+
+# Alternative: Set via app settings
+az functionapp config appsettings set \
+  --name "livestock-api" \
+  --resource-group "rg-livestock-club-sa" \
+  --settings "WEBSITE_NODE_DEFAULT_VERSION=~20"
+```
 
 ## Cost Optimization
 
-1. **Use consumption plans** where possible
-2. **Enable auto-shutdown** for dev/test environments
-3. **Monitor usage** with Azure Cost Management
-4. **Right-size resources** based on actual usage
-5. **Use reserved instances** for predictable workloads
+### Recommendations
 
-## Backup and Recovery
+- Use consumption plans for function apps
+- Implement auto-shutdown for development resources
+- Monitor and optimize database usage
+- Use lifecycle management for blob storage
 
-### Database Backups
+### Cost Monitoring
 
-```bash
-# Enable automated backups
-az postgres flexible-server backup create \
-  --resource-group pigpro-rg \
-  --name pigpro-db-server \
-  --backup-name manual-backup-$(date +%Y%m%d)
-```
+- Set up cost alerts
+- Use Azure Cost Management
+- Regular cost reviews
 
-### Static Web App
-- Deployment history maintained in GitHub
-- Can redeploy previous commits
+## Support
 
-### Function App
-- Enable deployment slots for zero-downtime deployments
-- Keep previous versions in GitHub
+### Azure Support
 
-## Support and Additional Resources
+- Use Azure support channels
+- Check Azure status page
+- Review Azure documentation
 
-- [Azure Static Web Apps Documentation](https://docs.microsoft.com/azure/static-web-apps/)
-- [Azure Functions Documentation](https://docs.microsoft.com/azure/azure-functions/)
-- [Azure Database for PostgreSQL Documentation](https://docs.microsoft.com/azure/postgresql/)
-- [Project GitHub Repository](https://github.com/YourOrg/pigpro)
-- [Report Issues](https://github.com/YourOrg/pigpro/issues)
+### Application Support
 
----
-
-For questions or issues with deployment, please open an issue on GitHub or contact the development team.
+- Monitor application logs
+- Use Application Insights
+- Set up health checks
