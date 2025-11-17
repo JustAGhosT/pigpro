@@ -26,7 +26,12 @@ interface SidebarProps {
 
 // NOTE: This is a mock implementation based on the available mock data.
 // In a real application, this would check the current user's animals.
-const hasDairyAnimalsFactory = (data: any) => () => data?.cattle?.breeds?.dairy?.length > 0;
+const hasDairyAnimalsFactory = (data: Record<string, unknown>) => () => {
+  const cattle = data?.cattle as Record<string, unknown> | undefined;
+  const breeds = cattle?.breeds as Record<string, unknown> | undefined;
+  const dairy = breeds?.dairy as unknown[] | undefined;
+  return (dairy?.length ?? 0) > 0;
+};
 
 const getMenuItems = (hasDairy: boolean) => [
   { id: 'dashboard', label: 'Dashboard', icon: Home },
@@ -45,7 +50,7 @@ const getMenuItems = (hasDairy: boolean) => [
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChange }) => {
-  const [livestockData, setLivestockData] = useState<any>(FALLBACK_LIVESTOCK);
+  const [livestockData, setLivestockData] = useState<Record<string, unknown>>(FALLBACK_LIVESTOCK);
 
   useEffect(() => {
     fetch('/api/v1/livestock')

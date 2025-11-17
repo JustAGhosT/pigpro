@@ -219,6 +219,10 @@ export const Shopping: React.FC = () => {
       params.set('maxKm', String(maxDistanceKm));
     }
     fetch(`/api/v1/listings?${params.toString()}`, { signal: controller.signal })
+      .then(r => r.ok ? r.json() : Promise.reject(r.statusText))
+      .then((json: Product[]) => setProducts(json))
+      .catch(() => { /* keep mock on failure */ });
+    return () => controller.abort();
   }, [
     searchTerm,
     selectedCategory,
@@ -233,11 +237,6 @@ export const Shopping: React.FC = () => {
     priceBounds.min,
     priceBounds.max,
   ]);
-      .then(r => r.ok ? r.json() : Promise.reject(r.statusText))
-      .then((json: Product[]) => setProducts(json))
-      .catch(() => { /* keep mock on failure */ });
-    return () => controller.abort();
-  }, [searchTerm, selectedCategory, selectedCategories, priceMin, priceMax, minRating, verifiedOnly, locationQuery, userLocation, maxDistanceKm]);
 
   const toCoords = React.useCallback((location: string): LatLng | null => {
     const key = location.toLowerCase();
