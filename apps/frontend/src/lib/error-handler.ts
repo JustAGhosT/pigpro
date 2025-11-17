@@ -122,7 +122,11 @@ export const logError = (error: Error, context?: string) => {
   console.error('Application Error:', errorInfo);
   
   // In production, you might want to send this to an error tracking service
-  const isProd = typeof import !== 'undefined' && import.meta && Boolean(import.meta.env?.PROD) || typeof process !== 'undefined' && process.env.NODE_ENV === 'production';
+  const importMeta =
+    typeof import.meta !== 'undefined' ? (import.meta as { env?: { PROD?: boolean } }) : undefined;
+  const isProd =
+    (importMeta?.env?.PROD === true) ||
+    (typeof process !== 'undefined' && process.env?.NODE_ENV === 'production');
   if (isProd) {
     // Example: send to error tracking service
     // errorTrackingService.captureException(error, { extra: errorInfo });
