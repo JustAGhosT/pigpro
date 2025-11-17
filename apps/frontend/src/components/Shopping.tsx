@@ -437,6 +437,9 @@ export const Shopping: React.FC = () => {
     setVerifiedOnly(false);
     setLocationQuery('');
     setMaxDistanceKm(0);
+    setAgeRange({ min: 0, max: 120 });
+    setGender('');
+    setBreed('');
   };
 
   // Save & load filters (localStorage)
