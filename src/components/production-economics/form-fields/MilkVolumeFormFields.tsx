@@ -11,10 +11,14 @@ import {
 } from '@/components/ui/select';
 import { AnimalSelect, DateField } from './FormFields';
 
+interface FormData {
+  [key: string]: string | number | undefined;
+}
+
 interface MilkVolumeFormFieldsProps {
   animals: Animal[];
   groups: Group[]; // Can be a group event
-  formData: any;
+  formData: FormData;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSelectChange: (name: string, value: string) => void;
 }
