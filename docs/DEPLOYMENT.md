@@ -98,7 +98,8 @@ az postgres flexible-server firewall-rule create \
 # or specify explicit CIDR ranges for your application servers
 ```
 
-**Security Note**: Avoid broad "allow Azure services" rules. For production deployments, consider using Azure Private Link or VNet integration for secure database access.
+**Security Note**: Avoid broad "allow Azure services" rules. For production deployments, consider
+using Azure Private Link or VNet integration for secure database access.
 
 ## Storage Deployment
 
@@ -282,7 +283,8 @@ az functionapp config appsettings set \
 
 ### GitHub Actions Workflow
 
-Azure Static Web Apps automatically creates a GitHub Actions workflow. Ensure your `.github/workflows/azure-static-web-apps-*.yml` includes:
+Azure Static Web Apps automatically creates a GitHub Actions workflow. Ensure your
+`.github/workflows/azure-static-web-apps-*.yml` includes:
 
 ```yaml
 name: Azure Static Web Apps CI/CD
@@ -298,7 +300,9 @@ on:
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    if:
+      github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action !=
+      'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
