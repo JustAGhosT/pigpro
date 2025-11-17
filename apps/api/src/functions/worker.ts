@@ -144,11 +144,15 @@ export async function processJobQueue(myTimer: Timer, context: InvocationContext
             if (data.length === 0) {
                 context.log('No data rows found in CSV file');
                 // Update job status to completed (no-op) instead of leaving it running
-                await query(
-                    'UPDATE job_queue SET status = $1, completed_at = NOW(), error_message = $2 WHERE id = $3',
-                    ['completed', 'No data rows in CSV', job.id]
-                );
+-               await query(
+-                   'UPDATE job_queue SET status = $1, completed_at = NOW(), error_message = $2 WHERE id = $3',
+-                   ['completed', 'No data rows in CSV', job.id]
+               await query(
+                   'UPDATE report_jobs SET status = $1, completed_at = NOW(), error_message = $2 WHERE id = $3',
+                   ['completed', 'No data rows in CSV', job.id]
+               );
                 return;
+            }
             }
 
             // Validate and process each record
