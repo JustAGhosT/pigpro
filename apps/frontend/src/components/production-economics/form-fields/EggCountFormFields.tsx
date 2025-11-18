@@ -10,9 +10,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+interface FormData {
+  [key: string]: string | number | undefined;
+}
+
 interface EggCountFormFieldsProps {
   groups: Group[];
-  formData: any;
+  formData: FormData;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSelectChange: (name: string, value: string) => void;
 }
@@ -24,7 +28,8 @@ export const EggCountFormFields: React.FC<EggCountFormFieldsProps> = ({
   onSelectChange,
 }) => {
   // Egg-laying species are typically poultry. We could filter groups by species here.
-  const poultryGroups = groups.filter(g => g.species_id === 'your-poultry-species-id'); // Placeholder
+  // Removing unused variable that was causing lint error
+  // const poultryGroups = groups.filter(g => g.species_id === 'your-poultry-species-id');
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4 mt-4">

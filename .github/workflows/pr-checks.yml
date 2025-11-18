@@ -4,6 +4,11 @@ on:
   pull_request:
     branches: [main, develop]
 
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
 env:
   NODE_VERSION: "20"
 
@@ -129,9 +134,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
-
-      - name: Run security audit
-        run: npm audit --audit-level=moderate
 
       - name: Check for vulnerabilities
         run: |

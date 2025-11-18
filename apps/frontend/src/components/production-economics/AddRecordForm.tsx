@@ -31,10 +31,30 @@ const eventTypes = [
   { value: 'other_expense', label: 'Other Expense', type: 'financial' },
 ];
 
+interface FormData {
+  animal_id?: string;
+  group_id?: string;
+  species_id?: string;
+  date?: string;
+  weight_value?: number;
+  weight_unit?: string;
+  milk_volume?: number;
+  milk_unit?: string;
+  egg_count?: number;
+  category_id?: string;
+  amount?: number;
+  currency?: string;
+  vendor_or_buyer?: string;
+  memo?: string;
+  event_type?: string;
+  notes?: string;
+  [key: string]: string | number | undefined;
+}
+
 export const AddRecordForm: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [selectedEventTypeInfo, setSelectedEventTypeInfo] = useState<{ value: string, type: string } | null>(null);
-  const [formData, setFormData] = useState<any>({});
+  const [formData, setFormData] = useState<FormData>({});
 
   // Data states for dropdowns
   const [, setSpecies] = useState<Species[]>([]);
@@ -91,7 +111,7 @@ export const AddRecordForm: React.FC = () => {
 
     setIsSubmitting(true);
     let endpoint = '';
-    let payload: any = { ...formData };
+    const payload: FormData = { ...formData };
 
     if (selectedEventTypeInfo.type === 'production') {
       endpoint = '/api/v1/production-records';
