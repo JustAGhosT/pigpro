@@ -3,10 +3,7 @@
   "moderate": true,
   "high": true,
   "critical": true,
-  "allowlist": [
-    "glob",
-    "GHSA-5j98-mcp5-4vw2"
-  ],
+  "allowlist": [],
   "skip-dev": false,
   "report-type": "summary",
   "output-format": "text"

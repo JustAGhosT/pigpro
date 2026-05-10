@@ -12,7 +12,33 @@
     "@typescript-eslint/eslint-plugin": "^8.3.0",
     "@typescript-eslint/parser": "^8.3.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
-    "eslint-plugin-react-refresh": "^0.4.11"
+    "eslint-plugin-react-refresh": "^0.4.11",
+    "ajv": "^6.14.0",
+    "brace-expansion@^1.1.7": "1.1.13",
+    "brace-expansion@^2.0.1": "2.0.3",
+    "diff": "^4.0.4",
+    "flatted": "^3.4.2",
+    "handlebars": "^4.7.9",
+    "glob@7.2.3": {
+      "minimatch": "3.1.4"
+    },
+    "minimatch@^3.0.4": "3.1.4",
+    "minimatch@3.1.4": {
+      "brace-expansion": "1.1.13"
+    },
+    "minimatch@^9.0.0": "9.0.7",
+    "picomatch@^2.0.4": "2.3.2",
+    "picomatch@^4.0.2": "4.0.4",
+    "rollup": "^4.59.0",
+    "test-exclude": {
+      "minimatch": "3.1.4"
+    },
+    "ts-jest": {
+      "handlebars": "4.7.9"
+    },
+    "ts-node": {
+      "diff": "4.0.4"
+    }
   },
   "scripts": {
     "dev": "vite",
@@ -63,7 +89,7 @@
     "@eslint/js": "^9.9.1",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
-    "@types/node": "^18.0.0",
+    "@types/node": "^20.19.0",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@types/recharts": "^1.8.29",
@@ -74,11 +100,11 @@
     "eslint-plugin-react-refresh": "^0.4.11",
     "globals": "^15.9.0",
     "jsdom": "^27.0.0",
-    "postcss": "^8.4.35",
+    "postcss": "^8.5.14",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
-    "vite": "^7.1.11",
+    "vite": "^7.3.3",
     "vitest": "^3.2.4"
   }
 }
