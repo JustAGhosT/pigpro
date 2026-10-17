@@ -18,7 +18,7 @@
     "brace-expansion@^2.0.1": "2.0.3",
     "diff": "^4.0.4",
     "flatted": "^3.4.2",
-    "handlebars": "^4.7.9",
+    "handlebars": "^4.7.10",
     "glob@7.2.3": {
       "minimatch": "3.1.4"
     },
